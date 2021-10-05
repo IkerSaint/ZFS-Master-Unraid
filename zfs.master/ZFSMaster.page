@@ -373,7 +373,6 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 				}); 
 			  }
 		  });
-		  $("#zfs_master_div").load("Main #zfs_master_div");
 	  });
   }
   
