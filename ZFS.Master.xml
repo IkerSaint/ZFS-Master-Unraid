@@ -10,7 +10,7 @@
   </Description>
   <MinVer>6.9.2</MinVer>
   <MaxVer>6.9.2</MaxVer>
-  <Support></Support>
+  <Support>https://forums.unraid.net/topic/41333-zfs-plugin-for-unraid/page/38/</Support>
   <Icon>https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main/zfs.master/images/zfs.master.png</Icon>
   <DonateText>I like expensive things</DonateText>
   <DonateLink>https://www.paypal.com/paypalme/ikersaint</DonateLink>
