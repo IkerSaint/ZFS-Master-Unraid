@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Containers>
   <Plugin>True</Plugin>
-  <PluginURL>https://raw.githubusercontent.com/GiorgioAresu/ZFS-companion-unraid/main/ZFS-companion.plg</PluginURL>
+  <PluginURL>https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main/zfs.master.plg</PluginURL>
   <PluginAuthor>IkerSaint</PluginAuthor>
   <Beta>True</Beta>
   <Category>Tools:System</Category>
@@ -10,8 +10,8 @@
   </Description>
   <MinVer>6.9.2</MinVer>
   <MaxVer>6.9.2</MaxVer>
-  <Support>http://lime-technology.com/forum/index.php?topic=40111.0</Support>
-  <Icon>https://raw.githubusercontent.com/GiorgioAresu/ZFS-companion-unraid/main/src/ZFS-companion/usr/local/emhttp/plugins/ZFS-companion/images/ZFS-companion.png</Icon>
+  <Support></Support>
+  <Icon>https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main/zfs.master/images/zfs.master.png</Icon>
   <DonateText>I like expensive things</DonateText>
   <DonateLink>https://www.paypal.com/paypalme/ikersaint</DonateLink>
 </Containers>
