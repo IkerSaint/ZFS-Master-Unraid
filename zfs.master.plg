@@ -3,8 +3,8 @@
 <!ENTITY name		"zfs.master">
 <!ENTITY author		"IkerSaint">
 <!ENTITY version	"2021.10.04">
-<!ENTITY launch     "Main">
-<!ENTITY gitURL		"https://www.incipit.life">
+<!ENTITY launch		"Main">
+<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main">
 <!ENTITY pluginURL	"&gitURL;/&name;.plg">
 ]>
 
