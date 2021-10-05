@@ -1,0 +1,72 @@
+<?xml version='1.0' standalone='yes'?>
+<!DOCTYPE PLUGIN [
+<!ENTITY name		"zfs.master">
+<!ENTITY author		"IkerSaint">
+<!ENTITY version	"2021.10.04">
+<!ENTITY launch     "Main">
+<!ENTITY gitURL		"https://www.incipit.life">
+<!ENTITY pluginURL	"&gitURL;/&name;.plg">
+]>
+
+<PLUGIN name="&name;"
+		author="&author;"
+		version="&version;"
+		pluginURL="&pluginURL;"
+		min="6.9.2">
+		
+<CHANGES>
+
+###2021.10.04
+- Initial Release.
+
+</CHANGES>
+
+<FILE Run="/bin/bash">
+<INLINE>
+# Remove emhttp files.
+rm -rf /usr/local/emhttp/plugins/&name;/* 2>/dev/null
+
+# Remove old 'bundle' files.
+rm -f $(ls /boot/config/plugins/&name;/*.tgz 2>/dev/null | grep -v '&version;')
+</INLINE>
+</FILE>
+
+<!-- SOURCE FILE -->
+<FILE Name="/boot/config/plugins/&name;/&name;.tgz">
+<URL>"&gitURL;/&name;-&version;.tgz"</URL>
+</FILE>
+
+<FILE Run="/bin/bash">
+<INLINE>
+# Install the packet.
+tar -xf /boot/config/plugins/&name;/&name;.tgz -C /usr/local/emhttp/plugins 2>/dev/null
+
+echo ""
+echo "-----------------------------------------------------------"
+echo " &name; has been installed."
+echo " Copyright 2021-2021, &author;"
+echo " Version: &version;"
+echo "-----------------------------------------------------------"
+echo ""
+</INLINE>
+</FILE>
+
+
+<!-- SOURCE FILE -->
+
+<!-- PLUGIN REMOVAL -->
+<FILE Run="/bin/bash" Method="remove">
+<INLINE>
+echo "Removing &name;..."
+rm -rf /boot/config/plugins/&name;
+rm -rf /usr/local/emhttp/plugins/&name;
+echo ""
+echo "-----------------------------------------------------------"
+echo " &name; has been removed."
+echo " Copyright 2021-2021, &author;"
+echo " Version: &version;"
+echo "-----------------------------------------------------------"
+echo ""
+</INLINE>
+</FILE>
+</PLUGIN>

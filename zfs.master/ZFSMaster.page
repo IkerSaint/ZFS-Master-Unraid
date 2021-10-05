@@ -1,0 +1,399 @@
+Menu="Main:2"
+Title="ZFS Master"
+Tag="database"
+Cond="file_exists('/usr/sbin/zpool')"
+---
+<?php
+
+$plugin = "zfs.master";
+$docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
+$urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
+$urlcreatedataset = "/plugins/".$plugin."/include/ZFSMCreateDataset.php";
+
+require_once "$docroot/plugins/$plugin/include/ZFSMConstants.php";
+require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
+    
+  function cleanupZPoolInfo($matched) {
+	  $result = array(
+		'Pool' => trim($matched['pool']),
+		'Health' => trim($matched['health']),
+		'Name' => '',
+		'Size' => trim($matched['size']),
+		'Used' => trim($matched['used']),
+		'Free' => trim($matched['free']),
+		'Refer' => '',
+		'MountPoint' => '',
+		'Snapshots' => '',
+		'Settings' => ''
+	  );
+	  return $result;
+  }
+  
+  function cleanupZDatasetInfo($matched) {
+	  $result = array(
+		'Pool' => '',
+		'Health' => '',
+		'Name' => trim($matched['name']),
+		'Size' => '',
+		'Used' => trim($matched['used']),
+		'Free' => trim($matched['free']),
+		'Refer' => trim($matched['refer']),
+		'MountPoint' => trim($matched['mount']),
+		'Snapshots' => '',
+		'Attributes' => array(
+			'Creation Date' => trim($matched['creation']),
+			'Compression' => trim($matched['compression']),
+			'Compress Ratio' => trim($matched['cratio']),
+			'Space used by Snaps' => trim($matched['snapused']),
+			'Quota' => trim($matched['quota']),
+			'RecordSize' => trim($matched['recordsize']),
+			'Access Time' => trim($matched['atime']),
+			'XAttr' => trim($matched['xattr'])
+		)
+	  );
+	  return $result;
+  }
+  
+  function processCmdLine($regex, $cmd_line, $cleanfunction) {
+	  $data = shell_exec($cmd_line.' 2>&1');
+	  $dataArr = preg_split("/\n/", $data, -1, PREG_SPLIT_NO_EMPTY);
+	  $returnData = array();
+	  
+	  foreach ($dataArr as $dataline):
+		  preg_match($regex, $dataline, $matches);
+		  
+		  if (count($matches) <= 0):
+			continue;
+		  endif;
+		  
+		  $returnData[] = $cleanfunction($matches);
+      endforeach;
+	  
+	  return $returnData;
+  }
+  
+  function getZFSDatasetSnapInfo(&$zdataset) {
+	  $regex = "/^(?'snapscount'\d+)\s(?'lsnap'\w+(\/[\S-]+)+)\s+(?'lsnapdate'\d+)/";
+	  $cmd_line = 'zfs list -o name,creation -Hp -t snapshot '.$zdataset['Name'].' | awk \'{++count } END {printf "%d %s", count, $0}\' 2>&1';
+	  $data = shell_exec($cmd_line);
+	  
+	  $zdataset['Snapshots'] = 0;
+	  $zdataset['Attributes']['Last Snap Date'] = 'N/A';
+	  $zdataset['Attributes']['Last Snap'] = 'N/A';
+	  
+	  if (preg_match($regex, $data, $matches) == 1):
+		  $zdataset['Snapshots'] = $matches['snapscount'];
+		  $zdataset['Attributes']['Last Snap Date'] = $matches['lsnapdate'];
+		  $zdataset['Attributes']['Last Snap'] = $matches['lsnap'];
+	  endif;
+
+	  return $zdataset;
+  }
+
+  function getZFSPoolDatasets($zpool_name, &$snapCount) {
+	  $regex = "/^(?'name'\w+(\/[\S-]+)?+)\s+(?'used'\d+.?\d+.)\s+(?'free'\d+.?\d+.)\s+(?'refer'\d+.?\d+.)\s+(?'mount'\/?\w+(\/[\S-]+)?+)\s+(?'compression'\w+)\s+(?'cratio'\d+.?\d+.)\s+(?'snapused'\d+.?\d*.?)\s+(?'quota'\w+)\s+(?'recordsize'\d+.)\s+(?'atime'\w+)\s+(?'xattr'\w+)\s+(?'creation'.*)/";
+	  $cmd_line = 'zfs list -o name,used,avail,refer,mountpoint,compress,compressratio,usedbysnapshots,quota,recordsize,atime,xattr,creation -r '.$zpool_name;
+	  $snaps_count = 0;
+	  
+	  $tmpDatasets = processCmdLine($regex, $cmd_line, 'cleanupZDatasetInfo');
+	  $retDatasets = array();
+	  $snapCount = 0;
+	  
+	  foreach ($tmpDatasets as $dataset):
+		$tmpdataset = getZFSDatasetSnapInfo($dataset);
+		$retDatasets[] = $tmpdataset;
+		$snapCount += $tmpdataset['Snapshots'];
+	  endforeach;
+	  
+	  return $retDatasets;
+  }
+  
+  function getZFSPoolDevices($zpool) {
+	  $cmd_line = "zpool status -v ".$zpool." | awk 'NR > 8 {print last} {last=$1}'";
+	  return trim(shell_exec($cmd_line.' 2>&1'));
+  }
+
+  function getZFSPools() {
+	  $regex = "/^(?'pool'\w+)\s+(?'size'\d+.?\d+.)\s+(?'used'\d+.?\d+.)\s+(?'free'\d+.?\d+.)\s+-\s+-\s+(?'fragmentation'\d+.)\s+(?'usedpercent'\d+.)\s+(?'dedup'\d+.?\d+x)\s+(?'health'\w+)/";
+	  
+	  $tmpPools = processCmdLine($regex, 'zpool list -v', 'cleanupZPoolInfo');
+	  $retPools = array();
+	  
+	  foreach ($tmpPools as $pool):
+		$retPools[$pool['Pool']] = $pool;
+	  endforeach;
+	  
+	  return $retPools;
+  }
+ 
+  $zpool_global = getZFSPools(); 
+    
+  $zpool_datasets = array();
+  $zpool_devices = array();
+
+  foreach ($zpool_global as $zpool):
+	 $snapscount = 0;
+	 $zpool_devices[$zpool['Pool']] = getZFSPoolDevices($zpool['Pool']);
+	 $zpool_datasets[$zpool['Pool']] = getZFSPoolDatasets($zpool['Pool'], $snapscount);
+	 $zpool_global[$zpool['Pool']]['Snapshots'] = $snapscount;
+	 $zpool_global[$zpool['Pool']]['MountPoint'] = $zpool_datasets[$zpool['Pool']][0]['MountPoint'];
+  endforeach;
+?>
+
+<style type="text/css">	
+  .zfs_table {white-space:nowrap}
+  .zfs_table td span{margin-left:10px}
+  .zfs_table thead tr:first-child td{font-size:1.1rem;text-transform:uppercase;letter-spacing:1px;background-color:#e8e8e8}
+  .zfs_table thead tr:last-child{border-bottom:1px solid #e3e3e3}
+  .zfs_table tr td:last-child{width:1%!important;padding-right:10px;text-align:right}
+  .zfs_table tbody tr:nth-child(even){background-color:#ededed}
+  .zfs_table tr>td{width:auto!important;padding-left:12px;padding-right:0;white-space:nowrap} 
+  .zfs_table tr>td+td{text-align:left;width:auto}
+  .zfs_table tr>td+td+td{width:6.5%;text-align:left;padding-left:4px;padding-right:8px}
+  .zfs_table tr>td+td+td+td{padding-left:0;padding-right:12px}
+  .zfs_table tr>td+td+td+td+td{}
+  .zfs_table tr>td+td+td+td+td+td{}
+  .zfs_table tr>td+td+td+td+td+td+td{text-align:center;}
+  .zfs_table tr>td+td+td+td+td+td+td+td{text-align:left;}
+  
+  .zfs_compact {
+	  padding: 2px 4px 3px 6px!important;
+	  margin: 2px 2px!important;
+  }
+</style>
+
+<script type="text/javascript" src="<?autov('/webGui/javascript/jquery.switchbutton.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/jquery.ui.css')?>">
+<link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/jquery.switchbutton.css')?>">
+<link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/jquery.filetree.css')?>">
+<link type="text/css" rel="stylesheet" href="<?autov('/plugins/unassigned.devices/assets/sweetalert2.css');?>">
+<script type="text/javascript" src="<?autov('/plugins/unassigned.devices/assets/sweetalert2.js');?>"></script>
+<script src="<?autov('/webGui/javascript/jquery.filetree.js')?>"></script>
+
+<div id="zfs_master_div">
+<table id="zfs_master" class="zfs_table">
+  <thead>
+    <tr>
+	  <td>Pool</td>
+	  <td>Health</td>
+	  <td>Option/Dataset Name</td>
+	  <td>Size</td>
+	  <td>Used</td>
+	  <td>Free</td>
+	  <td>Refer</td>
+	  <td>Mount Point</td>
+	  <td>Snapshots</td>
+	  <td></td>
+	</tr>
+  </thead>
+  <tbody id="zpools">
+	<?foreach ($zpool_global as $zpool):?>
+    <tr>
+		<?foreach ($zpool as $key => $zdetail):?>
+		 <td id=<?echo '"zpool-attribute-'.$key.'"'?>>
+	        <?
+			if ($key == "Pool"):
+				$zcolor = $statusColor[$zpool['Health']];
+				
+				echo '<a class="info hand">';
+				echo '<i id="zpool-'.$zdetail.'" class="fa fa-circle orb '.$zcolor.'-orb"></i>';
+				echo '<span>'.nl2br($zpool_devices[$zdetail]).'</span>';
+				echo '</a>';
+				echo $zdetail;
+			elseif ($key == 'Health'):
+				$zcolor = $statusColor[$zdetail];
+				$zmsg = $statusMsg[$zdetail];
+				
+				echo '<a class="info hand">';
+				echo '<i class="fa fa-heartbeat" style="color:'.$zcolor.'"></i>';
+				echo '<span>'.$zmsg.'</span>';
+				echo '</a> ';
+				echo $zdetail;
+			elseif ($key == "Name"):
+				echo '<button type="button" onclick="toggleTable(\'zpool-'.$zpool['Pool'].'-datasets\');">Show Datasets</button>';
+				echo '<button type="button" onclick="scrubPool(\''.$zpool['Pool'].'\')";">Scrub Pool</button>';
+				echo '<button type="button" onclick="createDataset(\''.$zpool['Pool'].'\')";">Create Dataset</button>';
+			elseif ($key == "Used"):
+				$percent = 100-round(calculateFreePercent($zpool['Used'], $zpool['Free']));
+				echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.$zdetail.'B</span></div>';
+			elseif ($key == "Free"):
+				$percent = round(calculateFreePercent($zpool['Used'], $zpool['Free']));
+				echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.$zdetail.'B</span></div>';
+			elseif ($key == 'Snapshots'):
+				echo '<i class="fa fa-camera-retro icon"></i> ';
+				echo $zdetail;
+			else:
+				echo $zdetail;
+			endif;
+			?>
+	     </td>
+		<?endforeach;?>
+	</tr>
+		<?foreach ($zpool_datasets[$zpool['Pool']] as $zdataset):?>
+	<?echo '<tr class="zpool-'.$zpool['Pool'].'-datasets" style="display: '.$_COOKIE['zpool-'.$zpool['Pool'].'-datasets'].';">'?>
+			<?foreach ($zdataset as $key => $zdatasetdetail):?>
+		 <td>
+			<?
+			if ($key == "Name"):
+				$tmp_array = $zdataset['Attributes'];
+				$icon_color = 'grey';
+				
+				if ($zdataset['Snapshots'] > 0):
+					$snaptimestamp = $zdataset['Attributes']['Last Snap Date'];
+										
+					$snapdate = new DateTime();
+					$snapdate->setTimestamp($snaptimestamp);
+					
+					if (daysToNow($snaptimestamp) > 7):
+						$icon_color = 'orange';
+					else:
+						$icon_color = '#486dba';
+					endif;
+					
+					$tmp_array['Last Snap Date'] = $snapdate->format('Y-m-d H:i:s');
+				endif;
+				
+				echo '<a class="info hand">';
+				echo '<i class="fa fa-hdd-o icon" style="color:'.$icon_color.'"></i>';
+				echo '<span>'.implodeWithKeys('<br>', $tmp_array).'</span>';
+				echo '</a>';
+				echo $zdatasetdetail;
+			elseif ($key == "Size"):
+				echo '<button type="button" class="zfs_compact" onclick="destroyDataset(\''.$zdataset['Name'].'\');">Destroy</button>';
+			elseif ($key == "Used"):
+				$percent = 100-round(calculateFreePercent($zdataset['Used'], $zdataset['Free']));
+				echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.$zdatasetdetail.'B</span></div>';
+			elseif ($key == "Free"):
+				$percent = round(calculateFreePercent($zdataset['Used'], $zdataset['Free']));
+				echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.$zdatasetdetail.'B</span></div>';
+			elseif ($key == "Snapshots"):
+				$icon_color = 'grey';
+				
+				if ($zdataset['Snapshots'] > 0):
+					$days = daysToNow($zdataset['Attributes']['Last Snap Date']);
+					
+					if ($days > 7):
+						$icon_color = 'orange';
+					else:
+						$icon_color = '#486dba';
+					endif;
+				endif;
+			
+				echo '<i class="fa fa-camera-retro icon" style="color:'.$icon_color.'"></i> ';
+				echo $zdatasetdetail;
+			elseif ($key == "Attributes"):
+				continue;
+			else:
+				echo $zdatasetdetail;
+	        endif;
+			?>
+	     </td>
+			<?endforeach;?>
+	</tr>
+		<?endforeach;?>
+	<?endforeach;?>
+   </tbody>
+</table>
+</div>
+
+:zfs_master_help_plug:
+> **ZFS Master.**
+>
+> ZPool Information Tool.
+:end
+  
+<script>
+  $(function() {
+	var $zfs_master = $("#zfs_master_div");
+	setInterval(function () { $zfs_master.load("Main #zfs_master_div"); }, 30000);
+  });
+    
+  function setCookie(key, value, daysToLive=3650) {
+	var expires = new Date();
+	expires.setTime(expires.getTime() + (daysToLive * 24 * 60 * 60));
+	document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+  }
+
+  function getCookie(key) {
+	var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+	return keyValue ? keyValue[2] : null;
+  }
+
+  function eraseCookie(key) {
+    var keyValue = getCookie(key);
+    setCookie(key, keyValue, '-1');
+  }
+  
+  function toggleTable(trclass) {
+	var myArray = document.getElementsByClassName(trclass);
+	for (let mytr of myArray) {
+		if (mytr.style.display == "none") {
+			setCookie(trclass, 'table-row');	
+			$(mytr).show("slow");
+			mytr.style.display = 'table-row';
+		}
+		else {
+			setCookie(trclass, 'none');	
+			$(mytr).hide("slow");
+			mytr.style.display = 'none';
+		}
+	}
+  }
+  
+  function createDataset(zpool) {
+	  var csrf_token = $("input[name='csrf_token']").val();	  
+	  openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,"Create Dataset",550,680,false);
+  }
+  
+  function destroyDataset(zdataset) {
+	  swal({
+		  title: "Destroy dataset<br>"+zdataset,
+		  text: "This operation will destroy the dataset, which cannot be undone, are you sure?",
+		  showConfirmButton: true,
+		  confirmButtonText: "Destroy",
+		  showCancelButton: true,
+		  closeOnConfirm: true,
+		  html: true,
+		  type: "warning"
+	  }, function() {
+		  $.post('<?=$urlzmadmin?>',{cmd: 'destroydataset', data: zdataset}, function(data) {
+			  if (data == 'Ok') {
+				swal({
+					title: 'Success!',
+					text: 'Dataset '+zdataset+' destroyed',
+					html: true,
+					type:'success'
+				});
+			  } else {
+				swal({
+					title: 'Error!',
+					text: 'Unable to destroy dataset '+zdataset+'<br>Output: '+data,
+					html: true,
+					type:'error'
+				}); 
+			  }
+		  });
+		  $("#zfs_master_div").load("Main #zfs_master_div");
+	  });
+  }
+  
+  function scrubPool(zpool) {
+	$.post('<?=$urlzmadmin?>',{cmd: 'scrub', data: zpool},function(data) {
+		if (data == 'Ok') {
+			swal({
+				title: 'Success!',
+				text: 'Scrub of '+zpool+' started',
+				html: true,
+				type:'success'
+			});
+		} else {
+			swal({
+				title: 'Error!',
+				text: 'Scrub of '+zpool+' failed to start<br>Output: '+data,
+				html: true,
+				type:'error'
+			}); 
+		}
+	});
+  }
+</script>
