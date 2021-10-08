@@ -2,9 +2,10 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name		"zfs.master">
 <!ENTITY author		"IkerSaint">
-<!ENTITY version	"2021.10.04">
-<!ENTITY launch		"Main">
-<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main">
+<!ENTITY version	"2021.10.08e">
+<!ENTITY launch     "Main">
+<!ENTITY gitURL		"https://www.incipit.life">
+<!ENTITY gitaURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main">
 <!ENTITY pluginURL	"&gitURL;/&name;.plg">
 ]>
 
@@ -16,6 +17,18 @@
 		
 <CHANGES>
 
+###2021.10.08e
+
+- Add - SweetAlert2 for notifications
+- Add - Refresh and Settings Buttons
+- Add - Mountpoint information for Pools
+- Add - Configurable Settings for Refresh Time, Destructive Mode, Dataset Exclussions, Alert Max Days Snapshot Icon 
+- Fix - Compatibility with Other Themes (Dark, Grey, etc.)
+- Fix - Improper dataset parsing
+- Fix - Regex warnings
+- Fix - UI freeze error on some system at destroying a Dataset
+- Remove - Unassigned Devices Plugin dependency
+
 ###2021.10.04
 - Initial Release.
 
@@ -26,7 +39,7 @@
 # Remove emhttp files.
 rm -rf /usr/local/emhttp/plugins/&name;/* 2>/dev/null
 
-# Remove old 'bundle' files.
+# Remove old files.
 rm -f $(ls /boot/config/plugins/&name;/*.tgz 2>/dev/null | grep -v '&version;')
 </INLINE>
 </FILE>
@@ -44,7 +57,7 @@ tar -xf /boot/config/plugins/&name;/&name;.tgz -C /usr/local/emhttp/plugins 2>/d
 echo ""
 echo "-----------------------------------------------------------"
 echo " &name; has been installed."
-echo " Copyright 2021-2021, &author;"
+echo " Copyright 2021, &author;"
 echo " Version: &version;"
 echo "-----------------------------------------------------------"
 echo ""
@@ -63,7 +76,7 @@ rm -rf /usr/local/emhttp/plugins/&name;
 echo ""
 echo "-----------------------------------------------------------"
 echo " &name; has been removed."
-echo " Copyright 2021-2021, &author;"
+echo " Copyright 2021, &author;"
 echo " Version: &version;"
 echo "-----------------------------------------------------------"
 echo ""
