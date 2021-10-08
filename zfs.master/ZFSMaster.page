@@ -9,9 +9,13 @@ $plugin = "zfs.master";
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 $urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
 $urlcreatedataset = "/plugins/".$plugin."/include/ZFSMCreateDataset.php";
+$refreshbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="refreshInfo()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a></span>';
+$settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a></span>';
 
 require_once "$docroot/plugins/$plugin/include/ZFSMConstants.php";
 require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
+
+$zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
     
   function cleanupZPoolInfo($matched) {
 	  $result = array(
@@ -23,8 +27,7 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 		'Free' => trim($matched['free']),
 		'Refer' => '',
 		'MountPoint' => '',
-		'Snapshots' => '',
-		'Settings' => ''
+		'Snapshots' => ''
 	  );
 	  return $result;
   }
@@ -56,11 +59,11 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
   
   function processCmdLine($regex, $cmd_line, $cleanfunction) {
 	  $data = shell_exec($cmd_line.' 2>&1');
-	  $dataArr = preg_split("/\n/", $data, -1, PREG_SPLIT_NO_EMPTY);
+	  $dataArr = @preg_split("/\n/", $data, -1, PREG_SPLIT_NO_EMPTY);
 	  $returnData = array();
 	  
 	  foreach ($dataArr as $dataline):
-		  preg_match($regex, $dataline, $matches);
+		  @preg_match($regex, $dataline, $matches);
 		  
 		  if (count($matches) <= 0):
 			continue;
@@ -72,16 +75,30 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 	  return $returnData;
   }
   
-  function getZFSDatasetSnapInfo(&$zdataset) {
-	  $regex = "/^(?'snapscount'\d+)\s(?'lsnap'\w+(\/[\S-]+)+)\s+(?'lsnapdate'\d+)/";
-	  $cmd_line = 'zfs list -o name,creation -Hp -t snapshot '.$zdataset['Name'].' | awk \'{++count } END {printf "%d %s", count, $0}\' 2>&1';
-	  $data = shell_exec($cmd_line);
+  function filterDataset($dataset_name, $regex_array) {
+	  if (count($regex_array) == 0):
+		  return false;
+	  endif;
 	  
+	  foreach($regex_array as $regex):
+		if ($regex != '' && @preg_match($regex, $dataset_name)):
+			return true;
+		endif;
+	  endforeach;
+	  
+	  return false;
+  }
+  
+  function getZFSDatasetSnapInfo(&$zdataset) {
 	  $zdataset['Snapshots'] = 0;
 	  $zdataset['Attributes']['Last Snap Date'] = 'N/A';
 	  $zdataset['Attributes']['Last Snap'] = 'N/A';
 	  
-	  if (preg_match($regex, $data, $matches) == 1):
+	  $regex = "/^(?'snapscount'\d+)\s(?'lsnap'\w+(\/[\S-]+)+)\s+(?'lsnapdate'\d+)/";
+	  $cmd_line = 'zfs list -o name,creation -Hp -t snapshot '.$zdataset['Name'].' | awk \'{++count } END {printf "%d %s", count, $0}\' 2>&1';
+	  $data = shell_exec($cmd_line);
+	  
+	  if (@preg_match($regex, $data, $matches)):
 		  $zdataset['Snapshots'] = $matches['snapscount'];
 		  $zdataset['Attributes']['Last Snap Date'] = $matches['lsnapdate'];
 		  $zdataset['Attributes']['Last Snap'] = $matches['lsnap'];
@@ -90,7 +107,7 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 	  return $zdataset;
   }
 
-  function getZFSPoolDatasets($zpool_name, &$snapCount) {
+  function getZFSPoolDatasets($zpool_name, &$snapCount, $regex_array) {
 	  $regex = "/^(?'name'\w+(\/[\S-]+)?+)\s+(?'used'\d+.?\d+.)\s+(?'free'\d+.?\d+.)\s+(?'refer'\d+.?\d+.)\s+(?'mount'\/?\w+(\/[\S-]+)?+)\s+(?'compression'\w+)\s+(?'cratio'\d+.?\d+.)\s+(?'snapused'\d+.?\d*.?)\s+(?'quota'\w+)\s+(?'recordsize'\d+.)\s+(?'atime'\w+)\s+(?'xattr'\w+)\s+(?'creation'.*)/";
 	  $cmd_line = 'zfs list -o name,used,avail,refer,mountpoint,compress,compressratio,usedbysnapshots,quota,recordsize,atime,xattr,creation -r '.$zpool_name;
 	  $snaps_count = 0;
@@ -100,6 +117,10 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 	  $snapCount = 0;
 	  
 	  foreach ($tmpDatasets as $dataset):
+		if (filterDataset($dataset['Name'], $regex_array)):
+			continue;
+		endif;
+	  
 		$tmpdataset = getZFSDatasetSnapInfo($dataset);
 		$retDatasets[] = $tmpdataset;
 		$snapCount += $tmpdataset['Snapshots'];
@@ -127,51 +148,50 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
   }
  
   $zpool_global = getZFSPools(); 
-    
   $zpool_datasets = array();
   $zpool_devices = array();
 
   foreach ($zpool_global as $zpool):
 	 $snapscount = 0;
 	 $zpool_devices[$zpool['Pool']] = getZFSPoolDevices($zpool['Pool']);
-	 $zpool_datasets[$zpool['Pool']] = getZFSPoolDatasets($zpool['Pool'], $snapscount);
+	 $zpool_datasets[$zpool['Pool']] = getZFSPoolDatasets($zpool['Pool'], $snapscount, $zfsm_cfg['dataset_exclussion']);
 	 $zpool_global[$zpool['Pool']]['Snapshots'] = $snapscount;
 	 $zpool_global[$zpool['Pool']]['MountPoint'] = $zpool_datasets[$zpool['Pool']][0]['MountPoint'];
   endforeach;
 ?>
 
 <style type="text/css">	
-  .zfs_table {white-space:nowrap}
   .zfs_table td span{margin-left:10px}
-  .zfs_table thead tr:first-child td{font-size:1.1rem;text-transform:uppercase;letter-spacing:1px;background-color:#e8e8e8}
-  .zfs_table thead tr:last-child{border-bottom:1px solid #e3e3e3}
-  .zfs_table tr td:last-child{width:1%!important;padding-right:10px;text-align:right}
-  .zfs_table tbody tr:nth-child(even){background-color:#ededed}
-  .zfs_table tr>td{width:auto!important;padding-left:12px;padding-right:0;white-space:nowrap} 
-  .zfs_table tr>td+td{text-align:left;width:auto}
-  .zfs_table tr>td+td+td{width:6.5%;text-align:left;padding-left:4px;padding-right:8px}
-  .zfs_table tr>td+td+td+td{padding-left:0;padding-right:12px}
-  .zfs_table tr>td+td+td+td+td{}
-  .zfs_table tr>td+td+td+td+td+td{}
-  .zfs_table tr>td+td+td+td+td+td+td{text-align:center;}
-  .zfs_table tr>td+td+td+td+td+td+td+td{text-align:left;}
+  .zfs_table tr>td{width:auto!important}
+  .zfs_table tr>td+td+td{text-align:left!important}
+  .zfs_table tr>td+td+td+td+td+td+td{text-align:center!important}
+  .zfs_table tr>td+td+td+td+td+td+td+td{text-align:left!important}
+  .zfs_table tr>td+td+td+td+td+td+td+td+td{text-align:center!important}
+  
+  .zfs_bar_button {
+	  padding-right: 8px;
+	  float: right;
+  }
   
   .zfs_compact {
 	  padding: 2px 4px 3px 6px!important;
 	  margin: 2px 2px!important;
+  }
+  
+  .swal2-container.swal2-center>.swal2-popup {
+	  font-size: 1.1em;
   }
 </style>
 
 <script type="text/javascript" src="<?autov('/webGui/javascript/jquery.switchbutton.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/jquery.ui.css')?>">
 <link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/jquery.switchbutton.css')?>">
-<link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/jquery.filetree.css')?>">
-<link type="text/css" rel="stylesheet" href="<?autov('/plugins/unassigned.devices/assets/sweetalert2.css');?>">
-<script type="text/javascript" src="<?autov('/plugins/unassigned.devices/assets/sweetalert2.js');?>"></script>
-<script src="<?autov('/webGui/javascript/jquery.filetree.js')?>"></script>
+
+<script type="text/javascript" src="<?autov('/plugins/zfs.master/assets/sweetalert2.all.min.js');?>"></script>
+<link type="text/css" rel="stylesheet" href="<?autov('/plugins/zfs.master/assets/sweetalert2.min.css');?>">
 
 <div id="zfs_master_div">
-<table id="zfs_master" class="zfs_table">
+<table id="zfs_master" class="zfs_table disk_status wide">
   <thead>
     <tr>
 	  <td>Pool</td>
@@ -183,7 +203,6 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 	  <td>Refer</td>
 	  <td>Mount Point</td>
 	  <td>Snapshots</td>
-	  <td></td>
 	</tr>
   </thead>
   <tbody id="zpools">
@@ -230,9 +249,13 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 		<?endforeach;?>
 	</tr>
 		<?foreach ($zpool_datasets[$zpool['Pool']] as $zdataset):?>
+		
 	<?echo '<tr class="zpool-'.$zpool['Pool'].'-datasets" style="display: '.$_COOKIE['zpool-'.$zpool['Pool'].'-datasets'].';">'?>
-			<?foreach ($zdataset as $key => $zdatasetdetail):?>
-		 <td>
+			<?foreach ($zdataset as $key => $zdatasetdetail):
+			if ($key == 'Attributes'):
+				continue;
+			endif;?>
+			<td>
 			<?
 			if ($key == "Name"):
 				$tmp_array = $zdataset['Attributes'];
@@ -244,7 +267,7 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 					$snapdate = new DateTime();
 					$snapdate->setTimestamp($snaptimestamp);
 					
-					if (daysToNow($snaptimestamp) > 7):
+					if (daysToNow($snaptimestamp) > $zfsm_cfg['snap_max_days_alert']):
 						$icon_color = 'orange';
 					else:
 						$icon_color = '#486dba';
@@ -259,7 +282,9 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 				echo '</a>';
 				echo $zdatasetdetail;
 			elseif ($key == "Size"):
-				echo '<button type="button" class="zfs_compact" onclick="destroyDataset(\''.$zdataset['Name'].'\');">Destroy</button>';
+				if ($zfsm_cfg['destructive_mode']):
+					echo '<button type="button" class="zfs_compact" onclick="destroyDataset(\''.$zdataset['Name'].'\');">Destroy</button>';
+				endif;
 			elseif ($key == "Used"):
 				$percent = 100-round(calculateFreePercent($zdataset['Used'], $zdataset['Free']));
 				echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.$zdatasetdetail.'B</span></div>';
@@ -272,7 +297,7 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 				if ($zdataset['Snapshots'] > 0):
 					$days = daysToNow($zdataset['Attributes']['Last Snap Date']);
 					
-					if ($days > 7):
+					if ($days > $zfsm_cfg['snap_max_days_alert']):
 						$icon_color = 'orange';
 					else:
 						$icon_color = '#486dba';
@@ -287,7 +312,7 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 				echo $zdatasetdetail;
 	        endif;
 			?>
-	     </td>
+			</td>
 			<?endforeach;?>
 	</tr>
 		<?endforeach;?>
@@ -304,9 +329,35 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
   
 <script>
   $(function() {
-	var $zfs_master = $("#zfs_master_div");
-	setInterval(function () { $zfs_master.load("Main #zfs_master_div"); }, 30000);
+	  addButtons();
+	  setInterval(function () { refreshInfo() }, <?=$zfsm_cfg['refresh_interval']?>*1000);
   });
+  
+  function refreshInfo() {
+	  replaceElementClass("#zfsm-refresh", "fa-refresh", "fa-spinner fa-spin");
+	  
+	  var $zfs_master = $("#zfs_master_div");
+	  
+	  $zfs_master.load("Main #zfs_master_div", function() {
+		  replaceElementClass("#zfsm-refresh", "fa-spinner fa-spin", "fa-refresh");
+	  });
+  }
+  
+  function replaceElementClass(element, oldClass, newClass){
+	  $(element).removeClass(oldClass);
+	  $(element).addClass(newClass);
+  }
+  
+  function getUnraidParentElement() {
+	  return $("div#title > span.left").filter(function(){return $(this).text() === 'ZFS Master';}).parent();
+  }
+  
+  function addButtons() {
+	  var parent = getUnraidParentElement();
+	  
+	  parent.append('<?=$settingsbutton?>');
+	  parent.append('<?=$refreshbutton?>');
+  }
     
   function setCookie(key, value, daysToLive=3650) {
 	var expires = new Date();
@@ -346,51 +397,49 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
   }
   
   function destroyDataset(zdataset) {
-	  swal({
-		  title: "Destroy dataset<br>"+zdataset,
-		  text: "This operation will destroy the dataset, which cannot be undone, are you sure?",
+	  Swal2.fire({
+		  title: '<strong>Destroy Dataset<br>'+zdataset+'</strong>',
+		  icon: 'warning',
+		  html: 'This operation will destroy the Dataset, <b>which cannot be undone</b>, are you sure?',
+		  input: 'checkbox',
+		  inputPlaceholder: 'Force and Recursively Destroy all Children and Dependents',
 		  showConfirmButton: true,
 		  confirmButtonText: "Destroy",
-		  showCancelButton: true,
-		  closeOnConfirm: true,
-		  html: true,
-		  type: "warning"
-	  }, function() {
-		  $.post('<?=$urlzmadmin?>',{cmd: 'destroydataset', data: zdataset}, function(data) {
-			  if (data == 'Ok') {
-				swal({
-					title: 'Success!',
-					text: 'Dataset '+zdataset+' destroyed',
-					html: true,
-					type:'success'
-				});
-			  } else {
-				swal({
-					title: 'Error!',
-					text: 'Unable to destroy dataset '+zdataset+'<br>Output: '+data,
-					html: true,
-					type:'error'
-				}); 
-			  }
-		  });
+		  showCancelButton: true
+	  }).then((result) => {
+		  if (result.isConfirmed) {
+			  $.post('<?=$urlzmadmin?>',{cmd: 'destroydataset', data: zdataset, force: result.value}, function(data) {
+				  if (data == 'Ok') {
+					Swal2.fire({
+						title: 'Success!',
+						icon: 'success',
+						text: 'Dataset '+zdataset+' destroyed'
+					});
+				  } else {
+					Swal2.fire({
+						title: 'Error!',
+						icon: 'error',
+						html: 'Unable to destroy dataset '+zdataset+'<br>Output: '+data
+					}); 
+				  }
+			  });
+		  }
 	  });
   }
   
   function scrubPool(zpool) {
-	$.post('<?=$urlzmadmin?>',{cmd: 'scrub', data: zpool},function(data) {
+	$.post('<?=$urlzmadmin?>',{cmd: 'scrubpool', data: zpool},function(data) {
 		if (data == 'Ok') {
-			swal({
+			Swal2.fire({
 				title: 'Success!',
-				text: 'Scrub of '+zpool+' started',
-				html: true,
-				type:'success'
+				icon:'success',
+				html: 'Scrub of '+zpool+' started'
 			});
 		} else {
-			swal({
+			Swal2.fire({
 				title: 'Error!',
-				text: 'Scrub of '+zpool+' failed to start<br>Output: '+data,
-				html: true,
-				type:'error'
+				icon:'error',
+				html: 'Scrub of '+zpool+' failed to start<br>Output: '+data
 			}); 
 		}
 	});

@@ -110,9 +110,11 @@ input[type=email]{margin-top:8px;float:left}
 <script src="<?autov('/webGui/javascript/dynamix.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/default-fonts.css');?>">
 <link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/default-popup.css');?>">
-<link type="text/css" rel="stylesheet" href="<?autov('/plugins/unassigned.devices/assets/sweetalert2.css');?>">
-<script type="text/javascript" src="<?autov('/plugins/unassigned.devices/assets/sweetalert2.js');?>"></script>
+
 <script src="<?autov('/webGui/javascript/jquery.filetree.js')?>"></script>
+
+<script type="text/javascript" src="<?autov('/plugins/zfs.master/assets/sweetalert2.all.min.js');?>"></script>
+<link type="text/css" rel="stylesheet" href="<?autov('/plugins/zfs.master/assets/sweetalert2.min.css');?>">
 
 </head>
 
@@ -242,18 +244,16 @@ input[type=email]{margin-top:8px;float:left}
 		
 	$.post('<?=$urlzmadmin?>',{cmd: 'createdataset', 'data': formData, 'csrf_token': '<?=$csrf_token?>'}, function(data){
 		if (data == 'Ok') {
-			top.swal({
+			top.Swal2.fire({
 				title: 'Success!',
-				text: 'Dataset '+formData['zpool']+'/'+formData['name']+' created',
-				html: true,
-				type:'success'
+				icon:'success',
+				html: 'Dataset '+formData['zpool']+'/'+formData['name']+' created'
 			});
 		} else {
-			top.swal({
+			top.Swal2.fire({
 				title: 'Error!',
-				text: 'Unable to create dataset '+formData['zpool']+'/'+formData['name']+'<br>Output: '+data,
-				html: true,
-				type:'error'
+				icon:'error',
+				html: 'Unable to create dataset '+formData['zpool']+'/'+formData['name']+'<br>Output: '+data
 			}); 
 		}
 		top.Shadowbox.close();

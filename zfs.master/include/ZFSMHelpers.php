@@ -1,8 +1,25 @@
 <?php
-$docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 
-	function zfsnotify($subject, $description, $message, $type="normal") {
-		$command = '/usr/local/emhttp/plugins/dynamix/scripts/notify -e "ZFS Master" -s "'.$subject.'" -d "'.$description.'" -m "'.$message.'" -i "'.$type.'"';
+	function loadConfig($config, $explode=true) {	
+		$zfsm_ret['refresh_interval'] = isset($config['general']['refresh_interval']) ? intval($config['general']['refresh_interval']) : 30;
+		$zfsm_ret['destructive_mode'] = isset($config['general']['destructive_mode']) ? intval($config['general']['destructive_mode']) : 0;
+		
+		$zfsm_dataset_exclussion = isset($config['general']['exclussion']) ? $config['general']['exclussion'] : '';
+		
+		$zfsm_ret['snap_max_days_alert'] = isset($config['general']['snap_max_days_alert']) ? intval($config['general']['snap_max_days_alert']) : 30;
+		
+		if ($explode):
+			$zfsm_ret['dataset_exclussion'] = preg_split('/\r\n|\r|\n/', $zfsm_dataset_exclussion);
+		else:
+			$zfsm_ret['dataset_exclussion'] = $zfsm_dataset_exclussion;
+		endif;
+		
+		return $zfsm_ret;
+	}
+
+	function zfsnotify($docroot, $subject, $description, $message, $type="normal") {	
+		$command = $docroot.'/plugins/dynamix/scripts/notify -e "ZFS Master" -s "'.$subject.'" -d "'.$description.'" -m "'.$message.'" -i "'.$type.'"';
+
 		shell_exec($command);
 	}
 
@@ -56,7 +73,7 @@ $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 
 		$tmpout = str_replace("\n", '', implode(' ',$out_arr));
 		
-		$exec_out = escapeshellcmd($tmpout);
+		$exec_out = escapeshellarg($tmpout);
 		
 		return $val;
 	}
