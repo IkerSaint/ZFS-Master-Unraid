@@ -6,6 +6,13 @@ $urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
 $csrf_token = $_GET['csrf_token'];
 
 require_once "$docroot/webGui/include/Helpers.php";
+require_once "$docroot/plugins/$plugin/include/ZFSMConstants.php";
+require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
+
+$zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
+
+$zpool = $_GET['zpool'];
+$zpool_datasets = getZFSPoolDatasets($zpool, $snapscount, $zfsm_cfg['dataset_exclussion'], false);
 ?>
 <html>
 <head>
@@ -127,8 +134,18 @@ input[type=email]{margin-top:8px;float:left}
 			<div id="dataset-base-options">
 				<dl>
 					Dataset Name<br>
-					<input type="hidden" id="zpool" name="zpool" value="<?echo $_GET['zpool']?>">
-					<span class="zfsm-zpool" id="pool" name="<?echo $_GET['zpool']?>"><?echo $_GET['zpool']?></span> / <input id="name" class="zfsm-input zfsm-w75 zfsm-unraid-border" name="name" placeholder="Complete path, without the pool name." required>
+					<input type="hidden" id="zpool" name="zpool" value="<?echo $zpool?>">
+					<span class="zfsm-zpool" id="pool" name="<?echo $zpool?>"><?echo $zpool?></span> / <input id="name" class="zfsm-input zfsm-w75 zfsm-unraid-border" name="name" placeholder="Complete path, without the pool name." list="zpool-datasets" required>
+					<datalist id="zpool-datasets">
+					<?foreach ($zpool_datasets as $zdataset):
+						if ($zdataset['Name'] == $zpool):
+							continue;
+						endif;
+						$option = str_replace($zpool."/", "", $zdataset['Name'])."/";
+					?>
+						<option value="<?echo $option?>">
+					<?endforeach;?>
+					</datalist>
 				</dl>
 				<dl>
 					Mount

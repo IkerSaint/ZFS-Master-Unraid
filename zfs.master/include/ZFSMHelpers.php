@@ -87,6 +87,7 @@
 			endif;
 		endforeach;
 		
+		
 		if ($retParams['mount'] == 'no'):
 			$retParams['mountpoint'] = 'none';
 		else:
@@ -115,5 +116,145 @@
 		$cmd_line .= ' '.$zdataset_name;
 		
 		return $cmd_line;
+	}
+	
+	function processCmdLine($regex, $cmd_line, $cleanfunction) {
+		$data = shell_exec($cmd_line.' 2>&1');
+		$dataArr = @preg_split("/\n/", $data, -1, PREG_SPLIT_NO_EMPTY);
+		$returnData = array();
+		
+		foreach ($dataArr as $dataline):
+			@preg_match($regex, $dataline, $matches);
+
+			if (count($matches) <= 0):
+				continue;
+			endif;
+
+			$returnData[] = $cleanfunction($matches);
+		endforeach;
+		return $returnData;
+	}
+	
+	function cleanupZPoolInfo($matched) {
+		$result = array(
+			'Pool' => trim($matched['pool']),
+			'Health' => trim($matched['health']),
+			'Name' => '',
+			'Size' => trim($matched['size']),
+			'Used' => trim($matched['used']),
+			'Free' => trim($matched['free']),
+			'Refer' => '',
+			'MountPoint' => '',
+			'Snapshots' => ''
+		);
+		
+		return $result;
+	}
+  
+	function cleanupZDatasetInfo($matched) {
+		$result = array(
+			'Pool' => '',
+			'Health' => '',
+			'Name' => trim($matched['name']),
+			'Size' => '',
+			'Used' => trim($matched['used']),
+			'Free' => trim($matched['free']),
+			'Refer' => trim($matched['refer']),
+			'MountPoint' => trim($matched['mount']),
+			'Snapshots' => '',
+			'Attributes' => array(
+				'Creation Date' => trim($matched['creation']),
+				'Compression' => trim($matched['compression']),
+				'Compress Ratio' => trim($matched['cratio']),
+				'RecordSize' => trim($matched['recordsize']),
+				'Access Time' => trim($matched['atime']),
+				'XAttr' => trim($matched['xattr']),
+				'Primary Cache' => trim($matched['primarycache']),
+				'Quota' => trim($matched['quota']),
+				'Read Only' => trim($matched['readonly']),
+				'Case Sensitive' => trim($matched['case']),
+				'Sync' => trim($matched['sync']),
+				'Space used by Snaps' => trim($matched['snapused'])
+			)
+		);
+		
+		return $result;
+	}
+	
+	function filterDataset($dataset_name, $regex_array) {
+		if (count($regex_array) == 0):
+			return false;
+		endif;
+		
+		foreach($regex_array as $regex):
+			if ($regex != '' && @preg_match($regex, $dataset_name)):
+				return true;
+			endif;
+		endforeach;
+		
+		return false;
+	}
+	
+	
+	function getZFSDatasetSnapInfo(&$zdataset) {
+		$zdataset['Snapshots'] = 0;
+		$zdataset['Attributes']['Last Snap Date'] = 'N/A';
+		$zdataset['Attributes']['Last Snap'] = 'N/A';
+	  
+		$regex = "/^(?'snapscount'\d+)\s(?'lsnap'\w+(\/[\S-]+)+)\s+(?'lsnapdate'\d+)/";
+		$cmd_line = 'zfs list -o name,creation -Hp -t snapshot '.$zdataset['Name'].' | awk \'{++count } END {printf "%d %s", count, $0}\' 2>&1';
+		$data = shell_exec($cmd_line);
+	  
+		if (@preg_match($regex, $data, $matches)):
+			$zdataset['Snapshots'] = $matches['snapscount'];
+			$zdataset['Attributes']['Last Snap Date'] = $matches['lsnapdate'];
+			$zdataset['Attributes']['Last Snap'] = $matches['lsnap'];
+		endif;
+		
+		return $zdataset;
+	}
+	
+	function getZFSPoolDatasets($zpool_name, &$snapCount, $regex_array, $extended_info=true) {
+		$regex = "/^(?'name'\w+(\/[\S-]+)?+)\s+(?'used'\d+.?\d+.)\s+(?'free'\d+.?\d+.)\s+(?'refer'\d+.?\d+.)\s+(?'mount'\/?\w+(\/[\S-]+)?+)\s+(?'compression'\w+)\s+(?'cratio'\d+.?\d+.)\s+(?'snapused'\d+.?\d*.?)\s+(?'quota'\w+)\s+(?'recordsize'\d+.)\s+(?'atime'\w+)\s+(?'xattr'\w+)\s+(?'primarycache'\w+)\s+(?'readonly'\w+)\s+(?'case'\w+)\s+(?'sync'\w+)\s+(?'creation'.*)/";
+		$cmd_line = 'zfs list -o name,used,avail,refer,mountpoint,compress,compressratio,usedbysnapshots,quota,recordsize,atime,xattr,primarycache,readonly,case,sync,creation -r '.$zpool_name;
+		$snaps_count = 0;
+		
+		$tmpDatasets = processCmdLine($regex, $cmd_line, 'cleanupZDatasetInfo');
+		$retDatasets = array();
+		$snapCount = 0;
+		
+		if ($extended_info == false):
+			return $tmpDatasets;
+		endif;
+		
+		foreach ($tmpDatasets as $dataset):
+			if (filterDataset($dataset['Name'], $regex_array)):
+				continue;
+			endif;
+			
+			$tmpdataset = getZFSDatasetSnapInfo($dataset);
+			$retDatasets[] = $tmpdataset;
+			$snapCount += $tmpdataset['Snapshots'];
+		endforeach;
+		
+		return $retDatasets;
+	}
+	
+	function getZFSPoolDevices($zpool) {
+		$cmd_line = "zpool status -v ".$zpool." | awk 'NR > 8 {print last} {last=$1}'";
+		return trim(shell_exec($cmd_line.' 2>&1'));
+	}
+	
+	function getZFSPools() {
+		$regex = "/^(?'pool'\w+)\s+(?'size'\d+.?\d+.)\s+(?'used'\d+.?\d+.)\s+(?'free'\d+.?\d+.)\s+-\s+-\s+(?'fragmentation'\d+.)\s+(?'usedpercent'\d+.)\s+(?'dedup'\d+.?\d+x)\s+(?'health'\w+)/";
+	  
+		$tmpPools = processCmdLine($regex, 'zpool list -v', 'cleanupZPoolInfo');
+		$retPools = array();
+	  
+		foreach ($tmpPools as $pool):
+			$retPools[$pool['Pool']] = $pool;
+		endforeach;
+	  
+		return $retPools;
 	}
 ?>

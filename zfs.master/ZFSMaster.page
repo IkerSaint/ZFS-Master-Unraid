@@ -16,136 +16,6 @@ require_once "$docroot/plugins/$plugin/include/ZFSMConstants.php";
 require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
-    
-  function cleanupZPoolInfo($matched) {
-	  $result = array(
-		'Pool' => trim($matched['pool']),
-		'Health' => trim($matched['health']),
-		'Name' => '',
-		'Size' => trim($matched['size']),
-		'Used' => trim($matched['used']),
-		'Free' => trim($matched['free']),
-		'Refer' => '',
-		'MountPoint' => '',
-		'Snapshots' => ''
-	  );
-	  return $result;
-  }
-  
-  function cleanupZDatasetInfo($matched) {
-	  $result = array(
-		'Pool' => '',
-		'Health' => '',
-		'Name' => trim($matched['name']),
-		'Size' => '',
-		'Used' => trim($matched['used']),
-		'Free' => trim($matched['free']),
-		'Refer' => trim($matched['refer']),
-		'MountPoint' => trim($matched['mount']),
-		'Snapshots' => '',
-		'Attributes' => array(
-			'Creation Date' => trim($matched['creation']),
-			'Compression' => trim($matched['compression']),
-			'Compress Ratio' => trim($matched['cratio']),
-			'Space used by Snaps' => trim($matched['snapused']),
-			'Quota' => trim($matched['quota']),
-			'RecordSize' => trim($matched['recordsize']),
-			'Access Time' => trim($matched['atime']),
-			'XAttr' => trim($matched['xattr'])
-		)
-	  );
-	  return $result;
-  }
-  
-  function processCmdLine($regex, $cmd_line, $cleanfunction) {
-	  $data = shell_exec($cmd_line.' 2>&1');
-	  $dataArr = @preg_split("/\n/", $data, -1, PREG_SPLIT_NO_EMPTY);
-	  $returnData = array();
-	  
-	  foreach ($dataArr as $dataline):
-		  @preg_match($regex, $dataline, $matches);
-		  
-		  if (count($matches) <= 0):
-			continue;
-		  endif;
-		  
-		  $returnData[] = $cleanfunction($matches);
-      endforeach;
-	  
-	  return $returnData;
-  }
-  
-  function filterDataset($dataset_name, $regex_array) {
-	  if (count($regex_array) == 0):
-		  return false;
-	  endif;
-	  
-	  foreach($regex_array as $regex):
-		if ($regex != '' && @preg_match($regex, $dataset_name)):
-			return true;
-		endif;
-	  endforeach;
-	  
-	  return false;
-  }
-  
-  function getZFSDatasetSnapInfo(&$zdataset) {
-	  $zdataset['Snapshots'] = 0;
-	  $zdataset['Attributes']['Last Snap Date'] = 'N/A';
-	  $zdataset['Attributes']['Last Snap'] = 'N/A';
-	  
-	  $regex = "/^(?'snapscount'\d+)\s(?'lsnap'\w+(\/[\S-]+)+)\s+(?'lsnapdate'\d+)/";
-	  $cmd_line = 'zfs list -o name,creation -Hp -t snapshot '.$zdataset['Name'].' | awk \'{++count } END {printf "%d %s", count, $0}\' 2>&1';
-	  $data = shell_exec($cmd_line);
-	  
-	  if (@preg_match($regex, $data, $matches)):
-		  $zdataset['Snapshots'] = $matches['snapscount'];
-		  $zdataset['Attributes']['Last Snap Date'] = $matches['lsnapdate'];
-		  $zdataset['Attributes']['Last Snap'] = $matches['lsnap'];
-	  endif;
-
-	  return $zdataset;
-  }
-
-  function getZFSPoolDatasets($zpool_name, &$snapCount, $regex_array) {
-	  $regex = "/^(?'name'\w+(\/[\S-]+)?+)\s+(?'used'\d+.?\d+.)\s+(?'free'\d+.?\d+.)\s+(?'refer'\d+.?\d+.)\s+(?'mount'\/?\w+(\/[\S-]+)?+)\s+(?'compression'\w+)\s+(?'cratio'\d+.?\d+.)\s+(?'snapused'\d+.?\d*.?)\s+(?'quota'\w+)\s+(?'recordsize'\d+.)\s+(?'atime'\w+)\s+(?'xattr'\w+)\s+(?'creation'.*)/";
-	  $cmd_line = 'zfs list -o name,used,avail,refer,mountpoint,compress,compressratio,usedbysnapshots,quota,recordsize,atime,xattr,creation -r '.$zpool_name;
-	  $snaps_count = 0;
-	  
-	  $tmpDatasets = processCmdLine($regex, $cmd_line, 'cleanupZDatasetInfo');
-	  $retDatasets = array();
-	  $snapCount = 0;
-	  
-	  foreach ($tmpDatasets as $dataset):
-		if (filterDataset($dataset['Name'], $regex_array)):
-			continue;
-		endif;
-	  
-		$tmpdataset = getZFSDatasetSnapInfo($dataset);
-		$retDatasets[] = $tmpdataset;
-		$snapCount += $tmpdataset['Snapshots'];
-	  endforeach;
-	  
-	  return $retDatasets;
-  }
-  
-  function getZFSPoolDevices($zpool) {
-	  $cmd_line = "zpool status -v ".$zpool." | awk 'NR > 8 {print last} {last=$1}'";
-	  return trim(shell_exec($cmd_line.' 2>&1'));
-  }
-
-  function getZFSPools() {
-	  $regex = "/^(?'pool'\w+)\s+(?'size'\d+.?\d+.)\s+(?'used'\d+.?\d+.)\s+(?'free'\d+.?\d+.)\s+-\s+-\s+(?'fragmentation'\d+.)\s+(?'usedpercent'\d+.)\s+(?'dedup'\d+.?\d+x)\s+(?'health'\w+)/";
-	  
-	  $tmpPools = processCmdLine($regex, 'zpool list -v', 'cleanupZPoolInfo');
-	  $retPools = array();
-	  
-	  foreach ($tmpPools as $pool):
-		$retPools[$pool['Pool']] = $pool;
-	  endforeach;
-	  
-	  return $retPools;
-  }
  
   $zpool_global = getZFSPools(); 
   $zpool_datasets = array();
@@ -183,8 +53,9 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
   }
 </style>
 
-<script type="text/javascript" src="<?autov('/webGui/javascript/jquery.switchbutton.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/jquery.ui.css')?>">
+
+<script type="text/javascript" src="<?autov('/webGui/javascript/jquery.switchbutton.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/jquery.switchbutton.css')?>">
 
 <script type="text/javascript" src="<?autov('/plugins/zfs.master/assets/sweetalert2.all.min.js');?>"></script>
@@ -231,6 +102,9 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 			elseif ($key == "Name"):
 				echo '<button type="button" onclick="toggleTable(\'zpool-'.$zpool['Pool'].'-datasets\');">Show Datasets</button>';
 				echo '<button type="button" onclick="scrubPool(\''.$zpool['Pool'].'\')";">Scrub Pool</button>';
+				if ($zfsm_cfg['destructive_mode']):
+					echo '<button type="button" onclick="exportPool(\''.$zpool['Pool'].'\')";">Export Pool</button>';
+				endif;
 				echo '<button type="button" onclick="createDataset(\''.$zpool['Pool'].'\')";">Create Dataset</button>';
 			elseif ($key == "Used"):
 				$percent = 100-round(calculateFreePercent($zpool['Used'], $zpool['Free']));
@@ -285,6 +159,9 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 				if ($zfsm_cfg['destructive_mode']):
 					echo '<button type="button" class="zfs_compact" onclick="destroyDataset(\''.$zdataset['Name'].'\');">Destroy</button>';
 				endif;
+				#echo '<a class="info hand">';
+				#echo '<i class="zfs_bar_button fa fa-gears" onclick="modifyDataset(\''.$zdataset['Name'].'\');"></i>';
+				#echo '</a>';
 			elseif ($key == "Used"):
 				$percent = 100-round(calculateFreePercent($zdataset['Used'], $zdataset['Free']));
 				echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.$zdatasetdetail.'B</span></div>';
@@ -443,5 +320,36 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 			}); 
 		}
 	});
+  }
+  
+  function exportPool(zpool) {
+	  Swal2.fire({
+		  title: '<strong>Export Pool<br>'+zpool+'</strong>',
+		  icon: 'warning',
+		  html: 'This operation will export the Pool, <b>This could lead to potential data corruption</b>, are you sure?',
+		  input: 'checkbox',
+		  inputPlaceholder: 'Forcefully unmount all datasets, and allow export of pool with active shared spares',
+		  showConfirmButton: true,
+		  confirmButtonText: "Export",
+		  showCancelButton: true
+	  }).then((result) => {
+		  if (result.isConfirmed) {
+			  $.post('<?=$urlzmadmin?>',{cmd: 'exportpool', data: zpool, force: result.value}, function(data) {
+				  if (data == 'Ok') {
+					Swal2.fire({
+						title: 'Success!',
+						icon: 'success',
+						text: 'Pool '+zpool+' Exported'
+					});
+				  } else {
+					Swal2.fire({
+						title: 'Error!',
+						icon: 'error',
+						html: 'Unable to Export pool '+zpool+'<br>Output: '+data
+					}); 
+				  }
+			  });
+		  }
+	  });
   }
 </script>

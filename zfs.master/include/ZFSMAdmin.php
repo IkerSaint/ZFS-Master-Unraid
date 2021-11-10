@@ -15,10 +15,10 @@ switch ($_POST['cmd']) {
 		$ret = execCommand($cmd_line, $exec_result);
 		
 		if ($ret == 0):
-			zfsnotify($docroot, "Zpool Scrub", "Scrub of pool ".$_POST['data']." Started", "CMD output: ".$exec_result."","normal");
+			zfsnotify($docroot, "ZPool Scrub", "Scrub of pool ".$_POST['data']." Started", "CMD output: ".$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "Zpool Scrub", "Scrub of pool ".$_POST['data']." failed to start, return code (".$ret.")", "CMD output: ".$exec_result."","warning");
+			zfsnotify($docroot, "ZPool Scrub", "Scrub of pool ".$_POST['data']." failed to start, return code (".$ret.")", "CMD output: ".$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		
@@ -49,6 +49,20 @@ switch ($_POST['cmd']) {
 			echo 'Ok';
 		else:
 			zfsnotify($docroot, "ZFS Destroy", "Unable to destoy dataset ".$_POST['data'].", return code (".$ret.")", "CMD output: ".$exec_result."","warning");
+			echo $exec_result;
+		endif;
+		break;
+	case 'exportpool':
+		$force = ($_POST['force'] == '1') ? '-f ' : '';
+		$cmd_line = 'zfs export '.$force.escapeshellarg($_POST['data']).' 2>&1';
+		
+		$ret = execCommand($cmd_line, $exec_result);
+		
+		if ($ret == 0):
+			zfsnotify($docroot, "ZPool Export ", "Pool ".$_POST['data']." exported successfully", "CMD output: ".$exec_result."","normal");
+			echo 'Ok';
+		else:
+			zfsnotify($docroot, "ZPool Export", "Unable to export pool ".$_POST['data'].", return code (".$ret.")", "CMD output: ".$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		break;
