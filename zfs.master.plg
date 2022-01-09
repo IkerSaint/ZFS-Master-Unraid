@@ -38,16 +38,6 @@
 
 </CHANGES>
 
-<FILE Run="/bin/bash">
-<INLINE>
-# Remove emhttp files.
-rm -rf /usr/local/emhttp/plugins/&name;/* 2>/dev/null
-
-# Remove old files.
-rm -f $(ls /boot/config/plugins/&name;/*.tgz 2>/dev/null | grep -v '&version;')
-</INLINE>
-</FILE>
-
 <!-- SOURCE FILE -->
 <FILE Name="/boot/config/plugins/&name;/&name;.tgz">
 <URL>"&gitURL;/&name;-&version;.tgz"</URL>
