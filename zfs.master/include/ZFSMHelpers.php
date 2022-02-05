@@ -201,7 +201,7 @@
 		$zdataset['Attributes']['Last Snap Date'] = 'N/A';
 		$zdataset['Attributes']['Last Snap'] = 'N/A';
 	  
-		$regex = "/^(?'snapscount'\d+)\s(?'lsnap'\w+(\/[\S-]+)+)\s+(?'lsnapdate'\d+)/";
+		$regex = "/^(?'snapscount'\d+)\s(?'lsnap'[\w-]+(\/[\S-]+)+)\s+(?'lsnapdate'\d+)/";
 		$cmd_line = 'zfs list -o name,creation -Hp -t snapshot '.$zdataset['Name'].' | awk \'{++count } END {printf "%d %s", count, $0}\' 2>&1';
 		$data = shell_exec($cmd_line);
 	  
@@ -215,7 +215,7 @@
 	}
 	
 	function getZFSPoolDatasets($zpool_name, &$snapCount, $regex_array, $extended_info=true) {
-		$regex = "/^(?'name'\w+(\/[\S-]+)?+)\s+(?'used'\d+.?\d+.)\s+(?'free'\d+.?\d+.)\s+(?'refer'\d+.?\d+.)\s+(?'mount'\/?\w+(\/[\S-]+)?+)\s+(?'compression'\w+)\s+(?'cratio'\d+.?\d+.)\s+(?'snapused'\d+.?\d*.?)\s+(?'quota'\w+)\s+(?'recordsize'\d+.)\s+(?'atime'\w+)\s+(?'xattr'\w+)\s+(?'primarycache'\w+)\s+(?'readonly'\w+)\s+(?'case'\w+)\s+(?'sync'\w+)\s+(?'creation'.*)/";
+		$regex = "/^(?'name'[\w-]+(\/[\S-]+)?+)\s+(?'used'\d+.?\d+.)\s+(?'free'\d+.?\d+.)\s+(?'refer'\d+.?\d+.)\s+(?'mount'\/?[\w-]+(\/[\S-]+)?+)\s+(?'compression'\w+)\s+(?'cratio'\d+.?\d+.)\s+(?'snapused'\d+.?\d*.?)\s+(?'quota'\w+)\s+(?'recordsize'\d+.)\s+(?'atime'\w+)\s+(?'xattr'\w+)\s+(?'primarycache'\w+)\s+(?'readonly'\w+)\s+(?'case'\w+)\s+(?'sync'\w+)\s+(?'creation'.*)/";
 		$cmd_line = 'zfs list -o name,used,avail,refer,mountpoint,compress,compressratio,usedbysnapshots,quota,recordsize,atime,xattr,primarycache,readonly,case,sync,creation -r '.$zpool_name;
 		$snaps_count = 0;
 		
@@ -246,7 +246,7 @@
 	}
 	
 	function getZFSPools() {
-		$regex = "/^(?'pool'\w+)\s+(?'size'\d+.?\d+.)\s+(?'used'\d+.?\d+.)\s+(?'free'\d+.?\d+.)\s+-\s+-\s+(?'fragmentation'\d+.)\s+(?'usedpercent'\d+.)\s+(?'dedup'\d+.?\d+x)\s+(?'health'\w+)/";
+		$regex = "/^(?'pool'[\w-]+)\s+(?'size'\d+.?\d+.)\s+(?'used'\d+.?\d+.)\s+(?'free'\d+.?\d+.)\s+-\s+-\s+(?'fragmentation'\d+.)\s+(?'usedpercent'\d+.)\s+(?'dedup'\d+.?\d+x)\s+(?'health'\w+)/";
 	  
 		$tmpPools = processCmdLine($regex, 'zpool list -v', 'cleanupZPoolInfo');
 		$retPools = array();
