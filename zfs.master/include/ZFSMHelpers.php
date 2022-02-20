@@ -215,7 +215,7 @@
 	}
 	
 	function getZFSPoolDatasets($zpool_name, &$snapCount, $regex_array, $extended_info=true) {
-		$regex = "/^(?'name'[\w-]+(\/[\S-]+)?+)\s+(?'used'\d+.?\d+.)\s+(?'free'\d+.?\d+.)\s+(?'refer'\d+.?\d+.)\s+(?'mount'\/?[\w-]+(\/[\S-]+)?+)\s+(?'compression'\w+)\s+(?'cratio'\d+.?\d+.)\s+(?'snapused'\d+.?\d*.?)\s+(?'quota'\w+)\s+(?'recordsize'\d+.)\s+(?'atime'\w+)\s+(?'xattr'\w+)\s+(?'primarycache'\w+)\s+(?'readonly'\w+)\s+(?'case'\w+)\s+(?'sync'\w+)\s+(?'creation'.*)/";
+		$regex = "/^(?'name'[\w-]+(\/[\S-]+)?+)\s+(?'used'\d+.?\d+.)\s+(?'free'\d+.?\d+.)\s+(?'refer'\d+.?\d+.)\s+(?'mount'\/?[\w-]+(\/[\S-]+)?+)\s+(?'compression'[\w-]+)\s+(?'cratio'\d+.?\d+.)\s+(?'snapused'\d+.?\d*.?)\s+(?'quota'\w+)\s+(?'recordsize'\d+.)\s+(?'atime'\w+)\s+(?'xattr'\w+)\s+(?'primarycache'\w+)\s+(?'readonly'\w+)\s+(?'case'\w+)\s+(?'sync'\w+)\s+(?'creation'.*)/";
 		$cmd_line = 'zfs list -o name,used,avail,refer,mountpoint,compress,compressratio,usedbysnapshots,quota,recordsize,atime,xattr,primarycache,readonly,case,sync,creation -r '.$zpool_name;
 		$snaps_count = 0;
 		
