@@ -8,61 +8,65 @@ require_once "ZFSMHelpers.php";
 
 $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
+// String literals
+$boutput_str = " 2>&1";
+$cmdoutput_str = "CMD output: ";
+
 switch ($_POST['cmd']) {
 	case 'scrubpool':
-		$cmd_line = 'zpool scrub '.escapeshellarg($_POST['data']).' 2>&1';
+		$cmd_line = 'zpool scrub '.escapeshellarg($_POST['data']).$boutput_str;
 		
 		$ret = execCommand($cmd_line, $exec_result);
 		
 		if ($ret == 0):
-			zfsnotify($docroot, "ZPool Scrub", "Scrub of pool ".$_POST['data']." Started", "CMD output: ".$exec_result."","normal");
+			zfsnotify($docroot, "ZPool Scrub", "Scrub of pool ".$_POST['data']." Started", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "ZPool Scrub", "Scrub of pool ".$_POST['data']." failed to start, return code (".$ret.")", "CMD output: ".$exec_result."","warning");
+			zfsnotify($docroot, "ZPool Scrub", "Scrub of pool ".$_POST['data']." failed to start, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		
 		break;
 	case 'createdataset':
 		$zfs_cparams = cleanZFSCreateDatasetParams($_POST['data']);
-		$cmd_line = createZFSCreateDatasetCMDLine($zfs_cparams).' 2>&1';
+		$cmd_line = createZFSCreateDatasetCMDLine($zfs_cparams).$boutput_str;
 		
 		$ret = execCommand($cmd_line, $exec_result);
 		
 		if ($ret == 0):
-			zfsnotify($docroot, "ZFS Create", "Creation of dataset ".$zfs_cparams['zpool']."/".$zfs_cparams['name']." successful", "CMD output: ".$exec_result."","normal");
+			zfsnotify($docroot, "ZFS Create", "Creation of dataset ".$zfs_cparams['zpool']."/".$zfs_cparams['name']." successful", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "ZFS Create", "Creation of dataset ".$zfs_cparams['zpool']."/".$zfs_cparams['name']." failed, return code (".$ret.")", "CMD output: ".$exec_result."","warning");
+			zfsnotify($docroot, "ZFS Create", "Creation of dataset ".$zfs_cparams['zpool']."/".$zfs_cparams['name']." failed, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		
 		break;
 	case 'destroydataset':
 		$force = ($_POST['force'] == '1') ? '-fRr ' : '';
-		$cmd_line = 'zfs destroy -vp '.$force.escapeshellarg($_POST['data']).' 2>&1';
+		$cmd_line = 'zfs destroy -vp '.$force.escapeshellarg($_POST['data']).$boutput_str;
 		
 		$ret = execCommand($cmd_line, $exec_result);
 		
 		if ($ret == 0):
-			zfsnotify($docroot, "ZFS Destroy ", "Dataset ".$_POST['data']." destroyed successfully", "CMD output: ".$exec_result."","normal");
+			zfsnotify($docroot, "ZFS Destroy ", "Dataset ".$_POST['data']." destroyed successfully", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "ZFS Destroy", "Unable to destoy dataset ".$_POST['data'].", return code (".$ret.")", "CMD output: ".$exec_result."","warning");
+			zfsnotify($docroot, "ZFS Destroy", "Unable to destoy dataset ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		break;
 	case 'exportpool':
 		$force = ($_POST['force'] == '1') ? '-f ' : '';
-		$cmd_line = 'zfs export '.$force.escapeshellarg($_POST['data']).' 2>&1';
+		$cmd_line = 'zfs export '.$force.escapeshellarg($_POST['data']).$boutput_str;
 		
 		$ret = execCommand($cmd_line, $exec_result);
 		
 		if ($ret == 0):
-			zfsnotify($docroot, "ZPool Export ", "Pool ".$_POST['data']." exported successfully", "CMD output: ".$exec_result."","normal");
+			zfsnotify($docroot, "ZPool Export ", "Pool ".$_POST['data']." exported successfully", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "ZPool Export", "Unable to export pool ".$_POST['data'].", return code (".$ret.")", "CMD output: ".$exec_result."","warning");
+			zfsnotify($docroot, "ZPool Export", "Unable to export pool ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		break;

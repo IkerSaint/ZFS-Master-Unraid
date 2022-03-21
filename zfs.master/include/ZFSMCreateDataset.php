@@ -14,8 +14,11 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $zpool = $_GET['zpool'];
 $zpool_datasets = getZFSPoolDatasets($zpool, $snapscount, $zfsm_cfg['dataset_exclussion'], false);
 ?>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<title>ZFS Master - Create Dataset</title>
+
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="Content-Security-Policy" content="block-all-mixed-content">

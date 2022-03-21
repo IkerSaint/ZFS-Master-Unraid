@@ -52,7 +52,8 @@
 	  
 	function implodeWithKeys($glue, $array, $symbol = ': ') {
 		return implode( $glue, array_map( function($k, $v) use($symbol) {
-			return $k . $symbol . $v;},
+				return $k . $symbol . $v;
+			},
 			array_keys($array),
 			array_values($array))
 		);
@@ -136,7 +137,7 @@
 	}
 	
 	function cleanupZPoolInfo($matched) {
-		$result = array(
+		return array(
 			'Pool' => trim($matched['pool']),
 			'Health' => trim($matched['health']),
 			'Name' => '',
@@ -147,12 +148,10 @@
 			'MountPoint' => '',
 			'Snapshots' => ''
 		);
-		
-		return $result;
 	}
   
 	function cleanupZDatasetInfo($matched) {
-		$result = array(
+		return array(
 			'Pool' => '',
 			'Health' => '',
 			'Name' => trim($matched['name']),
@@ -177,8 +176,6 @@
 				'Space used by Snaps' => trim($matched['snapused'])
 			)
 		);
-		
-		return $result;
 	}
 	
 	function filterDataset($dataset_name, $regex_array) {
@@ -217,13 +214,12 @@
 	function getZFSPoolDatasets($zpool_name, &$snapCount, $regex_array, $extended_info=true) {
 		$regex = "/^(?'name'[\w-]+(\/[\S-]+)?+)\s+(?'used'\d+.?\d+.)\s+(?'free'\d+.?\d+.)\s+(?'refer'\d+.?\d+.)\s+(?'mount'\/?[\w-]+(\/[\S-]+)?+)\s+(?'compression'[\w-]+)\s+(?'cratio'\d+.?\d+.)\s+(?'snapused'\d+.?\d*.?)\s+(?'quota'\w+)\s+(?'recordsize'\d+.)\s+(?'atime'\w+)\s+(?'xattr'\w+)\s+(?'primarycache'\w+)\s+(?'readonly'\w+)\s+(?'case'\w+)\s+(?'sync'\w+)\s+(?'creation'.*)/";
 		$cmd_line = 'zfs list -o name,used,avail,refer,mountpoint,compress,compressratio,usedbysnapshots,quota,recordsize,atime,xattr,primarycache,readonly,case,sync,creation -r '.$zpool_name;
-		$snaps_count = 0;
 		
 		$tmpDatasets = processCmdLine($regex, $cmd_line, 'cleanupZDatasetInfo');
 		$retDatasets = array();
 		$snapCount = 0;
 		
-		if ($extended_info == false):
+		if (!$extended_info):
 			return $tmpDatasets;
 		endif;
 		
