@@ -1,0 +1,6 @@
+projectKey=ZFS-Master
+serverUrl=http://192.168.1.100:9001
+serverVersion=9.3.0.51899
+dashboardUrl=http://192.168.1.100:9001/dashboard?id=ZFS-Master
+ceTaskId=AX-qnobvAIgywEKGrKhz
+ceTaskUrl=http://192.168.1.100:9001/api/ce/task?id=AX-qnobvAIgywEKGrKhz
