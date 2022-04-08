@@ -88,7 +88,6 @@
 			endif;
 		endforeach;
 		
-		
 		if ($retParams['mount'] == 'no'):
 			$retParams['mountpoint'] = 'none';
 		else:

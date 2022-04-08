@@ -28,6 +28,10 @@ switch ($_POST['cmd']) {
 		
 		break;
 	case 'createdataset':
+		$permissions = isset($_POST['data']['permissions']) ? $_POST['data']['permissions'] : '';
+
+		unset($_POST['data']['permissions']);
+
 		$zfs_cparams = cleanZFSCreateDatasetParams($_POST['data']);
 		$cmd_line = createZFSCreateDatasetCMDLine($zfs_cparams).$boutput_str;
 		
@@ -40,7 +44,19 @@ switch ($_POST['cmd']) {
 			zfsnotify($docroot, "ZFS Create", "Creation of dataset ".$zfs_cparams['zpool']."/".$zfs_cparams['name']." failed, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
-		
+
+		if ($permissions == '' || $ret != 0):
+			break;
+		endif;
+			
+		$cmd_line = 'chmod '.$permissions.' /'.$zfs_cparams['zpool'].'/'.$zfs_cparams['name'];
+		$ret = execCommand($cmd_line, $exec_result);
+
+		if ($ret != 0):
+			zfsnotify($docroot, "ZFS Create", "Unable to set permissions for dataset ".$zfs_cparams['zpool']."/".$zfs_cparams['name'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			echo $exec_result;
+		endif;
+
 		break;
 	case 'destroydataset':
 		$force = ($_POST['force'] == '1') ? '-fRr ' : '';

@@ -183,6 +183,8 @@ input[type=email]{margin-top:8px;float:left}
 					</select>
 					Quota
 					<input id="quota" name="quota" class="zfsm-input zfsm-w10" maxlength="7">
+					Set Permissions
+					<input id="permissions" name="permissions" class="zfsm-input zfsm-w10" maxlength="7">
 				</dl>
 			</div>
 			<hr>
