@@ -15,6 +15,9 @@
 		min="6.9.2">
 <CHANGES>
 
+###2022.04.08
+- Add - Set permissions for new Datasets
+
 ###2021.11.09a
 
 - Add - List of current Datasets at Dataset Creation
