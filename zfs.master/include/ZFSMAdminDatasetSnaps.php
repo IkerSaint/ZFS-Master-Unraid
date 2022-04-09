@@ -32,9 +32,29 @@ window.onload = function() {
         var arrStyleSheets = parent.document.getElementsByTagName("style");
         for (var i = 0; i < arrStyleSheets.length; i++)
             oHead.appendChild(arrStyleSheets[i].cloneNode(true));
+
+		var arrStyleSheets = parent.document.getElementsByTagName("link");
+
+        for (var i = 0; i < arrStyleSheets.length; i++)
+            oHead.appendChild(arrStyleSheets[i].cloneNode(true));
     }
 }
 </script>
+<style type="text/css">	
+  .zfs_table {
+	  display: block;
+	  width: 96%;
+	  border: 1px solid #ccc;
+	  max-height: 600px;
+	  overflow: auto;
+	  margin: 2%;
+  }
+
+  .zfs_table tr>td{
+	  width:auto!important;
+	  white-space: normal!important;
+  }
+</style>
 
 </head>
 
@@ -94,27 +114,9 @@ window.onload = function() {
 </body>
 </html>
 
-<script>
-  function getFormData(formId) {
-	let formData = {};
-    let inputs = $(formId).serializeArray();
-    $.each(inputs, function (i, input) {
-        formData[input.name] = input.value;
-    });
-    
-	return formData;
-   }
-   
-  $("#adminsnaps-form").submit(function(e){
-        e.preventDefault();
-		alert('your option was');
-		//adminSnaps();
-  });
-   
+<script>  
   function rollbackSnapshot(snapshot) {
-	formData = getFormData("#adminsnaps-form");
-		
-	$.post('<?=$urlzmadmin?>',{cmd: 'rollbacksnapshot', 'data': formData, 'csrf_token': '<?=$csrf_token?>'}, function(data){
+	$.post('<?=$urlzmadmin?>',{cmd: 'rollbacksnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
 		if (data == 'Ok') {
 			top.Swal2.fire({
 				title: 'Success!',
