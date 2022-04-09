@@ -9,6 +9,7 @@ $plugin = "zfs.master";
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 $urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
 $urlcreatedataset = "/plugins/".$plugin."/include/ZFSMCreateDataset.php";
+$urlrollbackdataset = "/plugins/".$plugin."/include/ZFSMRollbackDataset.php";
 $refreshbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="refreshInfo()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a></span>';
 $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a></span>';
 
@@ -158,7 +159,14 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 			elseif ($key == "Size"):
 				if ($zfsm_cfg['destructive_mode']):
 					echo '<button type="button" class="zfs_compact" onclick="destroyDataset(\''.$zdataset['Name'].'\');">Destroy</button>';
+
+					if ($zdataset['Snapshots'] > 0):
+						echo '<button type="button" class="zfs_compact" onclick="rollbackDataset(\''.$zdataset['Name'].'\');">Rollback</button>';
+					else:
+						echo '<button type="button" class="zfs_compact" onclick="rollbackDataset(\''.$zdataset['Name'].'\');" disabled>Rollback</button>';
+					endif;
 				endif;
+
 				#echo '<a class="info hand">';
 				#echo '<i class="zfs_bar_button fa fa-gears" onclick="modifyDataset(\''.$zdataset['Name'].'\');"></i>';
 				#echo '</a>';
@@ -271,6 +279,11 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
   function createDataset(zpool) {
 	  var csrf_token = $("input[name='csrf_token']").val();	  
 	  openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,"Create Dataset",550,680,false);
+  }
+
+  function rollbackDataset(zdataset) {
+	  var csrf_token = $("input[name='csrf_token']").val();	  
+	  openBox('<?=$urlrollbackdataset?>?zdataset='+zdataset+'&csrf_token='+csrf_token,"Rollback Dataset",550,680,false);
   }
   
   function destroyDataset(zdataset) {
