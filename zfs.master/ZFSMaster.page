@@ -31,6 +31,8 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
   endforeach;
 ?>
 
+<link type="text/css" rel="stylesheet" href="/webGui/styles/font-awesome.css?v=1545863026">
+
 <style type="text/css">	
   .zfs_table td span{margin-left:10px}
   .zfs_table tr>td{width:auto!important}

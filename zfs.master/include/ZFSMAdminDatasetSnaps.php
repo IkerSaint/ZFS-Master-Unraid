@@ -25,106 +25,16 @@ $zdataset_snaps = getZFSDatasetSnapshots($zdataset);
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="same-origin">
 
-
-<style>
-#spinner_image{position:fixed;left:46%;top:46%;width:16px;height:16px;display:none}
-#control_panel{position:fixed;left:0;right:0;top:0;padding-top:8px;line-height:24px;white-space:nowrap}
-.four{text-align:center;box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box}
-.four label:first-child{margin-left:0}
-.four label{margin-left:2%;cursor:pointer}
-.allpanels{display:none;position:absolute;left:0;right:0;top:40px;bottom:25px;overflow:auto;margin:15px}
-#footer_panel{position:fixed;left:0;right:0;bottom:0;height:30px;line-height:10px;text-align:center}
-textarea{width:96%;height:250px;margin:10px 0;resize:none}
-input[type=button]{margin-right:0;float:right}
-input[type=email]{margin-top:8px;float:left}
-</style>
-
-<style type="text/css">	
-  .zfsm-dialog {
-	  width: 90%;
-	  height: 90%;
-	  margin: auto;
-  }
-  
-  .zfsm-form {
-	  font-size: 14px;
-	  text-align: center;
-  }
-  
-  .zfsm-title {
-	  font-weight: 400;
-	  position: relative;
-	  display: block;
-	  font-size: 25px;
-	  text-align: center;
-	  margin-bottom: 0;
-  }
-  
-  .zfsm-input:disabled {
-	  background-color: lightgrey;
-  }
-  
-  .zfsm-input {
-	  background-color: #fff;
-	  width: auto;
-	  border: 1px solid rgba(0,0,0,.10);
-	  display: inline-block;
-	  padding: 10px 5px;
-	  border-radius: 5px;
-  }
-  
-  .zfsm-zpool {
-	  color: #ff8c2f;
-	  width: auto;
-	  border: 1px solid rgba(0,0,0,.10);
-	  display: inline-block;
-	  padding: 10px 5px;
-	  border-radius: 5px;
-	  background: linear-gradient(90deg,#e22828 0,#ff8c2f) 0 0 no-repeat,linear-gradient(90deg,#e22828 0,#ff8c2f) 0 100% no-repeat,linear-gradient(0deg,#e22828 0,#e22828) 0 100% no-repeat,linear-gradient(0deg,#ff8c2f 0,#ff8c2f) 100% 100% no-repeat;
-	  background-size: 100% 2px,100% 2px,2px 100%,2px 100%;
-  }
-  
-  .zfsm-unraid-border {
-	  border: 1px solid rgba(0,0,0,.10);
-	  background-color: #fff!important;
-	  background: linear-gradient(90deg,#e22828 0,#ff8c2f) 0 0 no-repeat,linear-gradient(90deg,#e22828 0,#ff8c2f) 0 100% no-repeat,linear-gradient(0deg,#e22828 0,#e22828) 0 100% no-repeat,linear-gradient(0deg,#ff8c2f 0,#ff8c2f) 100% 100% no-repeat;
-	  background-size: 100% 2px,100% 2px,2px 100%,2px 100%;
-  }
-  
-  .zfsm-wauto {
-	  width: auto;
-  }
-  
-  .zfsm-w10 {
-	  width: 10%;
-  }
-  
-  .zfsm-w15 {
-	  width: 15%;
-  }
-  
-  .zfsm-w50 {
-	  width: 50%;
-  }
-  
-  .zfsm-w70 {
-	  width: 70%;
-  }
-  
-  .zfsm-w75 {
-	  width: 75%;
-  }
-  
-</style>
-
-<script src="<?autov('/webGui/javascript/dynamix.js')?>"></script>
-<link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/default-fonts.css');?>">
-<link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/default-popup.css');?>">
-
-<script src="<?autov('/webGui/javascript/jquery.filetree.js')?>"></script>
-
-<script type="text/javascript" src="<?autov('/plugins/zfs.master/assets/sweetalert2.all.min.js');?>"></script>
-<link type="text/css" rel="stylesheet" href="<?autov('/plugins/zfs.master/assets/sweetalert2.min.css');?>">
+<script type="text/javascript">
+window.onload = function() {
+    if (parent) {
+        var oHead = document.getElementsByTagName("head")[0];
+        var arrStyleSheets = parent.document.getElementsByTagName("style");
+        for (var i = 0; i < arrStyleSheets.length; i++)
+            oHead.appendChild(arrStyleSheets[i].cloneNode(true));
+    }
+}
+</script>
 
 </head>
 
@@ -170,10 +80,10 @@ input[type=email]{margin-top:8px;float:left}
 			<?endforeach;?>
 			<td id="snapl-attribute-actions">
 				<?
-				echo '<a style="cursor:pointer" class="tooltip" title="Rollback Snapshot" onclick="rollbackSnapshot(\''.$snap['Name'].'\')"><i id="zfsm-rollback" class="fa fa-backward-fast orb orange-orb"></i></a>';
-				echo '<a style="cursor:pointer" class="tooltip" title="Hold Snapshot" onclick="holdSnapshot(\''.$snap['Name'].'\')"><i id="zfsm-hold" class="fa fa-pause"></i></a>';
-				echo '<a style="cursor:pointer" class="tooltip" title="Release Snapshot" onclick="releaseSnapshot(\''.$snap['Name'].'\')"><i id="zfsm-release" class="fa fa-play"></i></a>';
-				echo '<a style="cursor:pointer" class="tooltip" title="Destroy Snapshot" onclick="destroySnapshot(\''.$snap['Name'].'\')"><i id="zfsm-destroy" class="fa fa-trash-can orb red-orb"></i></a>';
+				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Rollback Snapshot" onclick="rollbackSnapshot(\''.$snap['Name'].'\')"><i id="zfsm-rollback" class="fa fa-backward" style="color:orange"></i></a></span>';
+				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Hold Snapshot" onclick="holdSnapshot(\''.$snap['Name'].'\')"><i id="zfsm-hold" class="fa fa-pause"></i></a></span>';
+				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Release Snapshot" onclick="releaseSnapshot(\''.$snap['Name'].'\')"><i id="zfsm-release" class="fa fa-play"></i></a></span>';
+				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Destroy Snapshot" onclick="destroySnapshot(\''.$snap['Name'].'\')"><i id="zfsm-destroy" class="fa fa-trash" style="color:red"></i></a></span>';
 				?>
 			</td>
 		</tr>
