@@ -192,9 +192,9 @@
 	}
 
 	function getZFSDatasetSnapshots($zdataset_name) {
-		$regex ="/^(?'name'[\w-]+(\/[\S-]+)?+)\s+(?'used'\d+.?\d+.)\s+(?'refer'\d+.?\d+.)\s+(?'defer_destroy'[\w-]+)\s+(?'userrefs'\d+)\s+(?'creation'.*)/";
-		$cmd_line = 'zfs list -o name,used,avail,refer,creation,defer_destroy,userrefs -Hp -t snapshot '.$zdataset_name;
-		
+		$regex ="/^(?'name'[\w-]+(\/[\S-]+)?+)\s+(?'used'\d+.?)\s+(?'refer'\d+.?\d+.)\s+(?'defer_destroy'[\w-]+)\s+(?'userrefs'\d+)\s+(?'creation'.*)/";
+		$cmd_line = 'zfs list -o name,used,refer,defer_destroy,userrefs,creation -Hp -t snapshot '.$zdataset_name;
+
 		return processCmdLine($regex, $cmd_line, 'cleanupZDatasetInfo');
 	}
 	

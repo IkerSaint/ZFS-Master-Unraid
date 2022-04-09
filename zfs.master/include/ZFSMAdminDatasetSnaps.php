@@ -135,7 +135,7 @@ input[type=email]{margin-top:8px;float:left}
 				<div class="zfsm-title">Base Options</div>
 			<hr>
 			<div id="adminsnaps-base-options">
-			echo $zdataset_snaps
+			<?echo '<pre>'; print_r($zdataset_snaps); echo '</pre>'?>
 			<!----
 				<dl>
 					Dataset Name<br>
