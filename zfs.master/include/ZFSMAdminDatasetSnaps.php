@@ -130,118 +130,47 @@ input[type=email]{margin-top:8px;float:left}
 
 <body>
 	<div id="adminsnaps-form-div" class="zfsm-dialog">
-		<form id="adminsnaps-form" name="adminsnaps-form" class="zfsm-form" method="POST">
-			<hr>
-				<div class="zfsm-title">Base Options</div>
-			<hr>
-			<div id="adminsnaps-base-options">
-			<?echo '<pre>'; print_r($zdataset_snaps); echo '</pre>'?>
-			<!----
-				<dl>
-					Dataset Name<br>
-					<input type="hidden" id="zpool" name="zpool" value="<?echo $zpool?>">
-					<span class="zfsm-zpool" id="pool" name="<?echo $zpool?>"><?echo $zpool?></span> / <input id="name" class="zfsm-input zfsm-w75 zfsm-unraid-border" name="name" placeholder="Complete path, without the pool name." list="zpool-datasets" required>
-					<datalist id="zpool-datasets">
-					<?foreach ($zpool_datasets as $zdataset):
-						if ($zdataset['Name'] == $zpool):
-							continue;
-						endif;
-						$option = str_replace($zpool."/", "", $zdataset['Name'])."/";
-					?>
-						<option value="<?echo $option?>">
-					<?endforeach;?>
-					</datalist>
-				</dl>
-				<dl>
-					Mount
-					<select id="mount" name="mount" class="zfsm-input">
-						<option value="yes" selected>Yes</option>
-						<option value="no">No</option>
-					</select>
-					<input id="mountpoint" name="mountpoint" class="zfsm-input zfsm-w70 zfsm-unraid-border" placeholder="Empty for default, otherwise complete mountpoint path. ">
-				</dl>
-				<dl>
-					Access Time
-					<select id="atime" name="atime" class="zfsm-input">
-						<option value="inherit" selected>Inherit</option>
-						<option value="off">Off</option>
-						<option value="on">On</option>
-					</select>
-					Case Sensitivity
-					<select id="casesensitivity" name="casesensitivity" class="zfsm-input">
-						<option value="sensitive" selected>Sensitive (Default)</option>
-						<option value="insensitive">Insensitive</option>
-						<option value="mixed">Mixed</option>
-					</select>
-				</dl>
-				<dl>
-					Compression
-					<select id="compression" name="compression" class="zfsm-input">
-						<option value="inherit" selected>Inherit</option>
-						<option value="off">Off</option>
-						<option value="lz4">lz4</option>
-						<option value="gzip">gzip</option>
-						<option value="zstd">zstd</option>
-					</select>
-					Quota
-					<input id="quota" name="quota" class="zfsm-input zfsm-w10" maxlength="7">
-					Set Permissions
-					<input id="permissions" name="permissions" class="zfsm-input zfsm-w10" maxlength="7">
-				</dl>
-			--->
-			</div>
-			<hr>
-				<div class="zfsm-title">Advanced Options</div>
-			<hr>
-			<div id="adminsnaps-advanced-options">
-			<!----
-				<dl>
-					Extended Attributes:
-					<select id="xattr" name="xattr" class="zfsm-input">
-						<option value="inherit" selected>Inherit</option>
-						<option value="sa">sa</option>
-						<option value="on">on</option>
-						<option value="off">off</option>
-					</select>
-					Record Size:
-					<select id="recordsize" name="recordsize" class="zfsm-input">
-						<option value="inherit" selected>Inherit</option>
-						<option value="512">512</option>
-						<option value="4K">4K</option>
-						<option value="8K">8K</option>
-						<option value="16K">16K</option>
-						<option value="64K">64K</option>
-						<option value="128K">128K</option>
-						<option value="1MB">1MB</option>
-					</select>
-				</dl>
-				<dl>
-					Primary Cache:
-					<select id="primarycache" name="primarycache" class="zfsm-input">
-						<option value="inherit" selected>Inherit</option>
-						<option value="all">All</option>
-						<option value="metadata">Metadata</option>
-						<option value="none">None</option>
-					</select>
-					Read Only:
-					<select id="readonly" name="readonly" class="zfsm-input">
-						<option value="off" selected>Off (Default)</option>
-						<option value="on">On</option>
-					</select>
-					Sync:
-					<select id="sync" name="sync" class="zfsm-input">
-						<option value="standard" selected>Standard (Default)</option>
-						<option value="always">Always</option>
-						<option value="disabled">Disabled</option>
-					</select>
-				</dl>
-			--->
-			</div>
-			<hr>
-			<div id="adminsnaps-footer" class="zfsm-footer">
-				<button type="submit">Create</button>
-			</div>
-		</form>
+	<table id="zfs_master" class="zfs_table disk_status wide">
+	<thead>
+		<tr>
+		<td>Name</td>
+		<td>Used</td>
+		<td>Refer</td>
+		<td>Defer Destroy</td>
+		<td>Holds</td>
+		<td>Creation Date</td>
+		</tr>
+	</thead>
+	<tbody id="zpools">
+		<?foreach ($zdataset_snaps as $snap):?>
+		<tr>
+			<?foreach ($snap as $key => $zdetail):?>
+			<td id=<?echo '"snapl-attribute-'.$key.'"'?>>
+				<?
+				if ($key == "Name"):
+					echo '<i class="fa fa-hdd-o icon" style="color:#486dba"></i>';
+					echo $zdetail;
+				elseif ($key == 'Used'):
+					echo '<span>'.$zdetail.'B</span>';
+				elseif ($key == "Refer"):
+					echo '<span>'.$zdetail.'B</span>';
+				elseif ($key == "Defer Destroy"):
+					echo '<span>'.$zdetail.'</span>';
+				elseif ($key == "Holds"):
+					echo '<span>'.$zdetail.'</span>';
+				elseif ($key == 'Creation Date'):
+					$snapdate = new DateTime();
+					$snapdate->setTimestamp($zdetail);
+					$detail = $snapdate->format('Y-m-d H:i:s');
+					echo '<span>'.$zdetail.'</span>';
+				endif;
+				?>
+			</td>
+			<?endforeach;?>
+		</tr>
+		<?endforeach;?>
+	</tbody>
+	</table>
 	</div>
 </body>
 </html>
