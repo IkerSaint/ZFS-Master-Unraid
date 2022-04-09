@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Containers>
+  <Plugin>True</Plugin>
+  <PluginURL>https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main/zfs.master.plg</PluginURL>
+  <PluginAuthor>IkerSaint</PluginAuthor>
+  <Beta>True</Beta>
+  <Category>Tools:System</Category>
+  <Name>ZFS Master</Name>
+  <Description>The ZFS Master plugin provides information and control over the ZFS Pools in your Unraid. Available ZFS Pools are listed under the "Main/ZFSMaster" tab.
+  </Description>
+  <MinVer>6.9.2</MinVer>
+  <Support>http://lime-technology.com/forum/index.php?topic=40111.0</Support>
+  <Icon>https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main/zfs.master/images/zfs.master.png</Icon>
+  <DonateText>I like expensive things</DonateText>
+  <DonateLink>https://www.paypal.com/paypalme/ikersaint</DonateLink>
+  <Requires>
+  **ZFS Plugin**
+  </Requires>
+</Containers>
