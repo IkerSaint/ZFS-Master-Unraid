@@ -23,7 +23,7 @@
 		shell_exec($command);
 	}
 
-	function fromLetterToBytes($spacestr) {
+	function fromStringToBytes($spacestr) {
 		$return_number = (double)$spacestr;
 		
 		switch ($spacestr[-1]) {
@@ -41,10 +41,23 @@
 		  
 		return $return_number;
 	}
+
+	function fromBytesToString($bytes) {
+		$units = array('B', 'KB', 'MB', 'GB', 'TB'); 
+		
+		$bytes = max($bytes, 0); 
+    	$pow = floor(($bytes ? log($bytes) : 0) / log(1024)); 
+    	$pow = min($pow, count($units) - 1); 
+
+    	$bytes /= pow(1024, $pow);
+    	// $bytes /= (1 << (10 * $pow)); 
+
+    	return round($bytes, 2) . ' ' . $units[$pow]; 
+	}
 	  
 	function calculateFreePercent($used,$free) {
-		$used_tmp = fromLetterToBytes($used);
-		$free_tmp = fromLetterToBytes($free);
+		$used_tmp = fromStringToBytes($used);
+		$free_tmp = fromStringToBytes($free);
 		
 		$result = $free_tmp/($free_tmp+$used_tmp);
 		return $result*100;
@@ -132,6 +145,7 @@
 
 			$returnData[] = $cleanfunction($matches);
 		endforeach;
+
 		return $returnData;
 	}
 	

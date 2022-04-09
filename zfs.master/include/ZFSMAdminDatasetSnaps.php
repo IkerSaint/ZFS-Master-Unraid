@@ -152,9 +152,9 @@ input[type=email]{margin-top:8px;float:left}
 					echo '<i class="fa fa-hdd-o icon" style="color:#486dba"></i>';
 					echo $zdetail;
 				elseif ($key == 'Used'):
-					echo '<span>'.$zdetail.'B</span>';
+					echo '<span>'.fromBytesToString($zdetail).'</span>';
 				elseif ($key == "Refer"):
-					echo '<span>'.$zdetail.'B</span>';
+					echo '<span>'.fromBytesToString($zdetail).'B</span>';
 				elseif ($key == "Defer Destroy"):
 					echo '<span>'.$zdetail.'</span>';
 				elseif ($key == "Holds"):
@@ -163,15 +163,17 @@ input[type=email]{margin-top:8px;float:left}
 					$snapdate = new DateTime();
 					$snapdate->setTimestamp($zdetail);
 					$detail = $snapdate->format('Y-m-d H:i:s');
-					echo '<span>'.$zdetail.'</span>';
+					echo '<span>'.$detail.'</span>';
 				endif;
 				?>
 			</td>
 			<?endforeach;?>
 			<td id="snapl-attribute-actions">
 				<?
-				echo '<button type="button" class="zfs_compact" onclick="destroySnapshot(\''.$snap['Name'].'\');">Destroy</button>';
-				echo '<button type="button" class="zfs_compact" onclick="rollbackSnapshot(\''.$snap['Name'].'\');">Rollback</button>';
+				echo '<a style="cursor:pointer" class="tooltip" title="Rollback Snapshot" onclick="rollbackSnapshot(\''.$snap['Name'].'\')"><i id="zfsm-rollback" class="fa fa-backward-fast orb orange-orb"></i></a>';
+				echo '<a style="cursor:pointer" class="tooltip" title="Hold Snapshot" onclick="holdSnapshot(\''.$snap['Name'].'\')"><i id="zfsm-hold" class="fa fa-pause"></i></a>';
+				echo '<a style="cursor:pointer" class="tooltip" title="Release Snapshot" onclick="releaseSnapshot(\''.$snap['Name'].'\')"><i id="zfsm-release" class="fa fa-play"></i></a>';
+				echo '<a style="cursor:pointer" class="tooltip" title="Destroy Snapshot" onclick="destroySnapshot(\''.$snap['Name'].'\')"><i id="zfsm-destroy" class="fa fa-trash-can orb red-orb"></i></a>';
 				?>
 			</td>
 		</tr>
