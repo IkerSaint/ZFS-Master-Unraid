@@ -139,6 +139,7 @@ input[type=email]{margin-top:8px;float:left}
 		<td>Defer Destroy</td>
 		<td>Holds</td>
 		<td>Creation Date</td>
+		<td>Actions</td>
 		</tr>
 	</thead>
 	<tbody id="zpools">
@@ -167,6 +168,12 @@ input[type=email]{margin-top:8px;float:left}
 				?>
 			</td>
 			<?endforeach;?>
+			<td id="snapl-attribute-actions">
+				<?
+				echo '<button type="button" class="zfs_compact" onclick="destroySnapshot(\''.$snap['Name'].'\');">Destroy</button>';
+				echo '<button type="button" class="zfs_compact" onclick="rollbackSnapshot(\''.$snap['Name'].'\');">Rollback</button>';
+				?>
+			</td>
 		</tr>
 		<?endforeach;?>
 	</tbody>
@@ -192,21 +199,21 @@ input[type=email]{margin-top:8px;float:left}
 		//adminSnaps();
   });
    
-  function rollbackDataset() {
+  function rollbackSnapshot(snapshot) {
 	formData = getFormData("#adminsnaps-form");
 		
-	$.post('<?=$urlzmadmin?>',{cmd: 'rollbackdataset', 'data': formData, 'csrf_token': '<?=$csrf_token?>'}, function(data){
+	$.post('<?=$urlzmadmin?>',{cmd: 'rollbacksnapshot', 'data': formData, 'csrf_token': '<?=$csrf_token?>'}, function(data){
 		if (data == 'Ok') {
 			top.Swal2.fire({
 				title: 'Success!',
 				icon:'success',
-				html: 'Rollback of Dataset '+formData['zdataset']+' Successful'
+				html: 'Rollback of Snapshot '+snapshot+' Successful'
 			});
 		} else {
 			top.Swal2.fire({
 				title: 'Error!',
 				icon:'error',
-				html: 'Unable to rollback dataset '+formData['zdataset']+'<br>Output: '+data
+				html: 'Unable to rollback snapshot '+snapshot+'<br>Output: '+data
 			}); 
 		}
 		top.Shadowbox.close();

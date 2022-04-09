@@ -283,7 +283,7 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 
   function adminDatasetSnaps(zdataset) {
 	  var csrf_token = $("input[name='csrf_token']").val();	  
-	  openBox('<?=$urladmindatasetsnaps?>?zdataset='+zdataset+'&csrf_token='+csrf_token,"Admin Dataset Snapshots",550,680,false);
+	  openBox('<?=$urladmindatasetsnaps?>?zdataset='+zdataset+'&csrf_token='+csrf_token,"Admin Dataset Snapshots",680,800,false);
   }
   
   function destroyDataset(zdataset) {
