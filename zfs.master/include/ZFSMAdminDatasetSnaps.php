@@ -114,7 +114,8 @@ window.onload = function() {
 </body>
 </html>
 
-<script>  
+<script>
+  
   function rollbackSnapshot(snapshot) {
 	$.post('<?=$urlzmadmin?>',{cmd: 'rollbacksnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
 		if (data == 'Ok') {
@@ -132,5 +133,14 @@ window.onload = function() {
 		}
 		top.Shadowbox.close();
 	});
+  }
+
+  function holdSnapshot(snapshot) {
+  }
+
+  function releaseSnapshot(snapshot) {
+  }
+
+  function destroySnapshot(snapshot) {
   }
 </script>

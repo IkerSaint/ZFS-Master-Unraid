@@ -196,7 +196,7 @@
 			'Name' => trim($matched['name']),
 			'Used' => trim($matched['used']),
 			'Refer' => trim($matched['refer']),
-			'Defer Destroy' => trim($matched['size']),
+			'Defer Destroy' => trim($matched['defer_destroy']),
 			'Holds' => trim($matched['userrefs']),
 			'Creation Date' => trim($matched['creation'])
 		);
