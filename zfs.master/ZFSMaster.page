@@ -9,7 +9,7 @@ $plugin = "zfs.master";
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 $urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
 $urlcreatedataset = "/plugins/".$plugin."/include/ZFSMCreateDataset.php";
-$urlrollbackdataset = "/plugins/".$plugin."/include/ZFSMRollbackDataset.php";
+$urladmindatasetsnaps = "/plugins/".$plugin."/include/ZFSMAdminDatasetsnaps.php";
 $refreshbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="refreshInfo()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a></span>';
 $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a></span>';
 
@@ -161,9 +161,9 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 					echo '<button type="button" class="zfs_compact" onclick="destroyDataset(\''.$zdataset['Name'].'\');">Destroy</button>';
 
 					if ($zdataset['Snapshots'] > 0):
-						echo '<button type="button" class="zfs_compact" onclick="rollbackDataset(\''.$zdataset['Name'].'\');">Rollback</button>';
+						echo '<button type="button" class="zfs_compact" onclick="adminDatasetSnaps(\''.$zdataset['Name'].'\');">Snaps</button>';
 					else:
-						echo '<button type="button" class="zfs_compact" onclick="rollbackDataset(\''.$zdataset['Name'].'\');" disabled>Rollback</button>';
+						echo '<button type="button" class="zfs_compact" onclick="adminDatasetSnaps(\''.$zdataset['Name'].'\');" disabled>Snaps</button>';
 					endif;
 				endif;
 
@@ -281,9 +281,9 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 	  openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,"Create Dataset",550,680,false);
   }
 
-  function rollbackDataset(zdataset) {
+  function adminDatasetSnaps(zdataset) {
 	  var csrf_token = $("input[name='csrf_token']").val();	  
-	  openBox('<?=$urlrollbackdataset?>?zdataset='+zdataset+'&csrf_token='+csrf_token,"Rollback Dataset",550,680,false);
+	  openBox('<?=$urladmindatasetsnaps?>?zdataset='+zdataset+'&csrf_token='+csrf_token,"Admin Dataset Snapshots",550,680,false);
   }
   
   function destroyDataset(zdataset) {

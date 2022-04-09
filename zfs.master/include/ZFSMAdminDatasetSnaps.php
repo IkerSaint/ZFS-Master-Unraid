@@ -11,13 +11,13 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 
-$zpool = $_GET['zpool'];
-$zpool_datasets = getZFSPoolDatasets($zpool, $snapscount, $zfsm_cfg['dataset_exclussion'], false);
+$zdataset = $_GET['zdataset'];
+$zdataset_snaps = getZFSDatasetSnapshots($zdataset);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>ZFS Master - Create Dataset</title>
+<title>ZFS Master - Admin Dataset Snaps</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -129,12 +129,14 @@ input[type=email]{margin-top:8px;float:left}
 </head>
 
 <body>
-	<div id="dataset-form-div" class="zfsm-dialog">
-		<form id="dataset-form" name="dataset-form" class="zfsm-form" method="POST">
+	<div id="adminsnaps-form-div" class="zfsm-dialog">
+		<form id="adminsnaps-form" name="adminsnaps-form" class="zfsm-form" method="POST">
 			<hr>
 				<div class="zfsm-title">Base Options</div>
 			<hr>
-			<div id="dataset-base-options">
+			<div id="adminsnaps-base-options">
+			echo $zdataset_snaps
+			<!----
 				<dl>
 					Dataset Name<br>
 					<input type="hidden" id="zpool" name="zpool" value="<?echo $zpool?>">
@@ -186,11 +188,13 @@ input[type=email]{margin-top:8px;float:left}
 					Set Permissions
 					<input id="permissions" name="permissions" class="zfsm-input zfsm-w10" maxlength="7">
 				</dl>
+			--->
 			</div>
 			<hr>
 				<div class="zfsm-title">Advanced Options</div>
 			<hr>
-			<div id="dataset-advanced-options">
+			<div id="adminsnaps-advanced-options">
+			<!----
 				<dl>
 					Extended Attributes:
 					<select id="xattr" name="xattr" class="zfsm-input">
@@ -231,9 +235,10 @@ input[type=email]{margin-top:8px;float:left}
 						<option value="disabled">Disabled</option>
 					</select>
 				</dl>
+			--->
 			</div>
 			<hr>
-			<div id="dataset-footer" class="zfsm-footer">
+			<div id="adminsnaps-footer" class="zfsm-footer">
 				<button type="submit">Create</button>
 			</div>
 		</form>
@@ -252,30 +257,27 @@ input[type=email]{margin-top:8px;float:left}
 	return formData;
    }
    
-  $("#dataset-form").submit(function(e){
+  $("#adminsnaps-form").submit(function(e){
         e.preventDefault();
-		createDataset();
-  });
-  
-  $("select[name='mount']").change(function() {
-	 $("#mountpoint").attr('disabled', $(this).val() == 'no');
+		alert('your option was');
+		//adminSnaps();
   });
    
-  function createDataset() {
-	formData = getFormData("#dataset-form");
+  function rollbackDataset() {
+	formData = getFormData("#adminsnaps-form");
 		
-	$.post('<?=$urlzmadmin?>',{cmd: 'createdataset', 'data': formData, 'csrf_token': '<?=$csrf_token?>'}, function(data){
+	$.post('<?=$urlzmadmin?>',{cmd: 'rollbackdataset', 'data': formData, 'csrf_token': '<?=$csrf_token?>'}, function(data){
 		if (data == 'Ok') {
 			top.Swal2.fire({
 				title: 'Success!',
 				icon:'success',
-				html: 'Dataset '+formData['zpool']+'/'+formData['name']+' created'
+				html: 'Rollback of Dataset '+formData['zdataset']+' Successful'
 			});
 		} else {
 			top.Swal2.fire({
 				title: 'Error!',
 				icon:'error',
-				html: 'Unable to create dataset '+formData['zpool']+'/'+formData['name']+'<br>Output: '+data
+				html: 'Unable to rollback dataset '+formData['zdataset']+'<br>Output: '+data
 			}); 
 		}
 		top.Shadowbox.close();
