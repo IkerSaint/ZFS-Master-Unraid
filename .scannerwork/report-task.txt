@@ -1,0 +1,6 @@
+projectKey=ZFS-Master
+serverUrl=http://sonarqube:9000
+serverVersion=9.4.0.54424
+dashboardUrl=http://sonarqube:9000/dashboard?id=ZFS-Master
+ceTaskId=AYALpY_Bb9YC_FYyXwZL
+ceTaskUrl=http://sonarqube:9000/api/ce/task?id=AYALpY_Bb9YC_FYyXwZL
