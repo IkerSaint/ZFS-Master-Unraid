@@ -95,7 +95,7 @@ switch ($_POST['cmd']) {
 			zfsnotify($docroot, "ZFS Rollback ", "Snapshot ".$_POST['data']." restored successfully", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "ZFS Rollback", "Unable to rollback to snapshopt ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			zfsnotify($docroot, "ZFS Rollback", "Unable to rollback to snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		break;
@@ -121,7 +121,7 @@ switch ($_POST['cmd']) {
 			zfsnotify($docroot, "ZFS Release", "Snapshot ".$_POST['data']." reference removed successfully", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "ZFS Release", "Unable to remove reference from snapshopt ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			zfsnotify($docroot, "ZFS Release", "Unable to remove reference from snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		break;
@@ -134,7 +134,7 @@ switch ($_POST['cmd']) {
 			zfsnotify($docroot, "ZFS Destroy", "Snapshot ".$_POST['data']." destroyed successfully", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "ZFS Destroy", "Unable to destroy snapshopt ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			zfsnotify($docroot, "ZFS Destroy", "Unable to destroy snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		break;
