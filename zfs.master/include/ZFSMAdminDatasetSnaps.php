@@ -141,11 +141,59 @@ window.onload = function() {
   }
 
   function holdSnapshot(snapshot) {
+	$.post('<?=$urlzmadmin?>',{cmd: 'holdsnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
+		if (data == 'Ok') {
+			top.Swal2.fire({
+				title: 'Success!',
+				icon:'success',
+				html: 'Hold of Snapshot '+snapshot+' Successful'
+			});
+		} else {
+			top.Swal2.fire({
+				title: 'Error!',
+				icon:'error',
+				html: 'Unable to add reference to snapshot '+snapshot+'<br>Output: '+data
+			}); 
+		}
+		top.Shadowbox.close();
+	});
   }
 
   function releaseSnapshot(snapshot) {
+	$.post('<?=$urlzmadmin?>',{cmd: 'releasesnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
+		if (data == 'Ok') {
+			top.Swal2.fire({
+				title: 'Success!',
+				icon:'success',
+				html: 'Release of Snapshot '+snapshot+' Successful'
+			});
+		} else {
+			top.Swal2.fire({
+				title: 'Error!',
+				icon:'error',
+				html: 'Unable to remove reference from snapshot '+snapshot+'<br>Output: '+data
+			}); 
+		}
+		top.Shadowbox.close();
+	});
   }
 
   function destroySnapshot(snapshot) {
+	$.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
+		if (data == 'Ok') {
+			top.Swal2.fire({
+				title: 'Success!',
+				icon:'success',
+				html: 'Destroy of Snapshot '+snapshot+' Successful'
+			});
+		} else {
+			top.Swal2.fire({
+				title: 'Error!',
+				icon:'error',
+				html: 'Unable to destroy snapshot '+snapshot+'<br>Output: '+data
+			}); 
+		}
+		top.Shadowbox.close();
+	});
   }
 </script>

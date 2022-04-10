@@ -92,14 +92,14 @@ switch ($_POST['cmd']) {
 		$ret = execCommand($cmd_line, $exec_result);
 
 		if ($ret == 0):
-			zfsnotify($docroot, "ZFS Rollback ", "Rollback ".$_POST['data']." restored successfully", $cmdoutput_str.$exec_result."","normal");
+			zfsnotify($docroot, "ZFS Rollback ", "Snapshot ".$_POST['data']." restored successfully", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
 			zfsnotify($docroot, "ZFS Rollback", "Unable to rollback to snapshopt ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		break;
-	case 'holdSnapshot':
+	case 'holdsnapshot':
 		$cmd_line = "zfs hold zfsmaster ".escapeshellarg($_POST['data']);
 
 		$ret = execCommand($cmd_line, $exec_result);
@@ -112,7 +112,7 @@ switch ($_POST['cmd']) {
 			echo $exec_result;
 		endif;
 		break;
-	case 'releaseSnapshot':
+	case 'releasesnapshot':
 		$cmd_line = "zfs release zfsmaster ".escapeshellarg($_POST['data']);
 
 		$ret = execCommand($cmd_line, $exec_result);
@@ -125,7 +125,7 @@ switch ($_POST['cmd']) {
 			echo $exec_result;
 		endif;
 		break;
-	case 'destroySnapshot':
+	case 'destroysnapshot':
 		$cmd_line = "zfs destroy -r ".escapeshellarg($_POST['data']);
 
 		$ret = execCommand($cmd_line, $exec_result);
@@ -134,7 +134,7 @@ switch ($_POST['cmd']) {
 			zfsnotify($docroot, "ZFS Destroy", "Snapshot ".$_POST['data']." destroyed successfully", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "ZFS Destroy", "Unable to remove destroy snapshopt ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			zfsnotify($docroot, "ZFS Destroy", "Unable to destroy snapshopt ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		break;
