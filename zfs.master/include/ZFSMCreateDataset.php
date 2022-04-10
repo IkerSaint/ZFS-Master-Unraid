@@ -130,7 +130,7 @@ input[type=email]{margin-top:8px;float:left}
 
 <body>
 	<div id="dataset-form-div" class="zfsm-dialog">
-		<form id="dataset-form" name="dataset-form" class="zfsm-form" action="<?echo $urlzmadmincreate?>" method="POST">
+		<form id="dataset-form" name="dataset-form" class="zfsm-form" method="POST">
 			<hr>
 				<div class="zfsm-title">Base Options</div>
 			<hr>

@@ -23,7 +23,7 @@
 		shell_exec($command);
 	}
 
-	function fromLetterToBytes($spacestr) {
+	function fromStringToBytes($spacestr) {
 		$return_number = (double)$spacestr;
 		
 		switch ($spacestr[-1]) {
@@ -41,10 +41,23 @@
 		  
 		return $return_number;
 	}
+
+	function fromBytesToString($bytes) {
+		$units = array('B', 'KB', 'MB', 'GB', 'TB'); 
+		
+		$bytes = max($bytes, 0); 
+    	$pow = floor(($bytes ? log($bytes) : 0) / log(1024)); 
+    	$pow = min($pow, count($units) - 1); 
+
+    	$bytes /= pow(1024, $pow);
+    	// $bytes /= (1 << (10 * $pow)); 
+
+    	return round($bytes, 2) . ' ' . $units[$pow]; 
+	}
 	  
 	function calculateFreePercent($used,$free) {
-		$used_tmp = fromLetterToBytes($used);
-		$free_tmp = fromLetterToBytes($free);
+		$used_tmp = fromStringToBytes($used);
+		$free_tmp = fromStringToBytes($free);
 		
 		$result = $free_tmp/($free_tmp+$used_tmp);
 		return $result*100;
@@ -132,6 +145,7 @@
 
 			$returnData[] = $cleanfunction($matches);
 		endforeach;
+
 		return $returnData;
 	}
 	
@@ -176,6 +190,17 @@
 			)
 		);
 	}
+
+	function cleanupSnapshotInfo($matched) {
+		return array(
+			'Name' => trim($matched['name']),
+			'Used' => trim($matched['used']),
+			'Refer' => trim($matched['refer']),
+			'Defer Destroy' => trim($matched['defer_destroy']),
+			'Holds' => trim($matched['userrefs']),
+			'Creation Date' => trim($matched['creation'])
+		);
+	}
 	
 	function filterDataset($dataset_name, $regex_array) {
 		if (count($regex_array) == 0):
@@ -190,7 +215,13 @@
 		
 		return false;
 	}
-	
+
+	function getZFSDatasetSnapshots($zdataset_name) {
+		$regex ="/^(?'name'[\w-]+(\/[\S-]+)?+)\s+(?'used'\d+.?)\s+(?'refer'\d+.?\d+.)\s+(?'defer_destroy'[\w-]+)\s+(?'userrefs'\d+)\s+(?'creation'.*)/";
+		$cmd_line = 'zfs list -o name,used,refer,defer_destroy,userrefs,creation -Hp -t snapshot '.$zdataset_name;
+
+		return processCmdLine($regex, $cmd_line, 'cleanupSnapshotInfo');
+	}
 	
 	function getZFSDatasetSnapInfo(&$zdataset) {
 		$zdataset['Snapshots'] = 0;

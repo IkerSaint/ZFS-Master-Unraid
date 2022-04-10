@@ -4,7 +4,7 @@
 <!ENTITY author		"IkerSaint">
 <!ENTITY version "2022.04.08.40">
 <!ENTITY launch     "Main">
-<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main">
+<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/pre-release">
 <!ENTITY pluginURL	"&gitURL;/&name;.plg">
 ]>
 
@@ -14,6 +14,10 @@
 		pluginURL="&pluginURL;"
 		min="6.9.2">
 <CHANGES>
+
+###2022.04.10
+- Add - Dataset Snapshot management (rollback, hold, release, destroy)
+- Fix - Installation script bug
 
 ###2022.04.08
 - Add - Set permissions for new Datasets
@@ -42,27 +46,25 @@
 </CHANGES>
 
 <!-- SOURCE FILE -->
-<FILE Name="/boot/config/plugins/&name;/&name;.tgz">
+<FILE Name="/boot/config/plugins/&name;/&name;-&version;.tgz">
 <URL>"&gitURL;/&name;-&version;.tgz"</URL>
 </FILE>
 
+<!-- PLUGIN INSTALL FILE -->
 <FILE Run="/bin/bash">
 <INLINE>
-# Install the packet.
-tar -xf /boot/config/plugins/&name;/&name;.tgz -C /usr/local/emhttp/plugins 2>/dev/null
+tar -xf /boot/config/plugins/&name;/&name;-&version;.tgz -C /usr/local/emhttp/plugins 2>/dev/null
 
 echo ""
 echo "-----------------------------------------------------------"
 echo " &name; has been installed."
-echo " Copyright 2021, &author;"
+echo " Copyright 2022, &author;"
 echo " Version: &version;"
 echo "-----------------------------------------------------------"
 echo ""
 </INLINE>
 </FILE>
 
-
-<!-- SOURCE FILE -->
 
 <!-- PLUGIN REMOVAL -->
 <FILE Run="/bin/bash" Method="remove">
@@ -73,7 +75,7 @@ rm -rf /usr/local/emhttp/plugins/&name;
 echo ""
 echo "-----------------------------------------------------------"
 echo " &name; has been removed."
-echo " Copyright 2021, &author;"
+echo " Copyright 2022, &author;"
 echo " Version: &version;"
 echo "-----------------------------------------------------------"
 echo ""
