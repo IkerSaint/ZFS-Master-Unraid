@@ -40,6 +40,7 @@ window.onload = function() {
     }
 }
 </script>
+
 <style type="text/css">	
   .zfs_table {
 	  display: block;
@@ -55,6 +56,10 @@ window.onload = function() {
 	  white-space: normal!important;
   }
 </style>
+
+<script src="<?autov('/webGui/javascript/dynamix.js')?>"></script>
+<script src="<?autov('/webGui/javascript/jquery.filetree.js')?>"></script>
+<script type="text/javascript" src="<?autov('/plugins/zfs.master/assets/sweetalert2.all.min.js');?>"></script>
 
 </head>
 
@@ -84,7 +89,7 @@ window.onload = function() {
 				elseif ($key == 'Used'):
 					echo '<span>'.fromBytesToString($zdetail).'</span>';
 				elseif ($key == "Refer"):
-					echo '<span>'.fromBytesToString($zdetail).'B</span>';
+					echo '<span>'.fromBytesToString($zdetail).'</span>';
 				elseif ($key == "Defer Destroy"):
 					echo '<span>'.$zdetail.'</span>';
 				elseif ($key == "Holds"):

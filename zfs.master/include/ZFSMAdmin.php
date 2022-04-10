@@ -86,6 +86,58 @@ switch ($_POST['cmd']) {
 			echo $exec_result;
 		endif;
 		break;
+	case 'rollbacksnapshot':
+		$cmd_line = "zfs rollback -rf ".escapeshellarg($_POST['data']);
+
+		$ret = execCommand($cmd_line, $exec_result);
+
+		if ($ret == 0):
+			zfsnotify($docroot, "ZFS Rollback ", "Rollback ".$_POST['data']." restored successfully", $cmdoutput_str.$exec_result."","normal");
+			echo 'Ok';
+		else:
+			zfsnotify($docroot, "ZFS Rollback", "Unable to rollback to snapshopt ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			echo $exec_result;
+		endif;
+		break;
+	case 'holdSnapshot':
+		$cmd_line = "zfs hold zfsmaster ".escapeshellarg($_POST['data']);
+
+		$ret = execCommand($cmd_line, $exec_result);
+
+		if ($ret == 0):
+			zfsnotify($docroot, "ZFS Hold", "Snapshot ".$_POST['data']." reference added successfully", $cmdoutput_str.$exec_result."","normal");
+			echo 'Ok';
+		else:
+			zfsnotify($docroot, "ZFS Hold", "Unable to add reference to snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			echo $exec_result;
+		endif;
+		break;
+	case 'releaseSnapshot':
+		$cmd_line = "zfs release zfsmaster ".escapeshellarg($_POST['data']);
+
+		$ret = execCommand($cmd_line, $exec_result);
+
+		if ($ret == 0):
+			zfsnotify($docroot, "ZFS Release", "Snapshot ".$_POST['data']." reference removed successfully", $cmdoutput_str.$exec_result."","normal");
+			echo 'Ok';
+		else:
+			zfsnotify($docroot, "ZFS Release", "Unable to remove reference from snapshopt ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			echo $exec_result;
+		endif;
+		break;
+	case 'destroySnapshot':
+		$cmd_line = "zfs destroy -r ".escapeshellarg($_POST['data']);
+
+		$ret = execCommand($cmd_line, $exec_result);
+
+		if ($ret == 0):
+			zfsnotify($docroot, "ZFS Destroy", "Snapshot ".$_POST['data']." destroyed successfully", $cmdoutput_str.$exec_result."","normal");
+			echo 'Ok';
+		else:
+			zfsnotify($docroot, "ZFS Destroy", "Unable to remove destroy snapshopt ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			echo $exec_result;
+		endif;
+		break;
 	default:
 		echo 'unknown command';
 		break;
