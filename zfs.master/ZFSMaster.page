@@ -161,8 +161,7 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 			elseif ($key == "Size"):
 				if ($zfsm_cfg['destructive_mode']):
 					echo '<button type="button" class="zfs_compact" onclick="destroyDataset(\''.$zdataset['Name'].'\');">Destroy</button>';
-					echo '<button type="button" class="zfs_compact" onclick="addDatasetContext(\''.$zdataset['Name'].'\', '.$zdataset['Snapshots']).');">Snaps</button>';
-					endif;
+					echo '<button type="button" class="zfs_compact" onclick="addDatasetContext(\''.$zdataset['Name'].'\', '.$zdataset['Snapshots'].');">Snaps</button>';
 				endif;
 
 				#echo '<a class="info hand">';
