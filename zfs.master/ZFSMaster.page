@@ -264,7 +264,7 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
   
   function toggleTable(zpool_id, trclass) {
 	var myArray = document.getElementsByClassName(trclass);
-	var myButton = document.getElementById(zpool_id)
+	var myButton = document.getElementById(zpool_id);
 
 	for (let mytr of myArray) {
 		if (mytr.style.display == "none") {
