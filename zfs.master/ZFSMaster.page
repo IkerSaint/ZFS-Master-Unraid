@@ -103,7 +103,7 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 				echo '</a> ';
 				echo $zdetail;
 			elseif ($key == "Name"):
-				echo '<button type="button" id="show-zpool-'.$zpool['Pool'].'" onclick="toggleTable(\'show-zpool-'.$zpool['Pool'].', \'zpool-'.$zpool['Pool'].'-datasets\');">Show Datasets</button>';
+				echo '<button type="button" id="show-zpool-'.$zpool['Pool'].'" onclick="toggleTable(\'show-zpool-'.$zpool['Pool'].'\', \'zpool-'.$zpool['Pool'].'-datasets\');">Show Datasets</button>';
 				echo '<button type="button" onclick="scrubPool(\''.$zpool['Pool'].'\')";">Scrub Pool</button>';
 				if ($zfsm_cfg['destructive_mode']):
 					echo '<button type="button" onclick="exportPool(\''.$zpool['Pool'].'\')";">Export Pool</button>';
