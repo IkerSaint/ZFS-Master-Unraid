@@ -67,7 +67,7 @@ _(Snapshots Pattern)_:
 :end
 
 _(Snapshots Prefix (Do not include the '@'))_:
-: <input type="text" name="snap_refix" value="<?=$zfsm_cfg['snap_refix']?>" placeholder="default blank">
+: <input type="text" name="snap_refix" value="<?=$zfsm_cfg['snap_prefix']?>" placeholder="default blank">
 
 :zc_settings_snapshots_prefix_plug:
 > Prefix for the name of the snapshots taken through the interface eg: pattern:"Y-m-d-His", prefix:"zfs-master-" snapshot name: "tank/my_dataset@zfs-master-2022-04-13-171920".
