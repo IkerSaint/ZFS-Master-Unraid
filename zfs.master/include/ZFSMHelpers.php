@@ -7,10 +7,12 @@
 		$zfsm_dataset_exclussion = isset($config['general']['exclussion']) ? $config['general']['exclussion'] : '';
 		
 		$zfsm_ret['snap_max_days_alert'] = isset($config['general']['snap_max_days_alert']) ? intval($config['general']['snap_max_days_alert']) : 30;
-		$zfsm_ret['snap_pattern'] = isset($config['general']['snap_pattern']) ? $config['general']['snap_pattern'] : 'Y-m-d-His';
+		$zfsm_ret['snap_prefix'] = isset($config['general']['snap_prefix']) ? $config['general']['snap_prefix'] : '';
 
-		if ($zfsm_ret['snap_pattern'] == ''):
+		if (!isset($config['general']['snap_pattern']) || $config['general']['snap_pattern'] == ''):
 			$zfsm_ret['snap_pattern'] = 'Y-m-d-His';
+		else:
+			$zfsm_ret['snap_pattern'] = $config['general']['snap_pattern'];
 		endif;
 		
 		if ($explode):
