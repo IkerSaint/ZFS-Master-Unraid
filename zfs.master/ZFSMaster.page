@@ -161,7 +161,7 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 			elseif ($key == "Size"):
 				if ($zfsm_cfg['destructive_mode']):
 					echo '<button type="button" class="zfs_compact" onclick="destroyDataset(\''.$zdataset['Name'].'\');">Destroy</button>';
-					$id = uniqid();
+					$id = md5($zdataset['Name']);
 					echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zdataset['Name'].'\', '.$zdataset['Snapshots'].', \''.$id.'\');" class="zfs_compact hand">Snaps</button></span>';
 				endif;
 
@@ -212,6 +212,10 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 	  addButtons();
 	  setInterval(function () { refreshInfo() }, <?=$zfsm_cfg['refresh_interval']?>*1000);
   });
+
+  $(document).click(function() {
+	  removeContext();
+  })
   
   function refreshInfo() {
 	  replaceElementClass("#zfsm-refresh", "fa-refresh", "fa-spinner fa-spin");
@@ -319,6 +323,13 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
     }, 1);
   }
 
+  function removeContext() {
+	$(`[id*="dropdown-"]`).each(function() {
+		if (!$(this).hasClass('dropdown-menu-context')) {
+			$(this).hide()
+		}
+    })
+  }
 
   function takeDatasetSnapshot(zdataset) {
 	  Swal2.fire({
