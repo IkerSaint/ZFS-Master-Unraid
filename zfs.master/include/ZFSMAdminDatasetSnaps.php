@@ -25,6 +25,45 @@ $zdataset_snaps = getZFSDatasetSnapshots($zdataset);
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="same-origin">
 
+<style type="text/css">	
+#zfs_master.disk_status.zfs_snap_table thead tr td{
+  text-align: center !important ;
+}
+#zfs_master.disk_status.zfs_snap_table thead tr td:nth-child(4){
+  white-space: normal;
+  padding: 0 12px;
+}
+#zfs_master.disk_status.zfs_snap_table tbody tr td{
+  padding-left: 0;
+  text-align: center;
+  white-space: nowrap;
+}
+#zfs_master.disk_status.zfs_snap_table tbody tr td:first-child{
+  padding-left: 12px;
+  white-space: normal;
+}
+#zfs_master.disk_status.zfs_snap_table tbody tr td:last-child{
+  display: table-cell;
+  vertical-align: middle;
+  padding: 0 10px;
+}
+#zfs_master.disk_status.zfs_snap_table tbody tr td:last-child span:first-child{
+  margin-left: 0;
+}
+#zfs_master.disk_status.zfs_snap_table tbody tr td:last-child span{
+  margin: 0 5px;
+  float: none;
+  padding: 0;
+}
+#zfs_master.disk_status.zfs_snap_table tbody tr td:last-child span:last-child{
+  margin-right: 0;
+}
+#zfs_master.disk_status thead tr>td+td+td+td, #zfs_master.disk_status thead tr>td+td+td, #zfs_master.disk_status thead tr>td{
+  padding: 0;
+  text-align: center;
+}
+</style>
+
 <script type="text/javascript">
 window.onload = function() {
     if (parent) {
@@ -42,7 +81,7 @@ window.onload = function() {
 </script>
 
 <style type="text/css">	
-  .zfs_table {
+  .zfs_snap_table {
 	  display: block;
 	  width: 96%;
 	  border: 1px solid #ccc;
@@ -65,7 +104,7 @@ window.onload = function() {
 
 <body>
 	<div id="adminsnaps-form-div" class="zfsm-dialog">
-	<table id="zfs_master" class="zfs_table disk_status wide">
+	<table id="zfs_master" class="zfs_snap_table disk_status wide">
 	<thead>
 		<tr>
 		<td>Name</td>
