@@ -25,6 +25,9 @@ $zdataset_snaps = getZFSDatasetSnapshots($zdataset);
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="same-origin">
 
+
+
+
 <style type="text/css">	
 #zfs_master.disk_status.zfs_snap_table thead tr td{
   text-align: center !important ;
@@ -41,7 +44,9 @@ $zdataset_snaps = getZFSDatasetSnapshots($zdataset);
 #zfs_master.disk_status.zfs_snap_table tbody tr td:first-child{
   padding-left: 12px;
   white-space: normal;
+  word-break: break-all; 
 }
+
 #zfs_master.disk_status.zfs_snap_table tbody tr td:last-child{
   display: table-cell;
   vertical-align: middle;
@@ -50,6 +55,7 @@ $zdataset_snaps = getZFSDatasetSnapshots($zdataset);
 #zfs_master.disk_status.zfs_snap_table tbody tr td:last-child span:first-child{
   margin-left: 0;
 }
+
 #zfs_master.disk_status.zfs_snap_table tbody tr td:last-child span{
   margin: 0 5px;
   float: none;
@@ -61,6 +67,10 @@ $zdataset_snaps = getZFSDatasetSnapshots($zdataset);
 #zfs_master.disk_status thead tr>td+td+td+td, #zfs_master.disk_status thead tr>td+td+td, #zfs_master.disk_status thead tr>td{
   padding: 0;
   text-align: center;
+}
+
+#adminsnaps-form-div #zfs_master.disk_status tr>td{
+  width: auto;
 }
 </style>
 
