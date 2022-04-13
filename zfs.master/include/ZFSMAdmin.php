@@ -138,6 +138,21 @@ switch ($_POST['cmd']) {
 			echo $exec_result;
 		endif;
 		break;
+	case 'snapshotdataset':
+		$recursively = ($_POST['recursively'] == '1') ? '-f ' : '';
+		$format = date("@Y-m-d-His");
+		$cmd_line = 'zfs snapshot '.$recursively.escapeshellarg($_POST['data']).escapeshellarg($format).$boutput_str;
+	
+		$ret = execCommand($cmd_line, $exec_result);
+	
+		if ($ret == 0):
+			zfsnotify($docroot, "ZFS Snapshot", "Snapshot ".$_POST['data']." created successfully", $cmdoutput_str.$exec_result."","normal");
+			echo 'Ok';
+		else:
+			zfsnotify($docroot, "ZFS Snapshot", "Unable to take snapshot of ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			echo $exec_result;
+		endif;
+		break;
 	default:
 		echo 'unknown command';
 		break;

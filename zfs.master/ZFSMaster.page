@@ -161,11 +161,7 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 			elseif ($key == "Size"):
 				if ($zfsm_cfg['destructive_mode']):
 					echo '<button type="button" class="zfs_compact" onclick="destroyDataset(\''.$zdataset['Name'].'\');">Destroy</button>';
-
-					if ($zdataset['Snapshots'] > 0):
-						echo '<button type="button" class="zfs_compact" onclick="adminDatasetSnaps(\''.$zdataset['Name'].'\');">Snaps</button>';
-					else:
-						echo '<button type="button" class="zfs_compact" onclick="adminDatasetSnaps(\''.$zdataset['Name'].'\');" disabled>Snaps</button>';
+					echo '<button type="button" class="zfs_compact" onclick="addDatasetContext(\''.$zdataset['Name'].'\', $zdataset['Snapshots']);">Snaps</button>';
 					endif;
 				endif;
 
@@ -287,10 +283,71 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 	  openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,"Create Dataset",550,680,false);
   }
 
+  function addDatasetContext(dataset, snapscount) {
+    var opts = [];
+
+	opts.push({ divider: true });
+
+    opts.push({
+        text: _("Take Snapshot"),
+        icon: "fa-camera-retro",
+		action: function (e) {
+			e.preventDefault();
+			takeDatasetSnapshot(dataset);
+        },
+    });
+    
+	if (snapscount >= 1) {
+        opts.push({
+			text: _("Snapshots Admin"),
+			icon: "fa-toolbox",
+			action: function(e) {
+				e.preventDefault();
+				adminDatasetSnaps(dataset);
+			},
+		});
+    }
+
+    context.attach("#" + id, opts);
+  }
+
+
+  function takeDatasetSnapshot(zdataset) {
+	  Swal2.fire({
+		  title: '<strong>Take Dataset <br>'+zdataset+'</strong> Snapshot',
+		  icon: 'question',
+		  html: 'This operation will take a Snapshot of the Dataset, are you sure?',
+		  input: 'checkbox',
+		  inputPlaceholder: 'Recursively create snapshots of all descendent datasets',
+		  showConfirmButton: true,
+		  confirmButtonText: "Snapshot",
+		  showCancelButton: true
+	  }).then((result) => {
+		  if (result.isConfirmed) {
+			  $.post('<?=$urlzmadmin?>',{cmd: 'snapshotdataset', data: zdataset, recursively: result.value}, function(data) {
+				  if (data == 'Ok') {
+					Swal2.fire({
+						title: 'Success!',
+						icon: 'success',
+						text: 'Snapshot of '+zdataset+' created'
+					});
+				  } else {
+					Swal2.fire({
+						title: 'Error!',
+						icon: 'error',
+						html: 'Unable to take a snapshot of dataset '+zdataset+'<br>Output: '+data
+					}); 
+				  }
+			  });
+		  }
+	  });
+  }
+
   function adminDatasetSnaps(zdataset) {
 	  var csrf_token = $("input[name='csrf_token']").val();	  
 	  openBox('<?=$urladmindatasetsnaps?>?zdataset='+zdataset+'&csrf_token='+csrf_token,"Admin Dataset Snapshots",680,800,false);
   }
+  
   
   function destroyDataset(zdataset) {
 	  Swal2.fire({
