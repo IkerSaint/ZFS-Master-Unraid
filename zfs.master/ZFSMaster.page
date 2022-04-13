@@ -161,12 +161,11 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 			elseif ($key == "Size"):
 				if ($zfsm_cfg['destructive_mode']):
 					echo '<button type="button" class="zfs_compact" onclick="destroyDataset(\''.$zdataset['Name'].'\');">Destroy</button>';
-					echo '<button type="button" class="zfs_compact" onclick="addDatasetContext(\''.$zdataset['Name'].'\', '.$zdataset['Snapshots'].', \'zfs-menu-'.$zdataset['Name'].'\');">Snaps</button>';
+					$id = uniqid();
+					echo '<script type="text/javascript">addDatasetContext(\''.$zdataset['Name'].'\', '.$zdataset['Snapshots'].', \''.$id.'\');</script>';
+					echo '<button type="button" id="\''.$id.'\'" onclick="showContextMenu(\''.$id.'\');" class="zfs_compact hand">Snaps</button></span>';
 				endif;
 
-				#echo '<a class="info hand">';
-				#echo '<i class="zfs_bar_button fa fa-gears" onclick="modifyDataset(\''.$zdataset['Name'].'\');"></i>';
-				#echo '</a>';
 			elseif ($key == "Used"):
 				$percent = 100-round(calculateFreePercent($zdataset['Used'], $zdataset['Free']));
 				echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.$zdatasetdetail.'B</span></div>';
@@ -299,15 +298,27 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 	if (snapscount >= 1) {
         opts.push({
 			text: _("Snapshots Admin"),
-			icon: "fa-toolbox",
+			icon: "fa-gears",
 			action: function(e) {
 				e.preventDefault();
 				adminDatasetSnaps(dataset);
 			},
 		});
     }
-
     context.attach("#" + id, opts);
+  }
+
+  function showContextMenu(id) {
+	var pos = document.getElementById(id);
+	setTimeout(function(){
+		let height = $(`#dropdown-${id}`).height()
+			$(`#dropdown-${id}`).css({
+				position: 'absolute',
+				top: pos.pageY + 25,
+				left: pos.pageX - 13,
+				display: 'block'
+			})
+    }, 1)
   }
 
 
