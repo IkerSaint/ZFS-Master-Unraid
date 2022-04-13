@@ -36,8 +36,8 @@ _(Destructive Mode)_:
   </select>
   
 :zc_settings_destructive_mode_plug:
-> + Set to **Yes** to enable "destroy" option for Datasets.
-> + Set to **No** to disable "destroy" option for Datasets.
+> + Set to **Yes** to enable additional options for Pools and Datasets.
+> + Set to **No** to disable additional options for Pools Datasets.
 :end
 
 <div id="title" class="nocontrol">_(Datasets)_</div>
