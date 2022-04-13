@@ -143,7 +143,7 @@ switch ($_POST['cmd']) {
 	case 'snapshotdataset':
 		$recursively = ($_POST['recursively'] == '1') ? '-r ' : '';
 		$format = '@'.$zfsm_cfg['snap_prefix'].date($zfsm_cfg['snap_pattern']);
-		$cmd_line = 'zfs snapshot '.$recursively.escapeshellarg($_POST['data'].escapeshellarg($format)).$boutput_str;
+		$cmd_line = 'zfs snapshot '.$recursively.escapeshellarg($_POST['data'].$format).$boutput_str;
 	
 		$ret = execCommand($cmd_line, $exec_result);
 	
