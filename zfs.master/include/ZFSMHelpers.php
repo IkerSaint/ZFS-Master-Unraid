@@ -51,7 +51,6 @@
     	$pow = min($pow, count($units) - 1); 
 
     	$bytes /= pow(1024, $pow);
-    	// $bytes /= (1 << (10 * $pow)); 
 
     	return round($bytes, 2) . ' ' . $units[$pow]; 
 	}
