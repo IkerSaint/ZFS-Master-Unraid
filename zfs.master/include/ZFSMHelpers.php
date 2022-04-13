@@ -7,6 +7,7 @@
 		$zfsm_dataset_exclussion = isset($config['general']['exclussion']) ? $config['general']['exclussion'] : '';
 		
 		$zfsm_ret['snap_max_days_alert'] = isset($config['general']['snap_max_days_alert']) ? intval($config['general']['snap_max_days_alert']) : 30;
+		$zfsm_ret['snap_pattern'] = isset($config['general']['snap_pattern']) ? $config['general']['refresh_interval'] : 'Y-m-d-His';
 		
 		if ($explode):
 			$zfsm_ret['dataset_exclussion'] = preg_split('/\r\n|\r|\n/', $zfsm_dataset_exclussion);

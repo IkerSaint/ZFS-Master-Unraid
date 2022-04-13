@@ -6,6 +6,8 @@ require_once "$docroot/webGui/include/Helpers.php";
 require_once "ZFSMConstants.php";
 require_once "ZFSMHelpers.php";
 
+$zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
+
 $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
 // String literals
@@ -140,7 +142,7 @@ switch ($_POST['cmd']) {
 		break;
 	case 'snapshotdataset':
 		$recursively = ($_POST['recursively'] == '1') ? '-f ' : '';
-		$format = date("@Y-m-d-His");
+		$format = date($zfsm_cfg['snap_pattern']);
 		$cmd_line = 'zfs snapshot '.$recursively.escapeshellarg($_POST['data']).escapeshellarg($format).$boutput_str;
 	
 		$ret = execCommand($cmd_line, $exec_result);

@@ -162,8 +162,7 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 				if ($zfsm_cfg['destructive_mode']):
 					echo '<button type="button" class="zfs_compact" onclick="destroyDataset(\''.$zdataset['Name'].'\');">Destroy</button>';
 					$id = md5($zdataset['Name']);
-					$display_snap = ($zdataset['Snapshots'] >= 1) ? '' : 'disabled';
-					echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zdataset['Name'].'\', '.$zdataset['Snapshots'].', \''.$id.'\');" class="zfs_compact" '.$display_snap.'>Snaps</button></span>';
+					echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zdataset['Name'].'\', '.$zdataset['Snapshots'].', \''.$id.'\');" class="zfs_compact">Actions</button></span>';
 				endif;
 
 			elseif ($key == "Used"):
@@ -311,17 +310,15 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
     }
     context.attach("#" + id, opts);
 
-	var father = document.getElementById(id);
+	var father = document.getElementById(id).style;
 
-	setTimeout(function(){
-		let height = $(`#dropdown-${id}`).height()
-			$(`#dropdown-${id}`).css({
-				position: 'absolute',
-				top: father.style.pageY + 5,
-				left: father.style.pageX - 10,
-				display: 'block'
-			})
-    }, 1);
+	let height = $(`#dropdown-${id}`).height()
+		$(`#dropdown-${id}`).css({
+			position: 'absolute',
+			top: father.pageY,
+			left: father.pageX,
+			display: 'block'
+		})
   }
 
   function removeContext() {

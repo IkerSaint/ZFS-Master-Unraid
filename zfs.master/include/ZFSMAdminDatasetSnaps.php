@@ -26,8 +26,6 @@ $zdataset_snaps = getZFSDatasetSnapshots($zdataset);
 <meta name="referrer" content="same-origin">
 
 
-
-
 <style type="text/css">	
 #zfs_master.disk_status.zfs_snap_table thead tr td{
   text-align: center !important ;

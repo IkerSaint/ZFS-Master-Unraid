@@ -46,7 +46,7 @@ _(Datasets Exclussion Patterns (One per line))_:
 /^tank\/downloads\/myhiddendataset\/.*/"><?=$zfsm_cfg['dataset_exclussion']?></textarea>
 
 :zc_settings_datasets_exclussion_plug:
-> Regular expression (With the start and end backslash) to be used for datasets excluded from the listing. Dataset descendants and snapshots also will be excluded.
+> Regular expression (With the start and end backslash) to be used for datasets listing exclussion. Dataset descendants and snapshots also will be excluded.
 > This could speed up the Information refresh process.
 :end
 
@@ -56,6 +56,13 @@ _(Snapshots Icon Alert Max Days)_:
 
 :zc_settings_datasets_exclussion_plug:
 > Maximum days old for Snapshots before the icon color in the main UI changes to orange.
+:end
+
+_(Snapshots Pattern)_:
+: <input type="text" name="snap_pattern" value="<?=$zfsm_cfg['snap_pattern']?>" placeholder="default Y-m-d-His">
+
+:zc_settings_datasets_pattern_plug:
+> Pattern for the name of the snapshots taken through the interface eg: pattern:"my-snaps-Y-m-d-His" snapshot name: "tank/my_dataset@my-snaps-2022-04-13-171920".
 :end
 
 &nbsp;
