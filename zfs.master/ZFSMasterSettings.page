@@ -66,7 +66,7 @@ _(Snapshots Pattern)_:
 > Reference https://www.php.net/manual/en/function.date.php
 :end
 
-_(Snapshots Prefix (Do not include the '@'))_:
+_(Snapshots Prefix (Do not include the '@' or spaces))_:
 : <input type="text" name="snap_prefix" value="<?=$zfsm_cfg['snap_prefix']?>" placeholder="default blank">
 
 :zc_settings_snapshots_prefix_plug:
