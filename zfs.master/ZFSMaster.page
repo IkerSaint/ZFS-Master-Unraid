@@ -159,12 +159,8 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 				echo '</a>';
 				echo $zdatasetdetail;
 			elseif ($key == "Size"):
-				if ($zfsm_cfg['destructive_mode']):
-					echo '<button type="button" class="zfs_compact" onclick="destroyDataset(\''.$zdataset['Name'].'\');">Destroy</button>';
-					$id = md5($zdataset['Name']);
-					echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zdataset['Name'].'\', '.$zdataset['Snapshots'].', \''.$id.'\');" class="zfs_compact">Actions</button></span>';
-				endif;
-
+				$id = md5($zdataset['Name']);
+				echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zdataset['Name'].'\', '.$zdataset['Snapshots'].', \''.$id.'\', \'.$zfsm_cfg['destructive_mode'].');" class="zfs_compact">Actions</button></span>';
 			elseif ($key == "Used"):
 				$percent = 100-round(calculateFreePercent($zdataset['Used'], $zdataset['Free']));
 				echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.$zdatasetdetail.'B</span></div>';
@@ -284,8 +280,19 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 	  openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,"Create Dataset",550,680,false);
   }
 
-  function addDatasetContext(dataset, snapscount, id) {
+  function addDatasetContext(zdataset, snapscount, id, destructive_mode) {
     var opts = [];
+
+	if (destructive_mode != 0) {
+		opts.push({
+			text: _("Destroy Dataset"),
+			icon: "fa-trash",
+			action: function (e) {
+				e.preventDefault();
+				destroyDataset(zdataset);
+			},
+		});
+	}
 
 	opts.push({ divider: true });
 
@@ -294,7 +301,7 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
         icon: "fa-camera-retro",
 		action: function (e) {
 			e.preventDefault();
-			takeDatasetSnapshot(dataset);
+			takeDatasetSnapshot(zdataset);
         },
     });
     
@@ -304,10 +311,11 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 			icon: "fa-gears",
 			action: function(e) {
 				e.preventDefault();
-				adminDatasetSnaps(dataset);
+				adminDatasetSnaps(zdataset);
 			},
 		});
     }
+
     context.attach("#" + id, opts);
 
 	var father = document.getElementById(id).style;
