@@ -160,7 +160,7 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 				echo $zdatasetdetail;
 			elseif ($key == "Size"):
 				$id = md5($zdataset['Name']);
-				echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zdataset['Name'].'\', '.$zdataset['Snapshots'].', \''.$id.'\', \'.$zfsm_cfg['destructive_mode'].');" class="zfs_compact">Actions</button></span>';
+				echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zdataset['Name'].'\', '.$zdataset['Snapshots'].', \''.$id.'\', '.$zfsm_cfg['destructive_mode'].');" class="zfs_compact">Actions</button></span>';
 			elseif ($key == "Used"):
 				$percent = 100-round(calculateFreePercent($zdataset['Used'], $zdataset['Free']));
 				echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.$zdatasetdetail.'B</span></div>';
