@@ -167,15 +167,17 @@ function cleanupZPoolInfo($matched) {
 	);
 }
 
-function orderDatasetArrayRows($dataset_array){
-	ksort($dataset_array['child']);
-	ksort($dataset_array['snapshots']);
-
-	foreach ($dataset_array['child'] as $zdataset):
-		if (count($zdataset['child']) > 0):
-			orderDatasetArrayRows($zdataset);
+function sortDatasetArray($datasetArray) {
+	ksort($datasetArray['child']);
+	ksort($datasetArray['snapshots']);
+	
+	foreach ($datasetArray['child'] as $dataset):
+		if (count($dataset['child'])>0):
+			$datasetArray['child'][$dataset['name']] = sortArray($dataset);
 		endif;
 	endforeach;
+	
+	return $datasetArray;
 }
 
 function getZFSPoolDatasets($zpool, $exc_pattern) {
@@ -183,7 +185,7 @@ function getZFSPoolDatasets($zpool, $exc_pattern) {
 
 	$json_ret = shell_exec($cmd_line.' 2>&1');
 	
-	return json_decode($json_ret, true)['return'];
+	return sortDatasetArray(json_decode($json_ret, true)['return']);
 }
 
 function getLastSnap($zsnapshots) {
@@ -282,7 +284,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 }
 
 function generateDatasetArrayRows($zpool, $dataset_array, $display, $zfsm_cfg){
-//	ksort($dataset_array['child']);
+	//ksort($dataset_array['child']);
 
 	foreach ($dataset_array['child'] as $zdataset):
 		generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg);
