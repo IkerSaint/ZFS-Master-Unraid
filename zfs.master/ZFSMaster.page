@@ -6,8 +6,10 @@ Cond="file_exists('/usr/sbin/zpool')"
 <?php
 
 $plugin = "zfs.master";
-require_once "/plugins/".$plugin."/include/ZFSMBase.php";
-require_once "/plugins/".$plugin."/include/ZFSMHelpers.php";
+$docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
+
+require_once $docroot."/plugins/".$plugin."/include/ZFSMBase.php";
+require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
 
 $refreshbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="refreshInfo()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a></span>';
 $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a></span>';
