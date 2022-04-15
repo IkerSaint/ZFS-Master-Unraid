@@ -186,6 +186,99 @@ function getLastSnap($zsnapshots) {
 
 	return $lastsnap;
 }
+
+function generateDatasetRow($zdataset, $display, $zfsm_cfg) {
+	echo '<tr class="zdataset-'.$zdataset['name'].'" style="display: '.$display.'">';
+	echo '<td>';
+	echo '</td>';
+	echo '<td>';
+	echo '</td>';
+	echo '<td>';
+		$tmp_array = ["Creation Date" =>  $zdataset['creation'],
+				"Compression" =>  $zdataset['compression'],
+				"Compress Ratio" => $zdataset['compressratio']/100,
+				"Record Size" =>  $zdataset['recordsize'],
+				"Access Time" =>  $zdataset['atime'],
+				"XAttr" =>  $zdataset['xattr'],
+				"Primary Cache" =>  $zdataset['primarycache'],
+				"Quota" =>  $zdataset['quota'],
+				"Read Only" =>  $zdataset['readonly'],
+				"Case Sensitive" =>  $zdataset['casesensitive'],
+				"Sync" =>  $zdataset['sync'],
+				"Space used by Snaps" =>  $zdataset['snapused']];
+
+		$icon_color = 'grey';
+			
+		if (count($zdataset['snapshots']) > 0):
+			$snap = getLastSnap($zdataset['snapshots']);
+									
+			$snapdate = new DateTime();
+			$snapdate->setTimestamp($snap['creation']);
+				
+			if (daysToNow($snap['creation']) > $zfsm_cfg['snap_max_days_alert']):
+				$icon_color = 'orange';
+			else:
+				$icon_color = '#486dba';
+			endif;
+				
+			$tmp_array['Last Snap Date'] = $snapdate->format('Y-m-d H:i:s');
+			$tmp_array['Last Snap'] = $snap['name'];
+		endif;
+			
+		echo '<a class="info hand">';
+		echo '<i class="fa fa-hdd-o icon" style="color:'.$icon_color.'"></i>';
+		echo '<span>'.implodeWithKeys('<br>', $tmp_array).'</span>';
+		echo '</a>';
+		echo $zdataset['name'];
+	echo '</td>';
+	echo '<td>';
+		$id = md5($zdataset['name']);
+		echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zdataset['name'].'\', '.count($zdataset['snapshots']).', \''.$id.'\', '.$zfsm_cfg['destructive_mode'].');" class="zfs_compact">Actions</button></span>';
+	echo '</td>';
+
+	echo '<td>';
+		$percent = 100-round(calculateFreePercent($zdataset['used'], $zdataset['available']));
+		echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.fromBytesToString($zdataset['used']).'</span></div>';
+	echo '</td>';
+	echo '<td>';
+		$percent = round(calculateFreePercent($zdataset['used'], $zdataset['available']));
+		echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.fromBytesToString($zdataset['available']).'</span></div>';
+	echo '</td>';
+	echo '<td>';
+		echo fromBytesToString($zdataset['referenced']);
+	echo '</td>';
+	echo '<td>';
+		echo $zdataset['mountpoint'];
+	echo '</td>';
+	echo '<td>';
+		$icon_color = 'grey';
+		
+		if (count($zdataset['snapshots']) > 0):
+			$snap = getLastSnap($zdataset['snapshots']);
+			$days = daysToNow($snap['creation']);
+			
+			if ($days > $zfsm_cfg['snap_max_days_alert']):
+				$icon_color = 'orange';
+			else:
+				$icon_color = '#486dba';
+			endif;
+		endif;
+	
+		echo '<i class="fa fa-camera-retro icon" style="color:'.$icon_color.'"></i> ';
+		echo count($zdataset['snapshots']);
+	echo '</td>';
+	echo '</tr>';
+}
+
+function generateDatasetArrayRows($dataset_array, $display, $zfsm_cfg){
+	foreach ($dataset_array['child'] as $zdataset):
+		generateDatasetRow($zdataset, $display, $zfsm_cfg);
+
+		if (count($zdataset['child']) > 0):
+			generateDatasetArrayRows($zdataset['child'], $display, $zfsm_cfg);
+		endif;
+	endforeach;
+}
 	
 function getZFSPoolDevices($zpool) {
 	$cmd_line = "zpool status -v ".$zpool." | awk 'NR > 8 {print last} {last=$1}'";
