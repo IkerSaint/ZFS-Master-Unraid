@@ -5,30 +5,28 @@ Cond="file_exists('/usr/sbin/zpool')"
 ---
 <?php
 
-$plugin = "zfs.master";
-$docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
-$urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
-$urlcreatedataset = "/plugins/".$plugin."/include/ZFSMCreateDataset.php";
-$urladmindatasetsnaps = "/plugins/".$plugin."/include/ZFSMAdminDatasetSnaps.php";
+require_once "/include/ZFSMBase.php";
+require_once "/include/ZFSMHelpers.php";
+
 $refreshbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="refreshInfo()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a></span>';
 $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a></span>';
-
-require_once "$docroot/plugins/$plugin/include/ZFSMConstants.php";
-require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
-
-$zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
  
-  $zpool_global = getZFSPools(); 
-  $zpool_datasets = array();
-  $zpool_devices = array();
+$zpool_global = getZFSPools(); 
+$zpool_datasets = array();
+$zpool_devices = array();
 
-  foreach ($zpool_global as $zpool):
-	 $snapscount = 0;
-	 $zpool_devices[$zpool['Pool']] = getZFSPoolDevices($zpool['Pool']);
-	 $zpool_datasets[$zpool['Pool']] = getZFSPoolDatasets($zpool['Pool'], $snapscount, $zfsm_cfg['dataset_exclussion']);
-	 $zpool_global[$zpool['Pool']]['Snapshots'] = $snapscount;
-	 $zpool_global[$zpool['Pool']]['MountPoint'] = $zpool_datasets[$zpool['Pool']][0]['MountPoint'];
-  endforeach;
+foreach ($zpool_global as $zpool):
+	$snapscount = 0;
+	$zpool_name = $zpool['Pool'];
+
+	$zpool_devices[] = getZFSPoolDevices($zpool_name);
+	$zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclussion']);
+	$zpool_global[$zpool_name]['Snapshots'] = $snapscount;
+	$zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
+endforeach;
+
+vardump($zpool_global,true)
+
 ?>
 
 <link type="text/css" rel="stylesheet" href="/webGui/styles/font-awesome.css?v=1545863026">
