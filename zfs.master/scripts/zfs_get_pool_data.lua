@@ -39,7 +39,7 @@ function list_datasets(root, exclussion_pattern)
 		if (string.match(child, exclussion_pattern)) then
 			goto continue
 		end
-		table.insert(dataset['child'], list_datasets(child, exclussion_pattern))
+		dataset['child'][child] = list_datasets(child, exclussion_pattern);
 		::continue::
     end
 	

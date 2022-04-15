@@ -1,10 +1,5 @@
 <?php
 
-$plugin = "zfs.master";
-$docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
-
-require_once $docroot."/plugins/".$plugin."/include/ZFSMBase.php";
-
 function loadConfig($config) {	
 	$zfsm_ret['refresh_interval'] = isset($config['general']['refresh_interval']) ? intval($config['general']['refresh_interval']) : 30;
 	$zfsm_ret['destructive_mode'] = isset($config['general']['destructive_mode']) ? intval($config['general']['destructive_mode']) : 0;
@@ -178,6 +173,18 @@ function getZFSPoolDatasets($zpool, $exc_pattern) {
 	$json_ret = shell_exec($cmd_line.' 2>&1');
 	
 	return json_decode($json_ret, true)['return'];
+}
+
+function getLastSnap($zsnapshots) {
+	$lastsnap = $zsnapshots[0];
+
+	foreach ($zsnapshots as $snap):
+		if ($snap['creation'] > $lastsnap['creation']):
+			$lastsnap = $snap;
+		endif;
+	endforeach;
+
+	return $lastsnap;
 }
 	
 function getZFSPoolDevices($zpool) {
