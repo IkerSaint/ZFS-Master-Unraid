@@ -16,53 +16,18 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $refreshbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="refreshInfo()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a></span>';
 $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a></span>';
 
-$need_refresh = false;
-
 $zpool_global = getZFSPools();
 $zpool_devices = array();
 $zpool_datasets = array();
 
-if (isset($_SESSION["zpool_global"])) {
-	$zpool_global = $_SESSION["zpool_global"];
-	$zpool_datasets = $_SESSION["zpool_datasets"];
-	$zpool_devices = $_SESSION["zpool_devices"];
+foreach ($zpool_global as $zpool):
+	$zpool_name = $zpool['Pool'];
 
-	$tmp_global = getZFSPools();
-	$tmp_devices = array();
-	$tmp_datasets = array();
-
-	foreach ($tmp_global as $zpool):
-		$zpool_name = $zpool['Pool'];
-
-		$tmp_devices[$zpool_name] = getZFSPoolDevices($zpool_name);
-		$tmp_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclussion']);
-		$tmp_global[$zpool_name]['Snapshots'] = $tmp_datasets[$zpool_name]['total_snapshots'];
-		$tmp_global[$zpool_name]['MountPoint'] = $tmp_datasets[$zpool_name]['mountpoint'];
-	endforeach;
-
-	if ($zpool_global != $tmp_global || $zpool_devices != $tmp_devices || $zpool_datasets == $tmp_datasets)
-		$need_refresh = true;
-	endif;
-endif;
-
-if ($need_refresh):
-	$zpool_global = getZFSPools();
-
-	foreach ($zpool_global as $zpool):
-		$zpool_name = $zpool['Pool'];
-
-		$zpool_devices[$zpool_name] = getZFSPoolDevices($zpool_name);
-		$zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclussion']);
-		$zpool_global[$zpool_name]['Snapshots'] = $zpool_datasets[$zpool_name]['total_snapshots'];
-		$zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
-	endforeach;
-
-	$_SESSION["zpool_global"] = $zpool_global;
-	$_SESSION["zpool_datasets"] = $zpool_datasets;
-	$_SESSION["zpool_devices"] = $zpool_devices;
-
-	echo 'need_refresh';
-endif;
+	$zpool_devices[$zpool_name] = getZFSPoolDevices($zpool_name);
+	$zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclussion']);
+	$zpool_global[$zpool_name]['Snapshots'] = $zpool_datasets[$zpool_name]['total_snapshots'];
+	$zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
+endforeach;
 
 ?>
 
