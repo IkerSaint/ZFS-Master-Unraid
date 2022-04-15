@@ -14,6 +14,7 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 $zpool = $_GET['zpool'];
 $zpool_datasets = $_SESSION['zpool_datasets'];
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,8 +25,6 @@ $zpool_datasets = $_SESSION['zpool_datasets'];
 <meta http-equiv="Content-Security-Policy" content="block-all-mixed-content">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="same-origin">
-
-var_dump()
 
 <style>
 #spinner_image{position:fixed;left:46%;top:46%;width:16px;height:16px;display:none}

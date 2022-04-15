@@ -220,9 +220,9 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	}
   }
   
-  function createDataset(zpool_datasets) {
+  function createDataset(zpool) {
 	  var csrf_token = $("input[name='csrf_token']").val();	  
-	  openBox('<?=$urlcreatedataset?>?zpool_datasets='+zpool_datasets+'&csrf_token='+csrf_token,"Create Dataset",550,680,false);
+	  openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,"Create Dataset",550,680,false);
   }
 
   function addDatasetContext(zdataset, snapscount, id, destructive_mode) {

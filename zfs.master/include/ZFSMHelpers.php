@@ -180,6 +180,19 @@ function sortDatasetArray($datasetArray) {
 	return $datasetArray;
 }
 
+function findDatasetInArray($dataset_name, $datasetArray) {
+	foreach ($datasetArray['child'] as $dataset):
+		if ($dataset['name'] == $dataset_name)
+			return $dataset;
+
+		if (count($dataset['child'])>0):
+			findDatasetInArray($dataset_name, $dataset);
+		endif;
+	endforeach;
+
+	return null;
+}
+
 function getZFSPoolDatasets($zpool, $exc_pattern) {
 	$cmd_line = "zfs program -jn -m 20971520 ".escapeshellarg($zpool)." ".$GLOBALS["script_get_pool_data"]." ".escapeshellarg($zpool)." ".escapeshellarg($exc_pattern);
 
@@ -298,7 +311,7 @@ function generateDatasetArrayRows($zpool, $dataset_array, $display, $zfsm_cfg){
 
 function generatePoolDatasetOptions($dataset_array) {
 	foreach ($dataset_array['child'] as $zdataset):
-		$option = ltrim(stristr($zdataset['Name'], '/'), '/')."/";
+		$option = ltrim(stristr($zdataset['name'], '/'), '/')."/";
 		echo '<option value="'.$option.'">';
 
 		if (count($zdataset['child']) > 0):

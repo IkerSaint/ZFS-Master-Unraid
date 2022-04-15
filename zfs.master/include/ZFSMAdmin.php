@@ -1,8 +1,13 @@
 <?php
 
-require_once "ZFSMBase.php";
-require_once "ZFSMHelpers.php";
-require_once $docroot."/webGui/include/Helpers.php";
+$plugin = "zfs.master";
+$docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
+
+require_once "$docroot/webGui/include/Helpers.php";
+require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
+require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
+
+$zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 
 $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 

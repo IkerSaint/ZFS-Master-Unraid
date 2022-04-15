@@ -6,8 +6,9 @@ require_once "ZFSMHelpers.php";
 
 $csrf_token = $_GET['csrf_token'];
 
-#$zdataset = $_GET['zdataset'];
-#$zdataset_snaps = getZFSDatasetSnapshots($zdataset);
+$zdataset = $_GET['zdataset'];
+$zpool_datasets = $_SESSION['zpool_datasets'];
+$dataset = findDatasetInArray($zdataset);
 ?>
 
 <!DOCTYPE html>
@@ -121,23 +122,23 @@ window.onload = function() {
 		</tr>
 	</thead>
 	<tbody id="zpools">
-		<?foreach ($zdataset_snaps as $snap):?>
+		<?foreach ($dataset['snapshots'] as $snap):?>
 		<tr>
 			<?foreach ($snap as $key => $zdetail):?>
 			<td id=<?echo '"snapl-attribute-'.$key.'"'?>>
 				<?
-				if ($key == "Name"):
+				if ($key == "name"):
 					echo '<i class="fa fa-hdd-o icon" style="color:#486dba"></i>';
 					echo $zdetail;
-				elseif ($key == 'Used'):
+				elseif ($key == 'used'):
 					echo '<span>'.fromBytesToString($zdetail).'</span>';
-				elseif ($key == "Refer"):
+				elseif ($key == "referenced"):
 					echo '<span>'.fromBytesToString($zdetail).'</span>';
-				elseif ($key == "Defer Destroy"):
+				elseif ($key == "defer_destroy"):
 					echo '<span>'.$zdetail.'</span>';
-				elseif ($key == "Holds"):
+				elseif ($key == "userrefs"):
 					echo '<span>'.$zdetail.'</span>';
-				elseif ($key == 'Creation Date'):
+				elseif ($key == 'creation'):
 					$snapdate = new DateTime();
 					$snapdate->setTimestamp($zdetail);
 					$detail = $snapdate->format('Y-m-d H:i:s');
