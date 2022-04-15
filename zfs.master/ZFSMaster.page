@@ -315,7 +315,7 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 
   function adminDatasetSnaps(zpool, zdataset) {
 	  var csrf_token = $("input[name='csrf_token']").val();	 
-	  openBox('<?=$urladmindatasetsnaps?>?zpool='+zpool+'&zdataset='+zdataset+'&csrf_token='+csrf_token,"Admin Dataset Snapshots",680,800,false);
+	  openBox('<?=$urladmindatasetsnaps?>?zpool='+zpool+'&zdataset='+zdataset+'&csrf_token='+csrf_token, zdataset+" - Admin Snapshots",680,800,false);
   }
   
   

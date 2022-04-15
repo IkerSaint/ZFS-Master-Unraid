@@ -11,7 +11,7 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 
 $csrf_token = $_GET['csrf_token'];
 
-$zpool = $_GET['zdataset'];
+$zpool = $_GET['zpool'];
 $zdataset = $_GET['zdataset'];
 $zpool_datasets = $_SESSION['zpool_datasets'][$zpool];
 $dataset = findDatasetInArray($zdataset, $zpool_datasets);
@@ -128,41 +128,38 @@ window.onload = function() {
 		</tr>
 	</thead>
 	<tbody id="zpools">
-		<?foreach ($dataset['snapshots'] as $snap):?>
-		<tr>
-			<?foreach ($snap as $key => $zdetail):?>
-			<td id=<?echo '"snapl-attribute-'.$key.'"'?>>
-				<?
-				if ($key == "name"):
-					echo '<i class="fa fa-hdd-o icon" style="color:#486dba"></i>';
-					echo $zdetail;
-				elseif ($key == 'used'):
-					echo '<span>'.fromBytesToString($zdetail).'</span>';
-				elseif ($key == "referenced"):
-					echo '<span>'.fromBytesToString($zdetail).'</span>';
-				elseif ($key == "defer_destroy"):
-					echo '<span>'.$zdetail.'</span>';
-				elseif ($key == "userrefs"):
-					echo '<span>'.$zdetail.'</span>';
-				elseif ($key == 'creation'):
-					$snapdate = new DateTime();
-					$snapdate->setTimestamp($zdetail);
-					$detail = $snapdate->format('Y-m-d H:i:s');
-					echo '<span>'.$detail.'</span>';
-				endif;
-				?>
-			</td>
-			<?endforeach;?>
-			<td id="snapl-attribute-actions">
-				<?
-				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Rollback Snapshot" onclick="rollbackSnapshot(\''.$snap['Name'].'\')"><i id="zfsm-rollback" class="fa fa-backward" style="color:orange"></i></a></span>';
-				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Hold Snapshot" onclick="holdSnapshot(\''.$snap['Name'].'\')"><i id="zfsm-hold" class="fa fa-pause"></i></a></span>';
-				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Release Snapshot" onclick="releaseSnapshot(\''.$snap['Name'].'\')"><i id="zfsm-release" class="fa fa-play"></i></a></span>';
-				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Destroy Snapshot" onclick="destroySnapshot(\''.$snap['Name'].'\')"><i id="zfsm-destroy" class="fa fa-trash" style="color:red"></i></a></span>';
-				?>
-			</td>
-		</tr>
-		<?endforeach;?>
+		<?foreach ($dataset['snapshots'] as $snap):
+		echo '<tr>';
+		echo '<td class="snapl-attribute-name">';
+			echo '<i class="fa fa-hdd-o icon" style="color:#486dba"></i>';
+			echo $snap['name'];
+		echo '</td>';
+		echo '<td class="snapl-attribute-used">';
+			echo fromBytesToString($snap['used']);
+		echo '</td>';
+		echo '<td class="snapl-attribute-referenced">';
+			echo fromBytesToString($snap['referenced']);
+		echo '</td>';
+		echo '<td class="snapl-attribute-defer_destroy">';
+			echo fromBytesToString($snap['defer_destroy']);
+		echo '</td>';
+		echo '<td class="snapl-attribute-userrefs">';
+			echo fromBytesToString($snap['userrefs']);
+		echo '</td>';
+		echo '<td class="snapl-attribute-creation">';
+			$snapdate = new DateTime();
+			$snapdate->setTimestamp($snap['creation']);
+			$detail = $snapdate->format('Y-m-d H:i:s');
+			echo '<span>'.$detail.'</span>';
+		echo '</td>';
+		echo '<td id="snapl-attribute-actions">';
+			echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Rollback Snapshot" onclick="rollbackSnapshot(\''.$snap['name'].'\')"><i id="zfsm-rollback" class="fa fa-backward" style="color:orange"></i></a></span>';
+			echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Hold Snapshot" onclick="holdSnapshot(\''.$snap['name'].'\')"><i id="zfsm-hold" class="fa fa-pause"></i></a></span>';
+			echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Release Snapshot" onclick="releaseSnapshot(\''.$snap['name'].'\')"><i id="zfsm-release" class="fa fa-play"></i></a></span>';
+			echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Destroy Snapshot" onclick="destroySnapshot(\''.$snap['name'].'\')"><i id="zfsm-destroy" class="fa fa-trash" style="color:red"></i></a></span>';
+		echo '</td>';
+		echo '</tr>';
+		endforeach;?>
 	</tbody>
 	</table>
 	</div>
