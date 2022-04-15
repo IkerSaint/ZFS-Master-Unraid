@@ -173,7 +173,7 @@ function sortDatasetArray($datasetArray) {
 	
 	foreach ($datasetArray['child'] as $dataset):
 		if (count($dataset['child'])>0):
-			$datasetArray['child'][$dataset['name']] = sortArray($dataset);
+			$datasetArray['child'][$dataset['name']] = sortDatasetArray($dataset);
 		endif;
 	endforeach;
 	
@@ -284,8 +284,6 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 }
 
 function generateDatasetArrayRows($zpool, $dataset_array, $display, $zfsm_cfg){
-	//ksort($dataset_array['child']);
-
 	foreach ($dataset_array['child'] as $zdataset):
 		generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg);
 

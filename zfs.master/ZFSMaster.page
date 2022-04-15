@@ -103,7 +103,12 @@ endforeach;
 				echo '</a> ';
 				echo $zdetail;
 			elseif ($key == "Name"):
-				echo '<button type="button" id="show-zpool-'.$zpool['Pool'].'" onclick="toggleTable(\'show-zpool-'.$zpool['Pool'].'\', \'zdataset-'.$zpool['Pool'].'\');">Show Datasets</button>';
+				$showTableButtonText = "Show Datasets";
+				if ($_COOKIE['zdataset-'.$zpool['Pool']] == "none"):
+					$showTableButtonText = "Hide Datasets";
+				endif;
+
+				echo '<button type="button" id="show-zpool-'.$zpool['Pool'].'" onclick="toggleTable(\'show-zpool-'.$zpool['Pool'].'\', \'zdataset-'.$zpool['Pool'].'\');">'.$showTableButtonText.'</button>';
 				echo '<button type="button" onclick="scrubPool(\''.$zpool['Pool'].'\')";">Scrub Pool</button>';
 				if ($zfsm_cfg['destructive_mode']):
 					echo '<button type="button" onclick="exportPool(\''.$zpool['Pool'].'\')";">Export Pool</button>';
