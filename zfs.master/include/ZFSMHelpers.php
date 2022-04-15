@@ -203,7 +203,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 				"Primary Cache" =>  $zdataset['primarycache'],
 				"Quota" =>  $zdataset['quota'],
 				"Read Only" =>  $zdataset['readonly'],
-				"Case Sensitive" =>  $zdataset['casesensitive'],
+				"Case Sensitive" =>  $zdataset['casesensitivity'],
 				"Sync" =>  $zdataset['sync'],
 				"Space used by Snaps" =>  $zdataset['snapused']];
 
@@ -271,6 +271,8 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 }
 
 function generateDatasetArrayRows($zpool, $dataset_array, $display, $zfsm_cfg){
+	ksort($dataset_array['child']);
+
 	foreach ($dataset_array['child'] as $zdataset):
 		generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg);
 
