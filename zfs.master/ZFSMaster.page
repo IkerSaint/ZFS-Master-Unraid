@@ -126,7 +126,7 @@ endforeach;
 		<?endforeach;?>
 	</tr>
 		<?
-			generateDatasetArrayRows($zpool_datasets[$zpool['Pool']])
+			generateDatasetArrayRows($zpool['Pool'], $zpool_datasets[$zpool['Pool']], $_COOKIE['zpool-'.$zpool['Pool'].'-datasets'], $zfsm_cfg);
 		?>
 	<?endforeach;?>
    </tbody>
