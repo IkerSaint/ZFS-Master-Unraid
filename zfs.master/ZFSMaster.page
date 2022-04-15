@@ -26,12 +26,9 @@ foreach ($zpool_global as $zpool):
 
 	$zpool_devices[] = getZFSPoolDevices($zpool_name);
 	$zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclussion']);
-	$zpool_global[$zpool_name]['Snapshots'] = $snapscount;
+	$zpool_global[$zpool_name]['Snapshots'] = $zpool_datasets[$zpool_name]['total_snapshots'];
 	$zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
 endforeach;
-
-vardump($zpool_global,true)
-
 ?>
 
 <link type="text/css" rel="stylesheet" href="/webGui/styles/font-awesome.css?v=1545863026">

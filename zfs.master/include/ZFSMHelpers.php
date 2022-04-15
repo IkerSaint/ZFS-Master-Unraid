@@ -1,12 +1,19 @@
 <?php
 
-require_once "ZFSMBase.php";
+$plugin = "zfs.master";
+$docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 
-function loadConfig($config, $explode=true) {	
+require_once $docroot."/plugins/".$plugin."/include/ZFSMBase.php";
+
+function loadConfig($config) {	
 	$zfsm_ret['refresh_interval'] = isset($config['general']['refresh_interval']) ? intval($config['general']['refresh_interval']) : 30;
 	$zfsm_ret['destructive_mode'] = isset($config['general']['destructive_mode']) ? intval($config['general']['destructive_mode']) : 0;
-		
-	$zfsm_dataset_exclussion = isset($config['general']['exclussion']) ? $config['general']['exclussion'] : '';
+
+	if (!isset($config['general']['exclussion']) || $config['general']['exclussion'] == ''):
+		$zfsm_ret['dataset_exclussion'] = ' ';
+	else:
+		$zfsm_ret['dataset_exclussion'] = $config['general']['exclussion'];
+	endif;
 		
 	$zfsm_ret['snap_max_days_alert'] = isset($config['general']['snap_max_days_alert']) ? intval($config['general']['snap_max_days_alert']) : 30;
 	$zfsm_ret['snap_prefix'] = isset($config['general']['snap_prefix']) ? $config['general']['snap_prefix'] : '';
@@ -16,18 +23,12 @@ function loadConfig($config, $explode=true) {
 	else:
 		$zfsm_ret['snap_pattern'] = $config['general']['snap_pattern'];
 	endif;
-		
-	if ($explode):
-		$zfsm_ret['dataset_exclussion'] = preg_split('/\r\n|\r|\n/', $zfsm_dataset_exclussion);
-	else:
-		$zfsm_ret['dataset_exclussion'] = $zfsm_dataset_exclussion;
-	endif;
 	
 	return $zfsm_ret;
 }
 
 function zfsnotify( $subject, $description, $message, $type="normal") {	
-	$command = $docroot.'/plugins/dynamix/scripts/notify -e "ZFS Master" -s "'.$subject.'" -d "'.$description.'" -m "'.$message.'" -i "'.$type.'"';
+	$command = $GLOBALS["docroot"].'/plugins/dynamix/scripts/notify -e "ZFS Master" -s "'.$subject.'" -d "'.$description.'" -m "'.$message.'" -i "'.$type.'"';
 
 	shell_exec($command);
 }
@@ -171,15 +172,8 @@ function cleanupZPoolInfo($matched) {
 	);
 }
 
-function getPoolInfo($zpool) {
-	$cmd_line = "zfs program -jn -m 20971520 ".escapeshellarg($zpool)." script.lua ".escapeshellarg($zpool);
-		
-	return shell_exec($cmd_line.' 2>&1');
-}
-
 function getZFSPoolDatasets($zpool, $exc_pattern) {
-	$exc_pattern = '/.*dockerfiles.*/';
-	$cmd_line = "zfs program -jn -m 20971520 ".escapeshellarg($zpool)." ".$script_get_pool_data." ".escapeshellarg($zpool)." ".escapeshellarg($exc_pattern);
+	$cmd_line = "zfs program -jn -m 20971520 ".escapeshellarg($zpool)." ".$GLOBALS["script_get_pool_data"]." ".escapeshellarg($zpool)." ".escapeshellarg($exc_pattern);
 
 	$json_ret = shell_exec($cmd_line.' 2>&1');
 	
