@@ -5,6 +5,8 @@ Cond="file_exists('/usr/sbin/zpool')"
 ---
 <?php
 
+session_start();
+
 $plugin = "zfs.master";
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 
@@ -28,6 +30,8 @@ foreach ($zpool_global as $zpool):
 	$zpool_global[$zpool_name]['Snapshots'] = $zpool_datasets[$zpool_name]['total_snapshots'];
 	$zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
 endforeach;
+
+$_SESSION['zpool_datasets'] = $zpool_datasets;
 
 ?>
 
@@ -113,7 +117,7 @@ endforeach;
 				if ($zfsm_cfg['destructive_mode']):
 					echo '<button type="button" onclick="exportPool(\''.$zpool['Pool'].'\')";">Export Pool</button>';
 				endif;
-				echo '<button type="button" onclick="createDataset(\''.$zpool_datasets[$zpool['Pool']].'\')";">Create Dataset</button>';
+				echo '<button type="button" onclick="createDataset(\''.$zpool['Pool'].'\')";">Create Dataset</button>';
 			elseif ($key == "Used"):
 				$percent = 100-round(calculateFreePercent($zpool['Used'], $zpool['Free']));
 				echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.$zdetail.'B</span></div>';
@@ -226,7 +230,7 @@ endforeach;
 
 	if (destructive_mode != 0) {
 		opts.push({
-			text: _("Destroy Dataset"),
+			text: _("Destroy"),
 			icon: "fa-trash",
 			action: function (e) {
 				e.preventDefault();
@@ -309,9 +313,9 @@ endforeach;
 	  });
   }
 
-  function adminDatasetSnaps(zdataset) {
-	  var csrf_token = $("input[name='csrf_token']").val();	  
-	  openBox('<?=$urladmindatasetsnaps?>?zdataset='+zdataset+'&csrf_token='+csrf_token,"Admin Dataset Snapshots",680,800,false);
+  function adminDatasetSnaps(zpool) {
+	  var csrf_token = $("input[name='csrf_token']").val();	 
+	  openBox('<?=$urladmindatasetsnaps?>?zpool='+zpool+'&csrf_token='+csrf_token,"Admin Dataset Snapshots",680,800,false);
   }
   
   

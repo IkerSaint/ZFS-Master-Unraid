@@ -295,6 +295,17 @@ function generateDatasetArrayRows($zpool, $dataset_array, $display, $zfsm_cfg){
 		endif;
 	endforeach;
 }
+
+function generatePoolDatasetOptions($dataset_array) {
+	foreach ($dataset_array['child'] as $zdataset):
+		$option = ltrim(stristr($zdataset['Name'], '/'), '/')."/";
+		echo '<option value="'.$option.'">';
+
+		if (count($zdataset['child']) > 0):
+			generatePoolDatasetOptions($zdataset);
+		endif;
+	endforeach;
+}
 	
 function getZFSPoolDevices($zpool) {
 	$cmd_line = "zpool status -v ".$zpool." | awk 'NR > 8 {print last} {last=$1}'";
