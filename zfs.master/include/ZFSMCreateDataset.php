@@ -6,13 +6,10 @@ $urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
 $csrf_token = $_GET['csrf_token'];
 
 require_once "$docroot/webGui/include/Helpers.php";
-require_once "$docroot/plugins/$plugin/include/ZFSMConstants.php";
+require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
 require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 
-$zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
-
-$zpool = $_GET['zpool'];
-$zpool_datasets = getZFSPoolDatasets($zpool, $snapscount, $zfsm_cfg['dataset_exclussion'], false);
+$zpool_datasets = $_GET['zpool_datasets'];
 ?>
 <!DOCTYPE html>
 <html lang="en">

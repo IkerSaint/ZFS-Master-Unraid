@@ -113,7 +113,7 @@ endforeach;
 				if ($zfsm_cfg['destructive_mode']):
 					echo '<button type="button" onclick="exportPool(\''.$zpool['Pool'].'\')";">Export Pool</button>';
 				endif;
-				echo '<button type="button" onclick="createDataset(\''.$zpool['Pool'].'\')";">Create Dataset</button>';
+				echo '<button type="button" onclick="createDataset(\''.$zpool_datasets[$zpool['Pool']].'\')";">Create Dataset</button>';
 			elseif ($key == "Used"):
 				$percent = 100-round(calculateFreePercent($zpool['Used'], $zpool['Free']));
 				echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.$zdetail.'B</span></div>';
@@ -216,9 +216,9 @@ endforeach;
 	}
   }
   
-  function createDataset(zpool) {
+  function createDataset(zpool_datasets) {
 	  var csrf_token = $("input[name='csrf_token']").val();	  
-	  openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,"Create Dataset",550,680,false);
+	  openBox('<?=$urlcreatedataset?>?zpool_datasets='+zpool_datasets+'&csrf_token='+csrf_token,"Create Dataset",550,680,false);
   }
 
   function addDatasetContext(zdataset, snapscount, id, destructive_mode) {
