@@ -29,6 +29,10 @@ foreach ($zpool_global as $zpool):
 	$zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
 endforeach;
 
+$data_hash = md5(serialize($zpool_global));
+
+echo 'Config hash'.$data_hash;
+
 ?>
 
 <link type="text/css" rel="stylesheet" href="/webGui/styles/font-awesome.css?v=1545863026">

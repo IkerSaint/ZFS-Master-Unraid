@@ -167,6 +167,17 @@ function cleanupZPoolInfo($matched) {
 	);
 }
 
+function orderDatasetArrayRows($dataset_array){
+	ksort($dataset_array['child']);
+	ksort($dataset_array['snapshots']);
+
+	foreach ($dataset_array['child'] as $zdataset):
+		if (count($zdataset['child']) > 0):
+			orderDatasetArrayRows($zdataset);
+		endif;
+	endforeach;
+}
+
 function getZFSPoolDatasets($zpool, $exc_pattern) {
 	$cmd_line = "zfs program -jn -m 20971520 ".escapeshellarg($zpool)." ".$GLOBALS["script_get_pool_data"]." ".escapeshellarg($zpool)." ".escapeshellarg($exc_pattern);
 
@@ -205,7 +216,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 				"Read Only" =>  $zdataset['readonly'],
 				"Case Sensitive" =>  $zdataset['casesensitivity'],
 				"Sync" =>  $zdataset['sync'],
-				"Space used by Snaps" =>  $zdataset['snapused']];
+				"Space used by Snaps" =>  $zdataset['usedbysnapshots']];
 
 		$icon_color = 'grey';
 			
@@ -271,7 +282,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 }
 
 function generateDatasetArrayRows($zpool, $dataset_array, $display, $zfsm_cfg){
-	ksort($dataset_array['child']);
+//	ksort($dataset_array['child']);
 
 	foreach ($dataset_array['child'] as $zdataset):
 		generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg);
