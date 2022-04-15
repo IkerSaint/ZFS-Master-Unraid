@@ -104,7 +104,7 @@ endforeach;
 				echo $zdetail;
 			elseif ($key == "Name"):
 				$showTableButtonText = "Show Datasets";
-				if ($_COOKIE['zdataset-'.$zpool['Pool']] == "none"):
+				if ($_COOKIE['zdataset-'.$zpool['Pool']] != "none"):
 					$showTableButtonText = "Hide Datasets";
 				endif;
 

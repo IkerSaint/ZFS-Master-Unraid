@@ -207,18 +207,21 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 	echo '<td>';
 	echo '</td>';
 	echo '<td>';
-		$tmp_array = ["Creation Date" =>  $zdataset['creation'],
+		$creationdate = new DateTime();
+		$creationdate->setTimestamp($zdataset['creation']);
+
+		$tmp_array = ["Creation Date" => $creationdate->format('Y-m-d H:i:s'),
 				"Compression" =>  $zdataset['compression'],
-				"Compress Ratio" => $zdataset['compressratio']/100,
-				"Record Size" =>  $zdataset['recordsize'],
+				"Compress Ratio" => ($zdataset['compressratio']/100),
+				"Record Size" =>  fromBytesToString($zdataset['recordsize']),
 				"Access Time" =>  $zdataset['atime'],
 				"XAttr" =>  $zdataset['xattr'],
 				"Primary Cache" =>  $zdataset['primarycache'],
-				"Quota" =>  $zdataset['quota'],
+				"Quota" =>  fromBytesToString($zdataset['quota']),
 				"Read Only" =>  $zdataset['readonly'],
 				"Case Sensitive" =>  $zdataset['casesensitivity'],
 				"Sync" =>  $zdataset['sync'],
-				"Space used by Snaps" =>  $zdataset['usedbysnapshots']];
+				"Space used by Snaps" =>  fromBytesToString($zdataset['usedbysnapshots'])];
 
 		$icon_color = 'grey';
 			
