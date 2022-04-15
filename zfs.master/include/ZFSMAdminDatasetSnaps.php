@@ -1,20 +1,26 @@
 <?php
 
+session_start();
 
-require_once "ZFSMBase.php";
-require_once "ZFSMHelpers.php";
+$plugin = "zfs.master";
+$docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
+$urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
+
+require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
+require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 
 $csrf_token = $_GET['csrf_token'];
 
+$zpool = $_GET['zdataset'];
 $zdataset = $_GET['zdataset'];
-$zpool_datasets = $_SESSION['zpool_datasets'];
-$dataset = findDatasetInArray($zdataset);
+$zpool_datasets = $_SESSION['zpool_datasets'][$zpool];
+$dataset = findDatasetInArray($zdataset, $zpool_datasets);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>ZFS Master - Admin Dataset Snaps</title>
+<?echo '<title>'.$zdataset.' - Admin Snapshots</title>';?>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">

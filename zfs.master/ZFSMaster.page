@@ -225,7 +225,7 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	  openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,"Create Dataset",550,680,false);
   }
 
-  function addDatasetContext(zdataset, snapscount, id, destructive_mode) {
+  function addDatasetContext(zpool, zdataset, snapscount, id, destructive_mode) {
     var opts = [];
 
 	if (destructive_mode != 0) {
@@ -256,7 +256,7 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 			icon: "fa-gears",
 			action: function(e) {
 				e.preventDefault();
-				adminDatasetSnaps(zdataset);
+				adminDatasetSnaps(zpool, zdataset);
 			},
 		});
     }
@@ -313,9 +313,9 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	  });
   }
 
-  function adminDatasetSnaps(zpool) {
+  function adminDatasetSnaps(zpool, zdataset) {
 	  var csrf_token = $("input[name='csrf_token']").val();	 
-	  openBox('<?=$urladmindatasetsnaps?>?zpool='+zpool+'&csrf_token='+csrf_token,"Admin Dataset Snapshots",680,800,false);
+	  openBox('<?=$urladmindatasetsnaps?>?zpool='+zpool+'&zdataset='+zdataset+'&csrf_token='+csrf_token,"Admin Dataset Snapshots",680,800,false);
   }
   
   
