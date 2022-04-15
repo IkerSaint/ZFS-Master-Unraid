@@ -1,19 +1,15 @@
 <?php
 
-$plugin = "zfs.master";
-$docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
-$urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
+
+require_once "ZFSMBase.php";
+require_once "ZFSMHelpers.php";
+
 $csrf_token = $_GET['csrf_token'];
 
-require_once "$docroot/webGui/include/Helpers.php";
-require_once "$docroot/plugins/$plugin/include/ZFSMConstants.php";
-require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
-
-$zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
-
-$zdataset = $_GET['zdataset'];
-$zdataset_snaps = getZFSDatasetSnapshots($zdataset);
+#$zdataset = $_GET['zdataset'];
+#$zdataset_snaps = getZFSDatasetSnapshots($zdataset);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
