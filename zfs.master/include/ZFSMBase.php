@@ -30,6 +30,4 @@
 
 	$boutput_str = " 2>&1";
 	$cmdoutput_str = "CMD output: ";
-
-	$zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 ?>
