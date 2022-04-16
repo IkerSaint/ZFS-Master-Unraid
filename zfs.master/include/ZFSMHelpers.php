@@ -170,7 +170,7 @@ function cleanupZPoolInfo($matched) {
 function sortDatasetArray($datasetArray) {
 	ksort($datasetArray['child']);
 	usort($datasetArray['snapshots'], function($item1, $item2) { 
-		return $item1['name'] <=> $item2['name'];
+		return $item1['creation'] > $item2['creation'];
 	});
 	
 	foreach ($datasetArray['child'] as $dataset):
