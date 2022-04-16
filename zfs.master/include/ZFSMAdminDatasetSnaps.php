@@ -106,6 +106,8 @@ window.onload = function() {
   }
 </style>
 
+<script src="<?autov('/webGui/javascript/jquery.filetree.js')?>"></script>
+
 </head>
 
 <body>
@@ -123,7 +125,8 @@ window.onload = function() {
 		</tr>
 	</thead>
 	<tbody id="zpools">
-		<?foreach ($dataset['snapshots'] as $snap):
+		<?
+		foreach ($dataset['snapshots'] as $snap):
 		echo '<tr>';
 		echo '<td class="snapl-attribute-name">';
 			echo '<i class="fa fa-hdd-o icon" style="color:#486dba"></i>';

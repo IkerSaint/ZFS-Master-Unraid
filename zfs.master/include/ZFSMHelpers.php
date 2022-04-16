@@ -174,9 +174,7 @@ function sortDatasetArray($datasetArray) {
 	});
 	
 	foreach ($datasetArray['child'] as $dataset):
-		if (count($dataset['child'])>0):
-			$datasetArray['child'][$dataset['name']] = sortDatasetArray($dataset);
-		endif;
+		$datasetArray['child'][$dataset['name']] = sortDatasetArray($dataset);
 	endforeach;
 	
 	return $datasetArray;
@@ -184,11 +182,14 @@ function sortDatasetArray($datasetArray) {
 
 function findDatasetInArray($dataset_name, $datasetArray) {
 	foreach ($datasetArray['child'] as $dataset):
-		if ($dataset['name'] == $dataset_name)
+		if (strcmp($dataset['name'], $dataset_name) == 0):
 			return $dataset;
+		endif;
 
-		if (count($dataset['child'])>0):
-			return findDatasetInArray($dataset_name, $dataset);
+		$ret = findDatasetInArray($dataset_name, $dataset);
+
+		if ($ret != null):
+			return $ret;
 		endif;
 	endforeach;
 
