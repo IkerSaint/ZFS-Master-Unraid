@@ -20,7 +20,6 @@ $dataset = findDatasetInArray($zdataset, $zpool_datasets);
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<?echo '<title>'.$zdataset.' - Admin Snapshots</title>';?>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -107,10 +106,6 @@ window.onload = function() {
   }
 </style>
 
-<script src="<?autov('/webGui/javascript/dynamix.js')?>"></script>
-<script src="<?autov('/webGui/javascript/jquery.filetree.js')?>"></script>
-<script type="text/javascript" src="<?autov('/plugins/zfs.master/assets/sweetalert2.all.min.js');?>"></script>
-
 </head>
 
 <body>
@@ -141,10 +136,10 @@ window.onload = function() {
 			echo fromBytesToString($snap['referenced']);
 		echo '</td>';
 		echo '<td class="snapl-attribute-defer_destroy">';
-			echo fromBytesToString($snap['defer_destroy']);
+			echo $snap['defer_destroy'];
 		echo '</td>';
 		echo '<td class="snapl-attribute-userrefs">';
-			echo fromBytesToString($snap['userrefs']);
+			echo $snap['userrefs'];
 		echo '</td>';
 		echo '<td class="snapl-attribute-creation">';
 			$snapdate = new DateTime();

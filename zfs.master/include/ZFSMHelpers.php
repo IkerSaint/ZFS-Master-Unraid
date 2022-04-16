@@ -169,7 +169,9 @@ function cleanupZPoolInfo($matched) {
 
 function sortDatasetArray($datasetArray) {
 	ksort($datasetArray['child']);
-	ksort($datasetArray['snapshots']);
+	usort($datasetArray['snapshots'], function($item1, $item2) { 
+		return $item1['name'] <=> $item2['name'];
+	});
 	
 	foreach ($datasetArray['child'] as $dataset):
 		if (count($dataset['child'])>0):
@@ -186,7 +188,7 @@ function findDatasetInArray($dataset_name, $datasetArray) {
 			return $dataset;
 
 		if (count($dataset['child'])>0):
-			findDatasetInArray($dataset_name, $dataset);
+			return findDatasetInArray($dataset_name, $dataset);
 		endif;
 	endforeach;
 
