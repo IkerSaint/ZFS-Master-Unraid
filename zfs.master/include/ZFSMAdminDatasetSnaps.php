@@ -6,6 +6,7 @@ $plugin = "zfs.master";
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 $urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
 
+require_once "$docroot/webGui/include/Helpers.php";
 require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
 require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 
@@ -106,7 +107,14 @@ window.onload = function() {
   }
 </style>
 
+<script src="<?autov('/webGui/javascript/dynamix.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/default-fonts.css');?>">
+<link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/default-popup.css');?>">
+
 <script src="<?autov('/webGui/javascript/jquery.filetree.js')?>"></script>
+
+<script type="text/javascript" src="<?autov('/plugins/zfs.master/assets/sweetalert2.all.min.js');?>"></script>
+<link type="text/css" rel="stylesheet" href="<?autov('/plugins/zfs.master/assets/sweetalert2.min.css');?>">
 
 </head>
 
