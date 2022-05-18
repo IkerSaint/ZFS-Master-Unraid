@@ -112,7 +112,7 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 					$showTableButtonText = "Hide Datasets";
 				endif;
 
-				echo '<button type="button" id="show-zpool-'.$zpool['Pool'].'" onclick="toggleTable(\'show-zpool-'.$zpool['Pool'].'\', \'zdataset-'.$zpool['Pool'].'\');">'.$showTableButtonText.'</button>';
+				echo '<button type="button" id="show-zpool-'.$zpool['Pool'].'" onclick="togglePoolTable(\'show-zpool-'.$zpool['Pool'].'\', \'zdataset-'.$zpool['Pool'].'\');">'.$showTableButtonText.'</button>';
 				echo '<button type="button" onclick="scrubPool(\''.$zpool['Pool'].'\')";">Scrub Pool</button>';
 				if ($zfsm_cfg['destructive_mode']):
 					echo '<button type="button" onclick="exportPool(\''.$zpool['Pool'].'\')";">Export Pool</button>';
@@ -200,7 +200,7 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
     setCookie(key, keyValue, '-1');
   }
   
-  function toggleTable(zpool_id, trclass) {
+  function togglePoolTable(zpool_id, trclass) {
 	var myArray = document.getElementsByClassName(trclass);
 	var myButton = document.getElementById(zpool_id);
 
