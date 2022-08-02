@@ -312,7 +312,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 		echo count($zdataset['snapshots']);
 
 		//AQIUIO VOY
-		echo '<a href="/Main/Browse?dir='$zdataset['mountpoint']'"><i class="icon-u-tab" title="Browse '$zdataset['mountpoint']'"></i></a>';
+		echo '<a href="/Main/Browse?dir='.$zdataset['mountpoint'].'"><i class="icon-u-tab" title="Browse '.$zdataset['mountpoint'].'"></i></a>';
 	echo '</td>';
 	echo '</tr>';
 }
