@@ -263,25 +263,37 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 		echo '</a>';
 		echo $zdataset['name'];
 	echo '</td>';
+
+	// Actions
+
 	echo '<td>';
 		$id = md5($zdataset['name']);
 		echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zpool.'\', \''.$zdataset['name'].'\', '.count($zdataset['snapshots']).', \''.$id.'\', '.$zfsm_cfg['destructive_mode'].');" class="zfs_compact">Actions</button></span>';
 	echo '</td>';
 
+	//mountpoint
+	echo '<td>';
+		echo $zdataset['mountpoint'];
+	echo '</td>';
+
+	// Referr
+	echo '<td>';
+		echo fromBytesToString($zdataset['referenced']);
+	echo '</td>';
+
+	// Used
 	echo '<td>';
 		$percent = 100-round(calculateFreePercent($zdataset['used'], $zdataset['available']));
 		echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.fromBytesToString($zdataset['used']).'</span></div>';
 	echo '</td>';
+
+	// Free
 	echo '<td>';
 		$percent = round(calculateFreePercent($zdataset['used'], $zdataset['available']));
 		echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.fromBytesToString($zdataset['available']).'</span></div>';
 	echo '</td>';
-	echo '<td>';
-		echo fromBytesToString($zdataset['referenced']);
-	echo '</td>';
-	echo '<td>';
-		echo $zdataset['mountpoint'];
-	echo '</td>';
+
+	//snapshots
 	echo '<td>';
 		$icon_color = 'grey';
 		
