@@ -310,6 +310,9 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 	
 		echo '<i class="fa fa-camera-retro icon" style="color:'.$icon_color.'"></i> ';
 		echo count($zdataset['snapshots']);
+
+		//AQIUIO VOY
+		echo '<a href="/Main/Browse?dir='$zdataset['mountpoint']'"><i class="icon-u-tab" title="Browse '$zdataset['mountpoint']'"></i></a>';
 	echo '</td>';
 	echo '</tr>';
 }
