@@ -273,7 +273,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 
 	//mountpoint
 	echo '<td>';
-		if ( empty($zdataset['mountpoint']) ): 
+		if ($zdataset['mountpoint'] != "none"): 
 			echo $zdataset['mountpoint'];
 		endif;
 	echo '</td>';
@@ -313,7 +313,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 		echo '<i class="fa fa-camera-retro icon" style="color:'.$icon_color.'"></i> ';
 		echo count($zdataset['snapshots']);
 
-		if ( empty($zdataset['mountpoint']) ): 
+		if ($zdataset['mountpoint'] != "none"): 
 			echo ' <a href="/Main/Browse?dir='.$zdataset['mountpoint'].'"><i class="icon-u-tab zfs_bar_button" title="Browse '.$zdataset['mountpoint'].'"></i></a>';
 		endif;
 	echo '</td>';
