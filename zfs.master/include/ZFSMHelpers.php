@@ -159,10 +159,10 @@ function cleanupZPoolInfo($matched) {
 		'Health' => trim($matched['health']),
 		'Name' => '',
 		'Size' => trim($matched['size']),
+		'MountPoint' => '',
+		'Refer' => '',
 		'Used' => trim($matched['used']),
 		'Free' => trim($matched['free']),
-		'Refer' => '',
-		'MountPoint' => '',
 		'Snapshots' => ''
 	);
 }

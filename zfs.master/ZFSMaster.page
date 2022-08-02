@@ -76,8 +76,8 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	  <td>Health</td>
 	  <td>Option/Dataset Name</td>
 	  <td>Size</td>
-	  <td>Refer</td>
 	  <td>Mount Point</td>
+	  <td>Refer</td>
 	  <td>Used</td>
 	  <td>Free</td>
 	  <td>Snapshots</td>
