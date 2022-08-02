@@ -273,8 +273,9 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 
 	//mountpoint
 	echo '<td>';
-		echo $zdataset['mountpoint'];
-		echo ' <a href="/Main/Browse?dir='.$zdataset['mountpoint'].'"><i class="icon-u-tab" title="Browse '.$zdataset['mountpoint'].'"></i></a>';
+		if ( empty($zdataset['mountpoint']) ): 
+			echo $zdataset['mountpoint'];
+		endif;
 	echo '</td>';
 
 	// Referr
@@ -285,13 +286,13 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 	// Used
 	echo '<td>';
 		$percent = 100-round(calculateFreePercent($zdataset['used'], $zdataset['available']));
-		echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.fromBytesToString($zdataset['used']).'</span></div>';
+		echo '<div class="usage-disk"><span style="width:'.$percent.'%" class=""><span>'.fromBytesToString($zdataset['used']).'</span></div>';
 	echo '</td>';
 
 	// Free
 	echo '<td>';
 		$percent = round(calculateFreePercent($zdataset['used'], $zdataset['available']));
-		echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.fromBytesToString($zdataset['available']).'</span></div>';
+		echo '<div class="usage-disk"><span style="width:'.$percent.'%" class=""><span>'.fromBytesToString($zdataset['available']).'</span></div>';
 	echo '</td>';
 
 	//snapshots
@@ -312,6 +313,9 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 		echo '<i class="fa fa-camera-retro icon" style="color:'.$icon_color.'"></i> ';
 		echo count($zdataset['snapshots']);
 
+		if ( empty($zdataset['mountpoint']) ): 
+			echo ' <a href="/Main/Browse?dir='.$zdataset['mountpoint'].'"><i class="icon-u-tab zfs_bar_button" title="Browse '.$zdataset['mountpoint'].'"></i></a>';
+		endif;
 	echo '</td>';
 	echo '</tr>';
 }

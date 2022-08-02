@@ -41,7 +41,6 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
   .zfs_table td span{margin-left:10px}
   .zfs_table tr>td{width:auto!important}
   .zfs_table tr>td+td+td{text-align:left!important}
-  .zfs_table tr>td+td+td+td+td+td+td{text-align:center!important}
   .zfs_table tr>td+td+td+td+td+td+td+td{text-align:left!important}
   .zfs_table tr>td+td+td+td+td+td+td+td+td{text-align:center!important}
   
