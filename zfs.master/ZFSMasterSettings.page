@@ -41,8 +41,8 @@ _(Destructive Mode)_:
 :end
 
 <div id="title" class="nocontrol">_(Datasets)_</div>
-_(Datasets Exclussion Patterns (One per line))_:
-: <textarea name="exclussion" cols="40" rows="5" placeholder="/dockerfiles/.*
+_(Datasets Exclussion Patterns (Just One!))_:
+: <textarea name="exclussion" cols="40" rows="1" placeholder="/dockerfiles/.*
 /myhiddendataset/.*"><?=$zfsm_cfg['dataset_exclussion']?></textarea>
 
 :zc_settings_datasets_exclussion_plug:
