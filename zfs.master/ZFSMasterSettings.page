@@ -46,8 +46,9 @@ _(Datasets Exclussion Patterns (One per line))_:
 /myhiddendataset/.*"><?=$zfsm_cfg['dataset_exclussion']?></textarea>
 
 :zc_settings_datasets_exclussion_plug:
-> Regular expression (With the start and end backslash) to be used for datasets listing exclussion. Dataset descendants and snapshots also will be excluded.
-> This could speed up the Information refresh process.
+> Lua pattern to be used for datasets listing exclussion. Dataset descendants and snapshots also will be excluded.
+> Check http://lua-users.org/wiki/PatternsTutorial for further information
+> This definitely speed up the Information refresh process!.
 :end
 
 <div id="title" class="nocontrol">_(Snapshots)_</div>
