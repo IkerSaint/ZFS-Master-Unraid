@@ -1,19 +1,20 @@
 <?php
 
+session_start();
+
 $plugin = "zfs.master";
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 $urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
 $csrf_token = $_GET['csrf_token'];
 
 require_once "$docroot/webGui/include/Helpers.php";
-require_once "$docroot/plugins/$plugin/include/ZFSMConstants.php";
+require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
 require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 
-$zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
-
 $zpool = $_GET['zpool'];
-$zpool_datasets = getZFSPoolDatasets($zpool, $snapscount, $zfsm_cfg['dataset_exclussion'], false);
+$zpool_datasets = $_SESSION['zpool_datasets'];
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,7 +25,6 @@ $zpool_datasets = getZFSPoolDatasets($zpool, $snapscount, $zfsm_cfg['dataset_exc
 <meta http-equiv="Content-Security-Policy" content="block-all-mixed-content">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="same-origin">
-
 
 <style>
 #spinner_image{position:fixed;left:46%;top:46%;width:16px;height:16px;display:none}
@@ -140,14 +140,9 @@ input[type=email]{margin-top:8px;float:left}
 					<input type="hidden" id="zpool" name="zpool" value="<?echo $zpool?>">
 					<span class="zfsm-zpool" id="pool" name="<?echo $zpool?>"><?echo $zpool?></span> / <input id="name" class="zfsm-input zfsm-w75 zfsm-unraid-border" name="name" placeholder="Complete path, without the pool name." list="zpool-datasets" required>
 					<datalist id="zpool-datasets">
-					<?foreach ($zpool_datasets as $zdataset):
-						if ($zdataset['Name'] == $zpool):
-							continue;
-						endif;
-						$option = str_replace($zpool."/", "", $zdataset['Name'])."/";
+					<?
+						generatePoolDatasetOptions($zpool_datasets[$zpool]);
 					?>
-						<option value="<?echo $option?>">
-					<?endforeach;?>
 					</datalist>
 				</dl>
 				<dl>
