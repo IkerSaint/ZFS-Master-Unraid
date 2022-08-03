@@ -42,8 +42,8 @@ _(Destructive Mode)_:
 
 <div id="title" class="nocontrol">_(Datasets)_</div>
 _(Datasets Exclussion Patterns (One per line))_:
-: <textarea name="exclussion" cols="40" rows="5" placeholder="/^tank\/dockerfiles\/.*/
-/^tank\/downloads\/myhiddendataset\/.*/"><?=$zfsm_cfg['dataset_exclussion']?></textarea>
+: <textarea name="exclussion" cols="40" rows="5" placeholder="/dockerfiles/.*
+/myhiddendataset/.*"><?=$zfsm_cfg['dataset_exclussion']?></textarea>
 
 :zc_settings_datasets_exclussion_plug:
 > Regular expression (With the start and end backslash) to be used for datasets listing exclussion. Dataset descendants and snapshots also will be excluded.
