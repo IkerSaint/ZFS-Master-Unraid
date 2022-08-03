@@ -4,7 +4,7 @@
 <!ENTITY author		"IkerSaint">
 <!ENTITY version "2022.04.17.49">
 <!ENTITY launch     "Main">
-<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main">
+<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/pre-release">
 <!ENTITY pluginURL	"&gitURL;/&name;.plg">
 ]>
 
@@ -14,6 +14,14 @@
 		pluginURL="&pluginURL;"
 		min="6.9.2">
 <CHANGES>
+
+###2022.08.02
+- Warning - Please Update your exclusion pattern!
+- Add - Browse Button for Datasets
+- Add - Support for listing volumes!!
+- Add - Lua script backend for loading dataset information
+- Change - Exclusion pattern for datasets (Please check http://lua-users.org/wiki/PatternsTutorial)
+- Change - UI columns re-organized to the unraid way (sort of)
 
 ###2022.04.13
 - Add - Dataset Snapshot Creation Option

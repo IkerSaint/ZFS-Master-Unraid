@@ -1,18 +1,15 @@
 <?php
+
 $plugin = "zfs.master";
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 
 require_once "$docroot/webGui/include/Helpers.php";
-require_once "ZFSMConstants.php";
-require_once "ZFSMHelpers.php";
+require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
+require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 
 $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-// String literals
-$boutput_str = " 2>&1";
-$cmdoutput_str = "CMD output: ";
 
 switch ($_POST['cmd']) {
 	case 'scrubpool':
@@ -21,10 +18,10 @@ switch ($_POST['cmd']) {
 		$ret = execCommand($cmd_line, $exec_result);
 		
 		if ($ret == 0):
-			zfsnotify($docroot, "ZPool Scrub", "Scrub of pool ".$_POST['data']." Started", $cmdoutput_str.$exec_result."","normal");
+			zfsnotify( "ZPool Scrub", "Scrub of pool ".$_POST['data']." Started", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "ZPool Scrub", "Scrub of pool ".$_POST['data']." failed to start, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			zfsnotify( "ZPool Scrub", "Scrub of pool ".$_POST['data']." failed to start, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		
@@ -40,10 +37,10 @@ switch ($_POST['cmd']) {
 		$ret = execCommand($cmd_line, $exec_result);
 		
 		if ($ret == 0):
-			zfsnotify($docroot, "ZFS Create", "Creation of dataset ".$zfs_cparams['zpool']."/".$zfs_cparams['name']." successful", $cmdoutput_str.$exec_result."","normal");
+			zfsnotify( "ZFS Create", "Creation of dataset ".$zfs_cparams['zpool']."/".$zfs_cparams['name']." successful", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "ZFS Create", "Creation of dataset ".$zfs_cparams['zpool']."/".$zfs_cparams['name']." failed, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			zfsnotify( "ZFS Create", "Creation of dataset ".$zfs_cparams['zpool']."/".$zfs_cparams['name']." failed, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 
@@ -55,7 +52,7 @@ switch ($_POST['cmd']) {
 		$ret = execCommand($cmd_line, $exec_result);
 
 		if ($ret != 0):
-			zfsnotify($docroot, "ZFS Create", "Unable to set permissions for dataset ".$zfs_cparams['zpool']."/".$zfs_cparams['name'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			zfsnotify( "ZFS Create", "Unable to set permissions for dataset ".$zfs_cparams['zpool']."/".$zfs_cparams['name'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 
@@ -67,10 +64,10 @@ switch ($_POST['cmd']) {
 		$ret = execCommand($cmd_line, $exec_result);
 		
 		if ($ret == 0):
-			zfsnotify($docroot, "ZFS Destroy ", "Dataset ".$_POST['data']." destroyed successfully", $cmdoutput_str.$exec_result."","normal");
+			zfsnotify( "ZFS Destroy ", "Dataset ".$_POST['data']." destroyed successfully", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "ZFS Destroy", "Unable to destoy dataset ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			zfsnotify( "ZFS Destroy", "Unable to destoy dataset ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		break;
@@ -81,10 +78,10 @@ switch ($_POST['cmd']) {
 		$ret = execCommand($cmd_line, $exec_result);
 		
 		if ($ret == 0):
-			zfsnotify($docroot, "ZPool Export ", "Pool ".$_POST['data']." exported successfully", $cmdoutput_str.$exec_result."","normal");
+			zfsnotify( "ZPool Export ", "Pool ".$_POST['data']." exported successfully", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "ZPool Export", "Unable to export pool ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			zfsnotify( "ZPool Export", "Unable to export pool ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		break;
@@ -94,10 +91,10 @@ switch ($_POST['cmd']) {
 		$ret = execCommand($cmd_line, $exec_result);
 
 		if ($ret == 0):
-			zfsnotify($docroot, "ZFS Rollback ", "Snapshot ".$_POST['data']." restored successfully", $cmdoutput_str.$exec_result."","normal");
+			zfsnotify( "ZFS Rollback ", "Snapshot ".$_POST['data']." restored successfully", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "ZFS Rollback", "Unable to rollback to snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			zfsnotify( "ZFS Rollback", "Unable to rollback to snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		break;
@@ -107,10 +104,10 @@ switch ($_POST['cmd']) {
 		$ret = execCommand($cmd_line, $exec_result);
 
 		if ($ret == 0):
-			zfsnotify($docroot, "ZFS Hold", "Snapshot ".$_POST['data']." reference added successfully", $cmdoutput_str.$exec_result."","normal");
+			zfsnotify( "ZFS Hold", "Snapshot ".$_POST['data']." reference added successfully", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "ZFS Hold", "Unable to add reference to snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			zfsnotify( "ZFS Hold", "Unable to add reference to snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		break;
@@ -120,10 +117,10 @@ switch ($_POST['cmd']) {
 		$ret = execCommand($cmd_line, $exec_result);
 
 		if ($ret == 0):
-			zfsnotify($docroot, "ZFS Release", "Snapshot ".$_POST['data']." reference removed successfully", $cmdoutput_str.$exec_result."","normal");
+			zfsnotify( "ZFS Release", "Snapshot ".$_POST['data']." reference removed successfully", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "ZFS Release", "Unable to remove reference from snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			zfsnotify( "ZFS Release", "Unable to remove reference from snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		break;
@@ -133,10 +130,10 @@ switch ($_POST['cmd']) {
 		$ret = execCommand($cmd_line, $exec_result);
 
 		if ($ret == 0):
-			zfsnotify($docroot, "ZFS Destroy", "Snapshot ".$_POST['data']." destroyed successfully", $cmdoutput_str.$exec_result."","normal");
+			zfsnotify( "ZFS Destroy", "Snapshot ".$_POST['data']." destroyed successfully", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "ZFS Destroy", "Unable to destroy snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			zfsnotify( "ZFS Destroy", "Unable to destroy snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		break;
@@ -148,10 +145,10 @@ switch ($_POST['cmd']) {
 		$ret = execCommand($cmd_line, $exec_result);
 	
 		if ($ret == 0):
-			zfsnotify($docroot, "ZFS Snapshot", "Snapshot ".$_POST['data'].$format." created successfully", $cmdoutput_str.$exec_result."","normal");
+			zfsnotify( "ZFS Snapshot", "Snapshot ".$_POST['data'].$format." created successfully", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify($docroot, "ZFS Snapshot", "Unable to create snapshot ".$_POST['data'].$format.", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			zfsnotify( "ZFS Snapshot", "Unable to create snapshot ".$_POST['data'].$format.", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		break;

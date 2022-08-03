@@ -41,13 +41,14 @@ _(Destructive Mode)_:
 :end
 
 <div id="title" class="nocontrol">_(Datasets)_</div>
-_(Datasets Exclussion Patterns (One per line))_:
-: <textarea name="exclussion" cols="40" rows="5" placeholder="/^tank\/dockerfiles\/.*/
-/^tank\/downloads\/myhiddendataset\/.*/"><?=$zfsm_cfg['dataset_exclussion']?></textarea>
+_(Datasets Exclussion Patterns (Just One!))_:
+: <textarea name="exclussion" cols="40" rows="1" placeholder="/dockerfiles/.*
+/myhiddendataset/.*"><?=$zfsm_cfg['dataset_exclussion']?></textarea>
 
 :zc_settings_datasets_exclussion_plug:
-> Regular expression (With the start and end backslash) to be used for datasets listing exclussion. Dataset descendants and snapshots also will be excluded.
-> This could speed up the Information refresh process.
+> Lua pattern to be used for datasets listing exclussion. Dataset descendants and snapshots also will be excluded.
+> Check http://lua-users.org/wiki/PatternsTutorial for further information
+> This definitely speed up the Information refresh process!.
 :end
 
 <div id="title" class="nocontrol">_(Snapshots)_</div>

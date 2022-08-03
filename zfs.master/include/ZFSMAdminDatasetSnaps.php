@@ -1,23 +1,26 @@
 <?php
 
+session_start();
+
 $plugin = "zfs.master";
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 $urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
-$csrf_token = $_GET['csrf_token'];
 
 require_once "$docroot/webGui/include/Helpers.php";
-require_once "$docroot/plugins/$plugin/include/ZFSMConstants.php";
+require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
 require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 
-$zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
+$csrf_token = $_GET['csrf_token'];
 
+$zpool = $_GET['zpool'];
 $zdataset = $_GET['zdataset'];
-$zdataset_snaps = getZFSDatasetSnapshots($zdataset);
+$zpool_datasets = $_SESSION['zpool_datasets'][$zpool];
+$dataset = findDatasetInArray($zdataset, $zpool_datasets);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>ZFS Master - Admin Dataset Snaps</title>
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -105,8 +108,13 @@ window.onload = function() {
 </style>
 
 <script src="<?autov('/webGui/javascript/dynamix.js')?>"></script>
+<link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/default-fonts.css');?>">
+<link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/default-popup.css');?>">
+
 <script src="<?autov('/webGui/javascript/jquery.filetree.js')?>"></script>
+
 <script type="text/javascript" src="<?autov('/plugins/zfs.master/assets/sweetalert2.all.min.js');?>"></script>
+<link type="text/css" rel="stylesheet" href="<?autov('/plugins/zfs.master/assets/sweetalert2.min.css');?>">
 
 </head>
 
@@ -125,41 +133,39 @@ window.onload = function() {
 		</tr>
 	</thead>
 	<tbody id="zpools">
-		<?foreach ($zdataset_snaps as $snap):?>
-		<tr>
-			<?foreach ($snap as $key => $zdetail):?>
-			<td id=<?echo '"snapl-attribute-'.$key.'"'?>>
-				<?
-				if ($key == "Name"):
-					echo '<i class="fa fa-hdd-o icon" style="color:#486dba"></i>';
-					echo $zdetail;
-				elseif ($key == 'Used'):
-					echo '<span>'.fromBytesToString($zdetail).'</span>';
-				elseif ($key == "Refer"):
-					echo '<span>'.fromBytesToString($zdetail).'</span>';
-				elseif ($key == "Defer Destroy"):
-					echo '<span>'.$zdetail.'</span>';
-				elseif ($key == "Holds"):
-					echo '<span>'.$zdetail.'</span>';
-				elseif ($key == 'Creation Date'):
-					$snapdate = new DateTime();
-					$snapdate->setTimestamp($zdetail);
-					$detail = $snapdate->format('Y-m-d H:i:s');
-					echo '<span>'.$detail.'</span>';
-				endif;
-				?>
-			</td>
-			<?endforeach;?>
-			<td id="snapl-attribute-actions">
-				<?
-				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Rollback Snapshot" onclick="rollbackSnapshot(\''.$snap['Name'].'\')"><i id="zfsm-rollback" class="fa fa-backward" style="color:orange"></i></a></span>';
-				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Hold Snapshot" onclick="holdSnapshot(\''.$snap['Name'].'\')"><i id="zfsm-hold" class="fa fa-pause"></i></a></span>';
-				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Release Snapshot" onclick="releaseSnapshot(\''.$snap['Name'].'\')"><i id="zfsm-release" class="fa fa-play"></i></a></span>';
-				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Destroy Snapshot" onclick="destroySnapshot(\''.$snap['Name'].'\')"><i id="zfsm-destroy" class="fa fa-trash" style="color:red"></i></a></span>';
-				?>
-			</td>
-		</tr>
-		<?endforeach;?>
+		<?
+		foreach ($dataset['snapshots'] as $snap):
+		echo '<tr>';
+		echo '<td class="snapl-attribute-name">';
+			echo '<i class="fa fa-hdd-o icon" style="color:#486dba"></i>';
+			echo $snap['name'];
+		echo '</td>';
+		echo '<td class="snapl-attribute-used">';
+			echo fromBytesToString($snap['used']);
+		echo '</td>';
+		echo '<td class="snapl-attribute-referenced">';
+			echo fromBytesToString($snap['referenced']);
+		echo '</td>';
+		echo '<td class="snapl-attribute-defer_destroy">';
+			echo $snap['defer_destroy'];
+		echo '</td>';
+		echo '<td class="snapl-attribute-userrefs">';
+			echo $snap['userrefs'];
+		echo '</td>';
+		echo '<td class="snapl-attribute-creation">';
+			$snapdate = new DateTime();
+			$snapdate->setTimestamp($snap['creation']);
+			$detail = $snapdate->format('Y-m-d H:i:s');
+			echo '<span>'.$detail.'</span>';
+		echo '</td>';
+		echo '<td id="snapl-attribute-actions">';
+			echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Rollback Snapshot" onclick="rollbackSnapshot(\''.$snap['name'].'\')"><i id="zfsm-rollback" class="fa fa-backward" style="color:orange"></i></a></span>';
+			echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Hold Snapshot" onclick="holdSnapshot(\''.$snap['name'].'\')"><i id="zfsm-hold" class="fa fa-pause"></i></a></span>';
+			echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Release Snapshot" onclick="releaseSnapshot(\''.$snap['name'].'\')"><i id="zfsm-release" class="fa fa-play"></i></a></span>';
+			echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Destroy Snapshot" onclick="destroySnapshot(\''.$snap['name'].'\')"><i id="zfsm-destroy" class="fa fa-trash" style="color:red"></i></a></span>';
+		echo '</td>';
+		echo '</tr>';
+		endforeach;?>
 	</tbody>
 	</table>
 	</div>

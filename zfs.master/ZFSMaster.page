@@ -5,30 +5,34 @@ Cond="file_exists('/usr/sbin/zpool')"
 ---
 <?php
 
+session_start();
+
 $plugin = "zfs.master";
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
-$urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
-$urlcreatedataset = "/plugins/".$plugin."/include/ZFSMCreateDataset.php";
-$urladmindatasetsnaps = "/plugins/".$plugin."/include/ZFSMAdminDatasetSnaps.php";
+
+require_once $docroot."/plugins/".$plugin."/include/ZFSMBase.php";
+require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
+
+$zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
+
 $refreshbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="refreshInfo()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a></span>';
 $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a></span>';
 
-require_once "$docroot/plugins/$plugin/include/ZFSMConstants.php";
-require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
+$zpool_global = getZFSPools();
+$zpool_devices = array();
+$zpool_datasets = array();
 
-$zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
- 
-  $zpool_global = getZFSPools(); 
-  $zpool_datasets = array();
-  $zpool_devices = array();
+foreach ($zpool_global as $zpool):
+	$zpool_name = $zpool['Pool'];
 
-  foreach ($zpool_global as $zpool):
-	 $snapscount = 0;
-	 $zpool_devices[$zpool['Pool']] = getZFSPoolDevices($zpool['Pool']);
-	 $zpool_datasets[$zpool['Pool']] = getZFSPoolDatasets($zpool['Pool'], $snapscount, $zfsm_cfg['dataset_exclussion']);
-	 $zpool_global[$zpool['Pool']]['Snapshots'] = $snapscount;
-	 $zpool_global[$zpool['Pool']]['MountPoint'] = $zpool_datasets[$zpool['Pool']][0]['MountPoint'];
-  endforeach;
+	$zpool_devices[$zpool_name] = getZFSPoolDevices($zpool_name);
+	$zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclussion']);
+	$zpool_global[$zpool_name]['Snapshots'] = $zpool_datasets[$zpool_name]['total_snapshots'];
+	$zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
+endforeach;
+
+$_SESSION['zpool_datasets'] = $zpool_datasets;
+
 ?>
 
 <link type="text/css" rel="stylesheet" href="/webGui/styles/font-awesome.css?v=1545863026">
@@ -37,7 +41,6 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
   .zfs_table td span{margin-left:10px}
   .zfs_table tr>td{width:auto!important}
   .zfs_table tr>td+td+td{text-align:left!important}
-  .zfs_table tr>td+td+td+td+td+td+td{text-align:center!important}
   .zfs_table tr>td+td+td+td+td+td+td+td{text-align:left!important}
   .zfs_table tr>td+td+td+td+td+td+td+td+td{text-align:center!important}
   
@@ -72,10 +75,10 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 	  <td>Health</td>
 	  <td>Option/Dataset Name</td>
 	  <td>Size</td>
+	  <td>Mount Point</td>
+	  <td>Refer</td>
 	  <td>Used</td>
 	  <td>Free</td>
-	  <td>Refer</td>
-	  <td>Mount Point</td>
 	  <td>Snapshots</td>
 	</tr>
   </thead>
@@ -103,7 +106,12 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 				echo '</a> ';
 				echo $zdetail;
 			elseif ($key == "Name"):
-				echo '<button type="button" id="show-zpool-'.$zpool['Pool'].'" onclick="toggleTable(\'show-zpool-'.$zpool['Pool'].'\', \'zpool-'.$zpool['Pool'].'-datasets\');">Show Datasets</button>';
+				$showTableButtonText = "Show Datasets";
+				if ($_COOKIE['zdataset-'.$zpool['Pool']] != "none"):
+					$showTableButtonText = "Hide Datasets";
+				endif;
+
+				echo '<button type="button" id="show-zpool-'.$zpool['Pool'].'" onclick="togglePoolTable(\'show-zpool-'.$zpool['Pool'].'\', \'zdataset-'.$zpool['Pool'].'\');">'.$showTableButtonText.'</button>';
 				echo '<button type="button" onclick="scrubPool(\''.$zpool['Pool'].'\')";">Scrub Pool</button>';
 				if ($zfsm_cfg['destructive_mode']):
 					echo '<button type="button" onclick="exportPool(\''.$zpool['Pool'].'\')";">Export Pool</button>';
@@ -125,73 +133,9 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 	     </td>
 		<?endforeach;?>
 	</tr>
-		<?foreach ($zpool_datasets[$zpool['Pool']] as $zdataset):?>
-		
-	<?echo '<tr class="zpool-'.$zpool['Pool'].'-datasets" style="display: '.$_COOKIE['zpool-'.$zpool['Pool'].'-datasets'].';">'?>
-			<?foreach ($zdataset as $key => $zdatasetdetail):
-			if ($key == 'Attributes'):
-				continue;
-			endif;?>
-			<td>
-			<?
-			if ($key == "Name"):
-				$tmp_array = $zdataset['Attributes'];
-				$icon_color = 'grey';
-				
-				if ($zdataset['Snapshots'] > 0):
-					$snaptimestamp = $zdataset['Attributes']['Last Snap Date'];
-										
-					$snapdate = new DateTime();
-					$snapdate->setTimestamp($snaptimestamp);
-					
-					if (daysToNow($snaptimestamp) > $zfsm_cfg['snap_max_days_alert']):
-						$icon_color = 'orange';
-					else:
-						$icon_color = '#486dba';
-					endif;
-					
-					$tmp_array['Last Snap Date'] = $snapdate->format('Y-m-d H:i:s');
-				endif;
-				
-				echo '<a class="info hand">';
-				echo '<i class="fa fa-hdd-o icon" style="color:'.$icon_color.'"></i>';
-				echo '<span>'.implodeWithKeys('<br>', $tmp_array).'</span>';
-				echo '</a>';
-				echo $zdatasetdetail;
-			elseif ($key == "Size"):
-				$id = md5($zdataset['Name']);
-				echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zdataset['Name'].'\', '.$zdataset['Snapshots'].', \''.$id.'\', '.$zfsm_cfg['destructive_mode'].');" class="zfs_compact">Actions</button></span>';
-			elseif ($key == "Used"):
-				$percent = 100-round(calculateFreePercent($zdataset['Used'], $zdataset['Free']));
-				echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.$zdatasetdetail.'B</span></div>';
-			elseif ($key == "Free"):
-				$percent = round(calculateFreePercent($zdataset['Used'], $zdataset['Free']));
-				echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.$zdatasetdetail.'B</span></div>';
-			elseif ($key == "Snapshots"):
-				$icon_color = 'grey';
-				
-				if ($zdataset['Snapshots'] > 0):
-					$days = daysToNow($zdataset['Attributes']['Last Snap Date']);
-					
-					if ($days > $zfsm_cfg['snap_max_days_alert']):
-						$icon_color = 'orange';
-					else:
-						$icon_color = '#486dba';
-					endif;
-				endif;
-			
-				echo '<i class="fa fa-camera-retro icon" style="color:'.$icon_color.'"></i> ';
-				echo $zdatasetdetail;
-			elseif ($key == "Attributes"):
-				continue;
-			else:
-				echo $zdatasetdetail;
-	        endif;
-			?>
-			</td>
-			<?endforeach;?>
-	</tr>
-		<?endforeach;?>
+		<?
+			generateDatasetArrayRows($zpool['Pool'], $zpool_datasets[$zpool['Pool']], $_COOKIE['zdataset-'.$zpool['Pool']], $zfsm_cfg);
+		?>
 	<?endforeach;?>
    </tbody>
 </table>
@@ -255,7 +199,7 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
     setCookie(key, keyValue, '-1');
   }
   
-  function toggleTable(zpool_id, trclass) {
+  function togglePoolTable(zpool_id, trclass) {
 	var myArray = document.getElementsByClassName(trclass);
 	var myButton = document.getElementById(zpool_id);
 
@@ -280,12 +224,12 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 	  openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,"Create Dataset",550,680,false);
   }
 
-  function addDatasetContext(zdataset, snapscount, id, destructive_mode) {
+  function addDatasetContext(zpool, zdataset, snapscount, id, destructive_mode) {
     var opts = [];
 
 	if (destructive_mode != 0) {
 		opts.push({
-			text: _("Destroy Dataset"),
+			text: _("Destroy"),
 			icon: "fa-trash",
 			action: function (e) {
 				e.preventDefault();
@@ -311,7 +255,7 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 			icon: "fa-gears",
 			action: function(e) {
 				e.preventDefault();
-				adminDatasetSnaps(zdataset);
+				adminDatasetSnaps(zpool, zdataset);
 			},
 		});
     }
@@ -368,9 +312,9 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 	  });
   }
 
-  function adminDatasetSnaps(zdataset) {
-	  var csrf_token = $("input[name='csrf_token']").val();	  
-	  openBox('<?=$urladmindatasetsnaps?>?zdataset='+zdataset+'&csrf_token='+csrf_token,"Admin Dataset Snapshots",680,800,false);
+  function adminDatasetSnaps(zpool, zdataset) {
+	  var csrf_token = $("input[name='csrf_token']").val();	 
+	  openBox('<?=$urladmindatasetsnaps?>?zpool='+zpool+'&zdataset='+zdataset+'&csrf_token='+csrf_token, zdataset+" - Admin Snapshots",680,680,false);
   }
   
   
