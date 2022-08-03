@@ -16,11 +16,11 @@
 <CHANGES>
 
 ###2022.08.02
-- Warning - Please Update your exclussion pattern!
+- Warning - Please Update your exclusion pattern!
 - Add - Browse Button for Datasets
 - Add - Support for listing volumes!!
 - Add - Lua script backend for loading dataset information
-- Change - Exclussion pattern for datasets (Please check http://lua-users.org/wiki/PatternsTutorial)
+- Change - Exclusion pattern for datasets (Please check http://lua-users.org/wiki/PatternsTutorial)
 - Change - UI columns re-organized to the unraid way (sort of)
 
 ###2022.04.13
