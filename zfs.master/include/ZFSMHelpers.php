@@ -273,7 +273,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 		echo '<span>'.implodeWithKeys('<br>', $tmp_array).'</span>';
 		echo '</a>';
 
-		echo = substr( $zdataset['name'], strrpos($zdataset['name'] + 1, "/"),  strlen($zdataset['name']) );
+		echo substr( $zdataset['name'], strrpos($zdataset['name'] + 1, "/"),  strlen($zdataset['name']) );
 	echo '</td>';
 
 	// Actions
