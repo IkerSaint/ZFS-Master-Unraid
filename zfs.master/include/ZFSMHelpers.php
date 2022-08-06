@@ -259,6 +259,11 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 			
 		echo '<a class="info hand">';
 		echo '<i class="fa fa-hdd-o icon" style="color:'.$icon_color.'"></i>';
+
+		if (count($zdataset['child']) > 0):
+			echo '<i class="fa fa-plus-square fa-append"></i>';
+		endif;
+
 		echo '<span>'.implodeWithKeys('<br>', $tmp_array).'</span>';
 		echo '</a>';
 		echo $zdataset['name'];
