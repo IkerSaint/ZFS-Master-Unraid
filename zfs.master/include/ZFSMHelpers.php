@@ -260,21 +260,20 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 		echo '<a class="info hand">';
 		echo '<i class="fa fa-hdd-o icon" style="color:'.$icon_color.'"></i>';
 
+		$depth = substr_count($zdataset['name'], '/');
+
+		for ( $i = 1; $i <= $depth; $i++) {
+			echo '    ';
+		}
+
 		if (count($zdataset['child']) > 0):
 			echo '<i class="fa fa-plus-square fa-append"></i>';
-
-			$depth = substr_count($zdataset['name'], '/');
-
-			for ( $i = 1; $i <= $depth; $i++) {
-				echo ' ';
-			}
-
-			$zdataset['name'] = substr( $zdataset['name'], strrpos($zdataset['name'], "/"),  strlen($zdataset['name']) );
 		endif;
 
 		echo '<span>'.implodeWithKeys('<br>', $tmp_array).'</span>';
 		echo '</a>';
-		echo $zdataset['name'];
+
+		echo = substr( $zdataset['name'], strrpos($zdataset['name'] + 1, "/"),  strlen($zdataset['name']) );
 	echo '</td>';
 
 	// Actions
