@@ -134,10 +134,10 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 		<?endforeach;?>
 	</tr>
 		<?
-			generateDatasetArrayRows($zpool['Pool'], $zpool_datasets[$zpool['Pool']], $_COOKIE['zdataset-'.$zpool['Pool']], $zfsm_cfg);
+			generateDatasetArrayRows($zpool['Pool'], $zpool_datasets[$zpool['Pool']], $_COOKIE['zdataset-'.$zpool['Pool']], $zfsm_cfg, $zpool['Pool']);
 		?>
 	<?endforeach;?>
-   </tbody>
+  </tbody>
 </table>
 </div>
 
@@ -209,8 +209,6 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 		var index = datasets.indexOf(zdataset);
 	}
 
-	
-
 	if (index > -1) {
 		// Hide this shis
 		datasets.splice(index, 1);
@@ -220,6 +218,18 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	}
 
 	setCookie('datasetsExpanded', JSON.stringify(datasets));
+
+	var myRows = document.getElementsByClassName(zdataset);
+
+	if (index > -1 ) {
+		for (let row of myRows) {
+			$(row).hide("slow");
+		}
+	} else {
+		for (let row of myRows) {
+			$(row).show("slow");
+		}
+	}
   }
   
   function togglePoolTable(zpool_id, trclass) {

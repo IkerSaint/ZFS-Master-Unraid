@@ -216,8 +216,8 @@ function getLastSnap($zsnapshots) {
 	return $lastsnap;
 }
 
-function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
-	echo '<tr class="zdataset-'.$zpool.'" style="display: '.$display.'">';
+function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
+	echo '<tr class="zdataset-'.$zpool.$zclass." style="display: '.$display.'">';
 	echo '<td>';
 	echo '</td>';
 	echo '<td>';
@@ -331,14 +331,12 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 	echo '</tr>';
 }
 
-function generateDatasetArrayRows($zpool, $dataset_array, $display, $zfsm_cfg){
+function generateDatasetArrayRows($zpool, $dataset_array, $display, $zfsm_cfg, $zclass){
 	foreach ($dataset_array['child'] as $zdataset):
-		generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg);
+		generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, '');
 
 		if (count($zdataset['child']) > 0):
-			echo '<tbody class="'.$zdataset['name'].'">';
-			generateDatasetArrayRows($zpool, $zdataset, $display, $zfsm_cfg);
-			echo '</tbody>';
+			generateDatasetArrayRows($zpool, $zdataset, $display, $zfsm_cfg, $zclass.' '.$zdataset['name']);
 		endif;
 	endforeach;
 }
