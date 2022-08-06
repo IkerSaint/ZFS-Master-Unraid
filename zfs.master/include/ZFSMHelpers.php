@@ -256,15 +256,15 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 			$tmp_array['Last Snap Date'] = $snapdate->format('Y-m-d H:i:s');
 			$tmp_array['Last Snap'] = $snap['name'];
 		endif;
-			
-		echo '<a class="info hand">';
-		echo '<i class="fa fa-hdd-o icon" style="color:'.$icon_color.'"></i>';
 
 		$depth = substr_count($zdataset['name'], '/');
 
 		for ( $i = 1; $i <= $depth; $i++) {
-			echo '    ';
+			echo '&emsp;';
 		}
+
+		echo '<a class="info hand">';
+		echo '<i class="fa fa-hdd-o icon" style="color:'.$icon_color.'"></i>';
 
 		if (count($zdataset['child']) > 0):
 			echo '<i class="fa fa-plus-square fa-append"></i>';
@@ -273,7 +273,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 		echo '<span>'.implodeWithKeys('<br>', $tmp_array).'</span>';
 		echo '</a>';
 
-		echo substr( $zdataset['name'], strrpos($zdataset['name'] + 1, "/"),  strlen($zdataset['name']) );
+		echo substr( $zdataset['name'], strrpos($zdataset['name'], "/")  + 1,  strlen($zdataset['name']) );
 	echo '</td>';
 
 	// Actions
