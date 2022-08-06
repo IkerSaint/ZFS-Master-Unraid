@@ -262,6 +262,14 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 
 		if (count($zdataset['child']) > 0):
 			echo '<i class="fa fa-plus-square fa-append"></i>';
+
+			$depth = substr_count($zdataset['name'], '/');
+
+			for ( $i = 1; $i <= $depth; $i++) {
+				echo ' ';
+			}
+
+			$zdataset['name'] = substr( $zdataset['name'], strrpos($zdataset['name'], "/"),  strlen($zdataset['name']) );
 		endif;
 
 		echo '<span>'.implodeWithKeys('<br>', $tmp_array).'</span>';
