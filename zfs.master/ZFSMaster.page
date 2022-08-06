@@ -236,7 +236,15 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	}
 
 	for (let mytr of myArray) {
-		if (datasets.indexOf($(mytr).attr("name") != -1) {
+		var classList = $(mytr).attr('class').split(/\s+/);
+
+		for (var i = 0; i < classList.length; i++) {
+			if (datasets.indexOf(classList[i]) != -1) {
+				continue;
+			}
+		}
+
+		if (datasets.indexOf($(mytr).attr("name")) != -1) {
 			continue;
 		}
 

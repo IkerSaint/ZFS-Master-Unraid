@@ -217,7 +217,7 @@ function getLastSnap($zsnapshots) {
 }
 
 function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
-	echo '<tr class="zdataset-'.$zpool.' '.$zclass.'" name="'.$zdataset['name'].'" style="display: '.$display.'">';
+	echo '<tr class="zdataset-'.$zpool.' '.$zclass.'" style="display: '.$display.'">';
 	echo '<td>';
 	echo '</td>';
 	echo '<td>';
