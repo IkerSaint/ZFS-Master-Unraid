@@ -236,7 +236,7 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	}
 
 	for (let mytr of myArray) {
-		if (datasets.indexOf(zdataset) != -1) {
+		if (datasets.indexOf($(mytr).attr("name") != -1) {
 			continue;
 		}
 
