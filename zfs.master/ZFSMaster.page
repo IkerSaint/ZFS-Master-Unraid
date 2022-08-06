@@ -201,15 +201,25 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 
   function toggleDataset(zdataset) {
 	var datasets = JSON.parse(getCookie('datasetsExpanded'));
+	var index = -1;
 
 	if (datasets == null) {
-		setCookie('datasetsExpanded', zdataset);
-	} else {
-		datasets.push(zdataset);
-		setCookie('datasetsExpanded', JSON.stringify(datasets));
+		datasets = [];
+	} else { 
+		var index = datasets.indexOf(zdataset);
 	}
+
 	
-	setCookie(trclass, 'table-row');
+
+	if (index > -1) {
+		// Hide this shis
+		datasets.splice(index, 1);
+	} else {
+		// Show this shit 
+		datasets.push(zdataset);
+	}
+
+	setCookie('datasetsExpanded', JSON.stringify(datasets));
   }
   
   function togglePoolTable(zpool_id, trclass) {
