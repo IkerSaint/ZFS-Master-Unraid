@@ -205,15 +205,14 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 
 	if (datasets == null) {
 		datasets = [];
-	} else { 
-		var index = datasets.indexOf(zdataset);
+		datasets.push(zdataset);
 	}
 
+	var index = datasets.indexOf(zdataset);
+
 	if (index > -1) {
-		// Hide this shis
 		datasets.splice(index, 1);
 	} else {
-		// Show this shit 
 		datasets.push(zdataset);
 	}
 
@@ -221,32 +220,34 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 
 	var myRows = document.getElementsByClassName(zdataset);
 
-	if (index > -1 ) {
-		for (let row of myRows) {
-			$(row).hide("slow");
-		}
-	} else {
-		for (let row of myRows) {
-			$(row).show("slow");
-		}
+	for (let row of myRows) {
+		$(row).toggle("fast");
 	}
   }
   
   function togglePoolTable(zpool_id, trclass) {
+	var datasets = JSON.parse(getCookie('datasetsExpanded'));
 	var myArray = document.getElementsByClassName(trclass);
 	var myButton = document.getElementById(zpool_id);
+	var visibility = getCookie(trclass);
+
+	if (datasets == null) {
+		datasets = [];
+	}
 
 	for (let mytr of myArray) {
-		if (mytr.style.display == "none") {
+		if (datasets.indexOf(zdataset) != -1) {
+			continue;
+		}
+
+		if (visibility == "none") {
 			setCookie(trclass, 'table-row');	
 			$(mytr).show("slow");
-			mytr.style.display = 'table-row';
 			myButton.firstChild.data = "Hide Datasets";
 		}
 		else {
 			setCookie(trclass, 'none');	
 			$(mytr).hide("slow");
-			mytr.style.display = 'none';
 			myButton.firstChild.data = "Show Datasets";
 		}
 	}
