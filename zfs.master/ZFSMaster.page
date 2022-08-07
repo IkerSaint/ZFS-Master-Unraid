@@ -200,12 +200,11 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
   }
 
   function toggleDataset(zdataset) {
-	var datasets = JSON.parse(getCookie('datasetsExpanded'));
+	var datasets = JSON.parse(getCookie('datasetsHidden));
 	var index = -1;
 
 	if (datasets == null) {
 		datasets = [];
-		datasets.push(zdataset);
 	}
 
 	var index = datasets.indexOf(zdataset);
@@ -216,17 +215,21 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 		datasets.push(zdataset);
 	}
 
-	setCookie('datasetsExpanded', JSON.stringify(datasets));
-
 	var myRows = document.getElementsByClassName(zdataset);
 
 	for (let row of myRows) {
-		$(row).toggle("fast");
+		if (index > -1) {
+			$(row).hide( "fast");
+		} else {
+			$(row).show( "fast");
+		}
 	}
+
+	setCookie('datasetsHidden', JSON.stringify(datasets));
   }
   
   function togglePoolTable(zpool_id, trclass) {
-	var datasets = JSON.parse(getCookie('datasetsExpanded'));
+	var datasets = JSON.parse(getCookie('datasetsHidden'));
 	var myArray = document.getElementsByClassName(trclass);
 	var myButton = document.getElementById(zpool_id);
 	var visibility = getCookie(trclass);
@@ -236,24 +239,25 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	}
 
 	for (let mytr of myArray) {
-		var classList = $(mytr).attr('class').split(/\s+/);
+		if (visibility == "none") {
+			var classList = $(mytr).attr('class').split(/\s+/);
+			var cont = false;
+			
+			for (var i = 0; i < classList.length; i++) {
+				if (datasets.indexOf(classList[i]) != -1) {
+					cont = true;
+					break;
+				}
+			}
 
-		for (var i = 0; i < classList.length; i++) {
-			if (datasets.indexOf(classList[i]) != -1) {
+			if (cont) {
 				continue;
 			}
-		}
 
-		if (datasets.indexOf($(mytr).attr("name")) != -1) {
-			continue;
-		}
-
-		if (visibility == "none") {
 			setCookie(trclass, 'table-row');	
 			$(mytr).show("slow");
 			myButton.firstChild.data = "Hide Datasets";
-		}
-		else {
+		} else {
 			setCookie(trclass, 'none');	
 			$(mytr).hide("slow");
 			myButton.firstChild.data = "Show Datasets";
