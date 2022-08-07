@@ -200,7 +200,7 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
   }
 
   function toggleDataset(zdataset) {
-	var datasets = JSON.parse(getCookie('datasetsHidden));
+	var datasets = JSON.parse(getCookie('datasetsHidden'));
 	var index = -1;
 
 	if (datasets == null) {
@@ -218,10 +218,12 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	var myRows = document.getElementsByClassName(zdataset);
 
 	for (let row of myRows) {
-		if (index > -1) {
+		if (index == -1) {
 			$(row).hide( "fast");
+			$('i[name=zdataset]').attr('class', 'fa fa-plus-square fa-append');
 		} else {
 			$(row).show( "fast");
+			$('i[name=zdataset]') .attr('class', 'fa fa-minus-square fa-append');
 		}
 	}
 

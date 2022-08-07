@@ -260,7 +260,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
 		$depth = substr_count($zdataset['name'], '/');
 
 		for ( $i = 1; $i <= $depth; $i++) {
-			echo '&emsp;';
+			echo '&emsp;&emsp;';
 		}
 
 		echo '<a class="info hand">';
@@ -269,7 +269,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
 		echo '</a>';
 
 		if (count($zdataset['child']) > 0):
-			echo '<i class="fa fa-plus-square fa-append"></i>';
+			echo '<i class="fa fa-plus-square fa-append" name="'.$zdataset['name'].'"></i>';
 		endif;
 
 		echo substr( $zdataset['name'], strrpos($zdataset['name'], "/")  + 1,  strlen($zdataset['name']) );
