@@ -151,6 +151,7 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
   $(function() {
 	  addButtons();
 	  setInterval(function () { refreshInfo() }, <?=$zfsm_cfg['refresh_interval']?>*1000);
+	  processHiddenDatasets();
   });
 
   $(document).click(function() {
@@ -164,6 +165,7 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	  
 	  $zfs_master.load("Main #zfs_master_div", function() {
 		  replaceElementClass("#zfsm-refresh", "fa-spinner fa-spin", "fa-refresh");
+		  processHiddenDatasets();
 	  });
   }
   
@@ -199,7 +201,7 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
     setCookie(key, keyValue, '-1');
   }
 
-  function hideDatasets() {
+  function processHiddenDatasets() {
 	var datasets = JSON.parse(getCookie('datasetsHidden'));
 	
 	if (datasets == null || datasets.length <= 0)
