@@ -269,7 +269,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
 		echo '</a>';
 
 		if (count($zdataset['child']) > 0):
-			echo '<i class="fa fa-plus-square fa-append" name="'.$zdataset['name'].'"></i>';
+			echo '<i class="fa fa-minus-square fa-append" name="'.$zdataset['name'].'"></i>';
 		endif;
 
 		echo substr( $zdataset['name'], strrpos($zdataset['name'], "/")  + 1,  strlen($zdataset['name']) );

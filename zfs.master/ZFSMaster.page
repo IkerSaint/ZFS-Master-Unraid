@@ -199,6 +199,22 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
     setCookie(key, keyValue, '-1');
   }
 
+  function hideDatasets() {
+	var datasets = JSON.parse(getCookie('datasetsHidden'));
+	
+	if (datasets == null || datasets.length <= 0)
+		return;
+
+	for (let zdataset of datasets) {
+		var myRows = document.getElementsByClassName(zdataset);
+		
+		for (let row of myRows) {
+			$(row).hide(0);
+			$('i[name=\''+zdataset+'\']').attr('class', 'fa fa-plus-square fa-append');
+		} 
+	}
+  }
+
   function toggleDataset(zdataset) {
 	var datasets = JSON.parse(getCookie('datasetsHidden'));
 	var index = -1;
@@ -220,10 +236,10 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	for (let row of myRows) {
 		if (index == -1) {
 			$(row).hide( "fast");
-			$('i[name=zdataset]').attr('class', 'fa fa-plus-square fa-append');
+			$('i[name=\''+zdataset+'\']').attr('class', 'fa fa-plus-square fa-append');
 		} else {
 			$(row).show( "fast");
-			$('i[name=zdataset]') .attr('class', 'fa fa-minus-square fa-append');
+			$('i[name=\''+zdataset+'\']') .attr('class', 'fa fa-minus-square fa-append');
 		}
 	}
 
