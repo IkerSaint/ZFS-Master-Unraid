@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 $plugin = "zfs.master";
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
@@ -12,9 +13,7 @@ $csrf_token = $_GET['csrf_token'];
 
 $zpool = $_GET['zpool'];
 $zdataset = $_GET['zdataset'];
-
-$compressedJSON = $_COOKIE['zpool_datasets'];
-$zpool_datasets = json_decode(gzinflate($compressedJSON))[$zpool];
+$zpool_datasets = $_SESSION['zpool_datasets'][$zpool];
 $dataset = findDatasetInArray($zdataset, $zpool_datasets);
 ?>
 
