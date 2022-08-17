@@ -11,7 +11,7 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 
 $zpool = $_GET['zpool'];
 $compressedJSON = $_COOKIE['zpool_datasets'];
-$zpool_datasets = gzinflate($compressedJSON);
+$zpool_datasets = json_encode(gzinflate($compressedJSON));
 ?>
 
 <!DOCTYPE html>

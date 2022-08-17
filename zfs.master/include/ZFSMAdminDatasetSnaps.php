@@ -14,7 +14,7 @@ $zpool = $_GET['zpool'];
 $zdataset = $_GET['zdataset'];
 
 $compressedJSON = $_COOKIE['zpool_datasets'];
-$zpool_datasets = gzinflate($compressedJSON)[$zpool];
+$zpool_datasets = json_decode(gzinflate($compressedJSON))[$zpool];
 $dataset = findDatasetInArray($zdataset, $zpool_datasets);
 ?>
 
