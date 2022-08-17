@@ -12,7 +12,9 @@ $csrf_token = $_GET['csrf_token'];
 
 $zpool = $_GET['zpool'];
 $zdataset = $_GET['zdataset'];
-$zpool_datasets = $_COOKIE['zpool_datasets'][$zpool];
+
+$compressedJSON = $_COOKIE['zpool_datasets'];
+$zpool_datasets = gzinflate($compressedJSON)[$zpool];
 $dataset = findDatasetInArray($zdataset, $zpool_datasets);
 ?>
 

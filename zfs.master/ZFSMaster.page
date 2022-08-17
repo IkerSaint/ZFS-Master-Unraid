@@ -29,7 +29,8 @@ foreach ($zpool_global as $zpool):
 	$zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
 endforeach;
 
-setcookie('zpool_datasets', $zpool_datasets, 86400);
+$compressedJSON = gzdeflate($zpool_datasets, 9);
+setcookie('zpool_datasets', $compressedJSON, 86400);
 
 ?>
 
