@@ -271,7 +271,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
 		echo '</a>';
 
 		if (count($zdataset['child']) > 0):
-			echo '<i class="fa fa-minus-square fa-append"></i>';
+			echo '<i class="fa fa-minus-square fa-append" name="'.$zdataset['name'].'"></i>';
 		endif;
 
 		if ($zdataset['keystatus'] != 'none'):
