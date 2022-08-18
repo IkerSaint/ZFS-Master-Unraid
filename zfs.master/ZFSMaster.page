@@ -291,7 +291,7 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	  openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,"Create Dataset",550,680,false);
   }
 
-  function addDatasetContext(zpool, zdataset, snapscount, id, destructive_mode) {
+  function addDatasetContext(zpool, zdataset, snapscount, id, destructive_mode, options) {
     var opts = [];
 
 	if (destructive_mode != 0) {
