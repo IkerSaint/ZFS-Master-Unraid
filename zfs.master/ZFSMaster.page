@@ -330,7 +330,7 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	if (encryption == 'available') {
 		opts.push({
 			text: _("Lock Dataset"),
-			icon: "fa-unlock",
+			icon: "fa-lock",
 			action: function(e) {
 				e.preventDefault();
 				lockDataset(zdataset);
@@ -338,8 +338,8 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 		});
 	} else if (encryption == 'unavailable') {
 		opts.push({
-			text: _("Lock Dataset"),
-			icon: "fa-lock",
+			text: _("Unlock Dataset"),
+			icon: "fa-unlock",
 			action: function(e) {
 				e.preventDefault();
 				unlockDataset(zdataset);
@@ -405,7 +405,35 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
   }
 
   function unlockDataset(zdataset) {
-	  
+	  Swal2.fire({
+		  title: '<strong>Passphrase <br>'+zdataset+'</strong>',
+		  input: 'text',
+		  showConfirmButton: true,
+		  showCancelButton: true
+	  }).then((result) => {
+		  if (result.isConfirmed) {
+			  var body = '{
+				"dataset" : zdataset,
+				"passphrase" : result.value,
+           	  }';
+
+			  $.post('<?=$urlzmadmin?>',{cmd: 'unlockdataset', data: JSON.stringify(body), force: result.value}, function(data) {
+				  if (data == 'Ok') {
+					Swal2.fire({
+						title: 'Success!',
+						icon: 'success',
+						text: 'Dataset '+zdataset+' Unlocked'
+					});
+				  } else {
+					Swal2.fire({
+						title: 'Error!',
+						icon: 'error',
+						html: 'Unable to unlock dataset '+zdataset+'<br>Output: '+data
+					}); 
+				  }
+			  });
+		  }
+	  });
   }
 
   function lockDataset(zdataset) {
