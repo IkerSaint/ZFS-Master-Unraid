@@ -85,6 +85,28 @@ switch ($_POST['cmd']) {
 			echo $exec_result;
 		endif;
 		break;
+	case 'lockdataset':
+		$cmd_line = "zfs umount -f ".escapeshellarg($_POST['data']);
+
+		$ret = execCommand($cmd_line, $exec_result);
+
+		if ($ret != 0):
+			zfsnotify( "ZFS Umount", "Unable to unmount dataset, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			echo $exec_result;
+		endif;
+
+		$cmd_line = "zfs unload-key -r ".escapeshellarg($_POST['data']);
+		$ret = execCommand($cmd_line, $exec_result);
+
+		if ($ret == 0):
+			zfsnotify( "ZFS Unload Key", "Pool ".$_POST['data']." exported successfully", $cmdoutput_str.$exec_result."","normal");
+			echo 'Ok';
+		else:
+			zfsnotify( "ZFS Unload Key", "Unable to unload the encryption key ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			echo $exec_result;
+		endif;
+
+		break;
 	case 'rollbacksnapshot':
 		$cmd_line = "zfs rollback -rf ".escapeshellarg($_POST['data']);
 

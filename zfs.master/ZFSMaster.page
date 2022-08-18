@@ -327,12 +327,22 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 		});
     }
 
-	if (encryption == 'unavailable') {
+	if (encryption == 'available') {
 		opts.push({
-			text: _("Unlock Dataset"),
-			icon: "fa-gears",
+			text: _("Lock Dataset"),
+			icon: "fa-unlock",
 			action: function(e) {
 				e.preventDefault();
+				lockDataset(zdataset);
+			},
+		});
+	} else if (encryption == 'unavailable') {
+		opts.push({
+			text: _("Lock Dataset"),
+			icon: "fa-lock",
+			action: function(e) {
+				e.preventDefault();
+				unlockDataset(zdataset);
 			},
 		});
 	}
@@ -393,7 +403,28 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	  var csrf_token = $("input[name='csrf_token']").val();	 
 	  openBox('<?=$urladmindatasetsnaps?>?zpool='+zpool+'&zdataset='+zdataset+'&csrf_token='+csrf_token, zdataset+" - Admin Snapshots",680,680,false);
   }
-  
+
+  function unlockDataset(zdataset) {
+	  
+  }
+
+  function lockDataset(zdataset) {
+	  $.post('<?=$urlzmadmin?>',{cmd: 'lockdataset', data: zdataset},function(data) {
+		if (data == 'Ok') {
+			Swal2.fire({
+				title: 'Success!',
+				icon:'success',
+				html: zdataset+' Locked!'
+			});
+		} else {
+			Swal2.fire({
+				title: 'Error!',
+				icon:'error',
+				html: 'Lock of '+zdataset+' failed! <br>Output: '+data
+			}); 
+		}
+	  });
+  }
   
   function destroyDataset(zdataset) {
 	  Swal2.fire({
