@@ -274,11 +274,11 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
 			echo '<i class="fa fa-minus-square fa-append"></i>';
 		endif;
 
-		if ($zdataset['encryption'] != 'off'):
+		if ($zdataset['keystatus'] != 'none'):
 			if ($zdataset['keystatus'] == 'available'):
-				echo '<i class="fa fa-lock fa-append"></i>';
-			else:
 				echo '<i class="fa fa-unlock fa-append"></i>';
+			else:
+				echo '<i class="fa fa-lock fa-append"></i>';
 			endif;
 		endif;
 
