@@ -233,6 +233,8 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
 				"Access Time" =>  $zdataset['atime'],
 				"XAttr" =>  $zdataset['xattr'],
 				"Primary Cache" =>  $zdataset['primarycache'],
+				"Encryption" => $zdataset['encryption'],
+				'Key Status' => $zdataset['keystatus'],
 				"Quota" =>  fromBytesToString($zdataset['quota']),
 				"Read Only" =>  $zdataset['readonly'],
 				"Case Sensitive" =>  $zdataset['casesensitivity'],
@@ -269,7 +271,15 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
 		echo '</a>';
 
 		if (count($zdataset['child']) > 0):
-			echo '<i class="fa fa-minus-square fa-append" name="'.$zdataset['name'].'"></i>';
+			echo '<i class="fa fa-minus-square fa-append"></i>';
+		endif;
+
+		if ($zdataset['encryption'] != 'off'):
+			if ($zdataset['keystatus'] == 'available'):
+				echo '<i class="fa fa-lock fa-append"></i>';
+			else:
+				echo '<i class="fa fa-unlock fa-append"></i>';
+			endif;
 		endif;
 
 		echo substr( $zdataset['name'], strrpos($zdataset['name'], "/")  + 1,  strlen($zdataset['name']) );
