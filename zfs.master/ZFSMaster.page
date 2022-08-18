@@ -406,18 +406,19 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 
   function unlockDataset(zdataset) {
 	  Swal2.fire({
-		  title: '<strong>Passphrase <br>'+zdataset+'</strong>',
-		  input: 'text',
+		  title: '<strong>Passphrase for '+zdataset+'</strong>',
+		  input: 'password',
+		  inputPlaceholder: 'Enter your Passphrase',
+		  inputAttributes: {
+			maxlength: 64,
+			autocapitalize: 'off',
+			autocorrect: 'off'
+		  },
 		  showConfirmButton: true,
 		  showCancelButton: true
 	  }).then((result) => {
 		  if (result.isConfirmed) {
-			  var body = '{
-				"dataset" : zdataset,
-				"passphrase" : result.value,
-           	  }';
-
-			  $.post('<?=$urlzmadmin?>',{cmd: 'unlockdataset', data: JSON.stringify(body), force: result.value}, function(data) {
+			  $.post('<?=$urlzmadmin?>',{cmd: 'unlockdataset', data: zdataset, passphrase: result.value}, function(data) {
 				  if (data == 'Ok') {
 					Swal2.fire({
 						title: 'Success!',

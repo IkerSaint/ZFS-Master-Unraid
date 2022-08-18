@@ -103,12 +103,23 @@ switch ($_POST['cmd']) {
 			zfsnotify( "ZFS Dataset Lock", "Dataset ".$_POST['data']." Locked successfully", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
-			zfsnotify( "ZFS Unload Key", "Unable to unload the encryption key ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			zfsnotify( "ZFS Dataset Lock", "Unable to unload the encryption key ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 
 		break;
 	case 'unlockdataset':
+		$cmd_line = "echo ".escapeshellarg($_POST['passphrase'])."| zfs mount -l ".escapeshellarg($_POST['data']);
+
+		$ret = execCommand($cmd_line, $exec_result);
+		
+		if ($ret == 0):
+			zfsnotify( "ZFS Dataset Unlock", "Dataset ".$_POST['data']." Unlocked successfully", $cmdoutput_str.$exec_result."","normal");
+			echo 'Ok';
+		else:
+			zfsnotify( "ZFS Dataset Unlock", "Unable to Unlock dataset ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			echo $exec_result;
+		endif;
 		
 		break;
 	case 'rollbacksnapshot':
