@@ -48,7 +48,7 @@ switch ($_POST['cmd']) {
 			break;
 		endif;
 			
-		$cmd_line = 'chmod '.$permissions.' /'.$zfs_cparams['zpool'].'/'.$zfs_cparams['name'];
+		$cmd_line = 'chmod '.$permissions.' /'.$zfs_cparams['zpool'].'/'.$zfs_cparams['name'].$boutput_str;
 		$ret = execCommand($cmd_line, $exec_result);
 
 		if ($ret != 0):
@@ -86,7 +86,7 @@ switch ($_POST['cmd']) {
 		endif;
 		break;
 	case 'lockdataset':
-		$cmd_line = "zfs umount -f ".escapeshellarg($_POST['data']);
+		$cmd_line = "zfs umount -f ".escapeshellarg($_POST['data']).$boutput_str;
 
 		$ret = execCommand($cmd_line, $exec_result);
 
@@ -96,7 +96,7 @@ switch ($_POST['cmd']) {
 			break;
 		endif;
 
-		$cmd_line = "zfs unload-key -r ".escapeshellarg($_POST['data']);
+		$cmd_line = "zfs unload-key -r ".escapeshellarg($_POST['data']).$boutput_str;
 		$ret = execCommand($cmd_line, $exec_result);
 
 		if ($ret == 0):
@@ -109,7 +109,7 @@ switch ($_POST['cmd']) {
 
 		break;
 	case 'unlockdataset':
-		$cmd_line = "echo ".escapeshellarg($_POST['passphrase'])."| zfs mount -l ".escapeshellarg($_POST['data']);
+		$cmd_line = "echo ".escapeshellarg($_POST['passphrase'])."| zfs mount -l ".escapeshellarg($_POST['data']).$boutput_str;
 
 		$ret = execCommand($cmd_line, $exec_result);
 		
@@ -123,7 +123,7 @@ switch ($_POST['cmd']) {
 		
 		break;
 	case 'rollbacksnapshot':
-		$cmd_line = "zfs rollback -rf ".escapeshellarg($_POST['data']);
+		$cmd_line = "zfs rollback -rf ".escapeshellarg($_POST['data']).$boutput_str;
 
 		$ret = execCommand($cmd_line, $exec_result);
 
@@ -136,7 +136,7 @@ switch ($_POST['cmd']) {
 		endif;
 		break;
 	case 'holdsnapshot':
-		$cmd_line = "zfs hold zfsmaster ".escapeshellarg($_POST['data']);
+		$cmd_line = "zfs hold zfsmaster ".escapeshellarg($_POST['data']).$boutput_str;
 
 		$ret = execCommand($cmd_line, $exec_result);
 
@@ -149,7 +149,7 @@ switch ($_POST['cmd']) {
 		endif;
 		break;
 	case 'releasesnapshot':
-		$cmd_line = "zfs release zfsmaster ".escapeshellarg($_POST['data']);
+		$cmd_line = "zfs release zfsmaster ".escapeshellarg($_POST['data']).$boutput_str;
 
 		$ret = execCommand($cmd_line, $exec_result);
 
@@ -162,7 +162,7 @@ switch ($_POST['cmd']) {
 		endif;
 		break;
 	case 'destroysnapshot':
-		$cmd_line = "zfs destroy -r ".escapeshellarg($_POST['data']);
+		$cmd_line = "zfs destroy -r ".escapeshellarg($_POST['data']).$boutput_str;
 
 		$ret = execCommand($cmd_line, $exec_result);
 
