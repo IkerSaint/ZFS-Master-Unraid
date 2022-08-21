@@ -38,7 +38,7 @@ switch ($_POST['cmd']) {
 
 		$cmd_line = createZFSCreateDatasetCMDLine($zfs_cparams).$boutput_str;
 
-		if ($retParams['encryption'] == 'on'):
+		if ($zfs_cparams['encryption'] == 'on'):
 			$cmd_line = "echo ".escapeshellarg($passphrase)." | echo ".escapeshellarg($passphrase)." | ".$cmd_line;
 		endif;
 

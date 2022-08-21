@@ -149,7 +149,7 @@ input[type=email]{margin-top:8px;float:left}
 						<option value="yes" selected>Yes</option>
 						<option value="no">No</option>
 					</select>
-					<input id="mountpoint" name="mountpoint" class="zfsm-input zfsm-w70 zfsm-unraid-border" placeholder="Empty for default, otherwise complete mountpoint path. ">
+					<input id="mountpoint" name="mountpoint" class="zfsm-input zfsm-w0 zfsm-unraid-border" placeholder="Empty for default, otherwise complete mountpoint path. ">
 				</dl>
 				<dl>
 					Access Time
@@ -187,10 +187,10 @@ input[type=email]{margin-top:8px;float:left}
 				<dl>
 					Encryption
 					<select id="encryption" name="encryption" class="zfsm-input">
-						<option value="yes" selected>Yes</option>
-						<option value="no">No</option>
+						<option value="yes">Yes</option>
+						<option value="no" selected>No</option>
 					</select>
-					<input id="passphrase" name="passphrase" class="zfsm-input zfsm-w70 zfsm-unraid-border" placeholder="Encryption PassPhrase">
+					<input id="passphrase" name="passphrase" autocomplete="off" type="password" class="zfsm-input zfsm-w50 zfsm-unraid-border" placeholder="Encryption PassPhrase">
 				</dl>
 				<dl>
 					Extended Attributes:
