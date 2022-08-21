@@ -30,7 +30,7 @@ function zfsnotify( $subject, $description, $message, $type="normal") {
 
 function loadJSONFromDisk($file) {
 	$readJSONFile = file_get_contents($file);
-	return json_decode($readJSONFile, true);
+	return json_decode($readJSONFile);
 }
 
 function saveJSONToDisk($file, $data) {

@@ -12,7 +12,7 @@ $csrf_token = $_GET['csrf_token'];
 $zpool = $_GET['zpool'];
 $zdataset = $_GET['zdataset'];
 $session_file = loadJSONFromDisk($plugin_session_file);
-$zpool_datasets = $session_file['zpool_datasets'][$zpool];
+$zpool_datasets = $session_file[$zpool];
 $dataset = findDatasetInArray($zdataset, $zpool_datasets);
 ?>
 
