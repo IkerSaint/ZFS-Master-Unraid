@@ -190,7 +190,7 @@ input[type=email]{margin-top:8px;float:left}
 						<option value="yes">Yes</option>
 						<option value="no" selected>No</option>
 					</select>
-					<input id="passphrase" name="passphrase" autocomplete="off" type="password" class="zfsm-input zfsm-w50 zfsm-unraid-border" placeholder="Encryption PassPhrase">
+					<input id="passphrase" name="passphrase" autocomplete="off" type="password" class="zfsm-input zfsm-w50 zfsm-unraid-border" placeholder="Encryption PassPhrase" disabled>
 				</dl>
 				<dl>
 					Extended Attributes:
@@ -263,7 +263,7 @@ input[type=email]{margin-top:8px;float:left}
   });
 
   $("select[name='encryption']").change(function() {
-	 $("#passphrase").attr('disabled', $(this).val() == 'no');
+	$("#passphrase").attr('disabled', $(this).val() == 'no');
   });
    
   function createDataset() {
