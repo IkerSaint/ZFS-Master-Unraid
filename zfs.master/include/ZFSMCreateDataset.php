@@ -1,7 +1,4 @@
 <?php
-
-session_start();
-
 $plugin = "zfs.master";
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 $urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
@@ -12,7 +9,8 @@ require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
 require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 
 $zpool = $_GET['zpool'];
-$zpool_datasets = $_SESSION['zpool_datasets'];
+$session_file = loadJSONFromDisk($plugin_session_file);
+$zpool_datasets = $session_file;
 ?>
 
 <!DOCTYPE html>
@@ -151,7 +149,7 @@ input[type=email]{margin-top:8px;float:left}
 						<option value="yes" selected>Yes</option>
 						<option value="no">No</option>
 					</select>
-					<input id="mountpoint" name="mountpoint" class="zfsm-input zfsm-w70 zfsm-unraid-border" placeholder="Empty for default, otherwise complete mountpoint path. ">
+					<input id="mountpoint" name="mountpoint" class="zfsm-input zfsm-w0 zfsm-unraid-border" placeholder="Empty for default, otherwise complete mountpoint path. ">
 				</dl>
 				<dl>
 					Access Time
@@ -186,6 +184,14 @@ input[type=email]{margin-top:8px;float:left}
 				<div class="zfsm-title">Advanced Options</div>
 			<hr>
 			<div id="dataset-advanced-options">
+				<dl>
+					Encryption
+					<select id="encryption" name="encryption" class="zfsm-input">
+						<option value="yes">Yes</option>
+						<option value="no" selected>No</option>
+					</select>
+					<input id="passphrase" name="passphrase" autocomplete="off" type="password" class="zfsm-input zfsm-w50 zfsm-unraid-border" placeholder="Encryption PassPhrase" disabled>
+				</dl>
 				<dl>
 					Extended Attributes:
 					<select id="xattr" name="xattr" class="zfsm-input">
@@ -254,6 +260,10 @@ input[type=email]{margin-top:8px;float:left}
   
   $("select[name='mount']").change(function() {
 	 $("#mountpoint").attr('disabled', $(this).val() == 'no');
+  });
+
+  $("select[name='encryption']").change(function() {
+	$("#passphrase").attr('disabled', $(this).val() == 'no');
   });
    
   function createDataset() {

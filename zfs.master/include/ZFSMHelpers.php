@@ -28,6 +28,15 @@ function zfsnotify( $subject, $description, $message, $type="normal") {
 	shell_exec($command);
 }
 
+function loadJSONFromDisk($file) {
+	$readJSONFile = file_get_contents($file);
+	return json_decode($readJSONFile, true);
+}
+
+function saveJSONToDisk($file, $data) {
+	file_put_contents($file, json_encode($data));
+}
+
 function fromStringToBytes($spacestr) {
 	$return_number = (double)$spacestr;
 		
@@ -110,6 +119,18 @@ function cleanZFSCreateDatasetParams($params) {
 	else:
 		if (!isset($retParams['mountpoint']) || $retParams['mountpoint'] == ''):
 			unset($retParams['mountpoint']);
+		endif;
+	endif;
+
+	if ($retParams['encryption'] == 'no'):
+		$retParams['encryption'] = 'off';
+	else:
+		if (!isset($retParams['passphrase']) || $retParams['passphrase'] == ''):
+			unset($retParams['encryption']);
+		else:
+			$retParams['encryption'] = 'on';
+			$retParams['keylocation'] = 'prompt';
+			$retParams['keyformat'] = 'passphrase';
 		endif;
 	endif;
 		
@@ -216,8 +237,8 @@ function getLastSnap($zsnapshots) {
 	return $lastsnap;
 }
 
-function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
-	echo '<tr class="zdataset-'.$zpool.'" style="display: '.$display.'">';
+function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
+	echo '<tr class="zdataset-'.$zpool.' '.$zclass.'" style="display: '.$display.'">';
 	echo '<td>';
 	echo '</td>';
 	echo '<td>';
@@ -233,6 +254,8 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 				"Access Time" =>  $zdataset['atime'],
 				"XAttr" =>  $zdataset['xattr'],
 				"Primary Cache" =>  $zdataset['primarycache'],
+				"Encryption" => $zdataset['encryption'],
+				'Key Status' => $zdataset['keystatus'],
 				"Quota" =>  fromBytesToString($zdataset['quota']),
 				"Read Only" =>  $zdataset['readonly'],
 				"Case Sensitive" =>  $zdataset['casesensitivity'],
@@ -256,19 +279,38 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 			$tmp_array['Last Snap Date'] = $snapdate->format('Y-m-d H:i:s');
 			$tmp_array['Last Snap'] = $snap['name'];
 		endif;
-			
+
+		$depth = substr_count($zdataset['name'], '/');
+
+		for ( $i = 1; $i <= $depth; $i++) {
+			echo '&emsp;&emsp;';
+		}
+
 		echo '<a class="info hand">';
-		echo '<i class="fa fa-hdd-o icon" style="color:'.$icon_color.'"></i>';
+		echo '<i class="fa fa-hdd-o icon" style="color:'.$icon_color.'" onclick="toggleDataset(\''.$zdataset['name'].'\');"></i>';
 		echo '<span>'.implodeWithKeys('<br>', $tmp_array).'</span>';
 		echo '</a>';
-		echo $zdataset['name'];
+
+		if (count($zdataset['child']) > 0):
+			echo '<i class="fa fa-minus-square fa-append" name="'.$zdataset['name'].'"></i>';
+		endif;
+
+		if ($zdataset['keystatus'] != 'none'):
+			if ($zdataset['keystatus'] == 'available'):
+				echo '<i class="fa fa-unlock fa-append"></i>';
+			else:
+				echo '<i class="fa fa-lock fa-append"></i>';
+			endif;
+		endif;
+
+		echo substr( $zdataset['name'], strrpos($zdataset['name'], "/")  + 1,  strlen($zdataset['name']) );
 	echo '</td>';
 
 	// Actions
 
 	echo '<td>';
 		$id = md5($zdataset['name']);
-		echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zpool.'\', \''.$zdataset['name'].'\', '.count($zdataset['snapshots']).', \''.$id.'\', '.$zfsm_cfg['destructive_mode'].');" class="zfs_compact">Actions</button></span>';
+		echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zpool.'\', \''.$zdataset['name'].'\', '.count($zdataset['snapshots']).', \''.$id.'\', '.$zfsm_cfg['destructive_mode'].', \''.$zdataset['keystatus'].'\');" class="zfs_compact">Actions</button></span>';
 	echo '</td>';
 
 	//mountpoint
@@ -320,12 +362,12 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg) {
 	echo '</tr>';
 }
 
-function generateDatasetArrayRows($zpool, $dataset_array, $display, $zfsm_cfg){
+function generateDatasetArrayRows($zpool, $dataset_array, $display, $zfsm_cfg, $zclass){
 	foreach ($dataset_array['child'] as $zdataset):
-		generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg);
+		generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass);
 
 		if (count($zdataset['child']) > 0):
-			generateDatasetArrayRows($zpool, $zdataset, $display, $zfsm_cfg);
+			generateDatasetArrayRows($zpool, $zdataset, $display, $zfsm_cfg, $zclass.' '.$zdataset['name']);
 		endif;
 	endforeach;
 }
