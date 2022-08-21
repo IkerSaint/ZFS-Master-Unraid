@@ -124,7 +124,6 @@ function cleanZFSCreateDatasetParams($params) {
 
 	if ($retParams['encryption'] == 'no'):
 		$retParams['encryption'] = 'off';
-		unset($retParams['passphrase']);
 	else:
 		if (!isset($retParams['passphrase']) || $retParams['passphrase'] == ''):
 			unset($retParams['encryption']);
