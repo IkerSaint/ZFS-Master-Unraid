@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 $plugin = "zfs.master";
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 $urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
@@ -11,7 +9,7 @@ require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
 require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 
 $zpool = $_GET['zpool'];
-$zpool_datasets = $_SESSION['zpool_datasets'];
+$zpool_datasets = loadJSONFromDisk($plugin_session_file)['zpool_datasets'];
 ?>
 
 <!DOCTYPE html>

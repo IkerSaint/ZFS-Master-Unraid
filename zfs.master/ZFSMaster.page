@@ -4,8 +4,6 @@ Tag="database"
 Cond="file_exists('/usr/sbin/zpool')"
 ---
 <?php
-session_start();
-
 $plugin = "zfs.master";
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 
@@ -30,7 +28,7 @@ foreach ($zpool_global as $zpool):
 	$zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
 endforeach;
 
-$_SESSION['zpool_datasets'] = $zpool_datasets;
+saveJSONToDisk($plugin_session_file,$zpool_datasets);
 
 ?>
 

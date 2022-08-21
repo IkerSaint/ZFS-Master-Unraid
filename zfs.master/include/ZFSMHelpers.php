@@ -28,6 +28,15 @@ function zfsnotify( $subject, $description, $message, $type="normal") {
 	shell_exec($command);
 }
 
+function loadJSONFromDisk($file) {
+	$readJSONFile = file_get_contents($file);
+	return json_decode($readJSONFile, TRUE);
+}
+
+function saveJSONToDisk($file, $data) {
+	$file_put_contents($file, $data)
+}
+
 function fromStringToBytes($spacestr) {
 	$return_number = (double)$spacestr;
 		
