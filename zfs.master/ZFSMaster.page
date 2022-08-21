@@ -4,9 +4,6 @@ Tag="database"
 Cond="file_exists('/usr/sbin/zpool')"
 ---
 <?php
-
-session_start();
-
 $plugin = "zfs.master";
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 
@@ -31,7 +28,7 @@ foreach ($zpool_global as $zpool):
 	$zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
 endforeach;
 
-$_SESSION['zpool_datasets'] = $zpool_datasets;
+saveJSONToDisk($plugin_session_file, $zpool_datasets);
 
 ?>
 
@@ -134,10 +131,10 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 		<?endforeach;?>
 	</tr>
 		<?
-			generateDatasetArrayRows($zpool['Pool'], $zpool_datasets[$zpool['Pool']], $_COOKIE['zdataset-'.$zpool['Pool']], $zfsm_cfg);
+			generateDatasetArrayRows($zpool['Pool'], $zpool_datasets[$zpool['Pool']], $_COOKIE['zdataset-'.$zpool['Pool']], $zfsm_cfg, $zpool['Pool']);
 		?>
 	<?endforeach;?>
-   </tbody>
+  </tbody>
 </table>
 </div>
 
@@ -151,6 +148,7 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
   $(function() {
 	  addButtons();
 	  setInterval(function () { refreshInfo() }, <?=$zfsm_cfg['refresh_interval']?>*1000);
+	  processHiddenDatasets();
   });
 
   $(document).click(function() {
@@ -164,6 +162,7 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	  
 	  $zfs_master.load("Main #zfs_master_div", function() {
 		  replaceElementClass("#zfsm-refresh", "fa-spinner fa-spin", "fa-refresh");
+		  processHiddenDatasets();
 	  });
   }
   
@@ -183,7 +182,7 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	  parent.append('<?=$refreshbutton?>');
   }
     
-  function setCookie(key, value, daysToLive=3650) {
+  function setCookie(key, value, daysToLive=365) {
 	var expires = new Date();
 	expires.setTime(expires.getTime() + (daysToLive * 24 * 60 * 60));
 	document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
@@ -198,22 +197,88 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
     var keyValue = getCookie(key);
     setCookie(key, keyValue, '-1');
   }
+
+  function processHiddenDatasets() {
+	var datasets = JSON.parse(getCookie('datasetsHidden'));
+	
+	if (datasets == null || datasets.length <= 0)
+		return;
+
+	for (let zdataset of datasets) {
+		var myRows = document.getElementsByClassName(zdataset);
+		
+		for (let row of myRows) {
+			$(row).hide(0);
+			$('i[name=\''+zdataset+'\']').attr('class', 'fa fa-plus-square fa-append');
+		} 
+	}
+  }
+
+  function toggleDataset(zdataset) {
+	var datasets = JSON.parse(getCookie('datasetsHidden'));
+	var index = -1;
+
+	if (datasets == null) {
+		datasets = [];
+	}
+
+	var index = datasets.indexOf(zdataset);
+
+	if (index > -1) {
+		datasets.splice(index, 1);
+	} else {
+		datasets.push(zdataset);
+	}
+
+	var myRows = document.getElementsByClassName(zdataset);
+
+	for (let row of myRows) {
+		if (index == -1) {
+			$(row).hide( "fast");
+			$('i[name=\''+zdataset+'\']').attr('class', 'fa fa-plus-square fa-append');
+		} else {
+			$(row).show( "fast");
+			$('i[name=\''+zdataset+'\']') .attr('class', 'fa fa-minus-square fa-append');
+		}
+	}
+
+	setCookie('datasetsHidden', JSON.stringify(datasets));
+
+	processHiddenDatasets();
+  }
   
   function togglePoolTable(zpool_id, trclass) {
+	var datasets = JSON.parse(getCookie('datasetsHidden'));
 	var myArray = document.getElementsByClassName(trclass);
 	var myButton = document.getElementById(zpool_id);
+	var visibility = getCookie(trclass);
+
+	if (datasets == null) {
+		datasets = [];
+	}
 
 	for (let mytr of myArray) {
-		if (mytr.style.display == "none") {
+		if (visibility == "none") {
+			var classList = $(mytr).attr('class').split(/\s+/);
+			var cont = false;
+			
+			for (var i = 0; i < classList.length; i++) {
+				if (datasets.indexOf(classList[i]) != -1) {
+					cont = true;
+					break;
+				}
+			}
+
+			if (cont) {
+				continue;
+			}
+
 			setCookie(trclass, 'table-row');	
 			$(mytr).show("slow");
-			mytr.style.display = 'table-row';
 			myButton.firstChild.data = "Hide Datasets";
-		}
-		else {
+		} else {
 			setCookie(trclass, 'none');	
 			$(mytr).hide("slow");
-			mytr.style.display = 'none';
 			myButton.firstChild.data = "Show Datasets";
 		}
 	}
@@ -224,7 +289,7 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	  openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,"Create Dataset",550,680,false);
   }
 
-  function addDatasetContext(zpool, zdataset, snapscount, id, destructive_mode) {
+  function addDatasetContext(zpool, zdataset, snapscount, id, destructive_mode, encryption) {
     var opts = [];
 
 	if (destructive_mode != 0) {
@@ -259,6 +324,26 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 			},
 		});
     }
+
+	if (encryption == 'available') {
+		opts.push({
+			text: _("Lock Dataset"),
+			icon: "fa-lock",
+			action: function(e) {
+				e.preventDefault();
+				lockDataset(zdataset);
+			},
+		});
+	} else if (encryption == 'unavailable') {
+		opts.push({
+			text: _("Unlock Dataset"),
+			icon: "fa-unlock",
+			action: function(e) {
+				e.preventDefault();
+				unlockDataset(zdataset);
+			},
+		});
+	}
 
     context.attach("#" + id, opts);
 
@@ -316,7 +401,57 @@ $_SESSION['zpool_datasets'] = $zpool_datasets;
 	  var csrf_token = $("input[name='csrf_token']").val();	 
 	  openBox('<?=$urladmindatasetsnaps?>?zpool='+zpool+'&zdataset='+zdataset+'&csrf_token='+csrf_token, zdataset+" - Admin Snapshots",680,680,false);
   }
-  
+
+  function unlockDataset(zdataset) {
+	  Swal2.fire({
+		  title: '<strong>Passphrase for '+zdataset+'</strong>',
+		  input: 'password',
+		  inputPlaceholder: 'Enter your Passphrase',
+		  inputAttributes: {
+			maxlength: 64,
+			autocapitalize: 'off',
+			autocorrect: 'off'
+		  },
+		  showConfirmButton: true,
+		  showCancelButton: true
+	  }).then((result) => {
+		  if (result.isConfirmed) {
+			  $.post('<?=$urlzmadmin?>',{cmd: 'unlockdataset', data: zdataset, passphrase: result.value}, function(data) {
+				  if (data == 'Ok') {
+					Swal2.fire({
+						title: 'Success!',
+						icon: 'success',
+						text: 'Dataset '+zdataset+' Unlocked'
+					});
+				  } else {
+					Swal2.fire({
+						title: 'Error!',
+						icon: 'error',
+						html: 'Unable to unlock dataset '+zdataset+'<br>Output: '+data
+					}); 
+				  }
+			  });
+		  }
+	  });
+  }
+
+  function lockDataset(zdataset) {
+	  $.post('<?=$urlzmadmin?>',{cmd: 'lockdataset', data: zdataset},function(data) {
+		if (data == 'Ok') {
+			Swal2.fire({
+				title: 'Success!',
+				icon:'success',
+				html: zdataset+' Locked!'
+			});
+		} else {
+			Swal2.fire({
+				title: 'Error!',
+				icon:'error',
+				html: 'Lock of '+zdataset+' failed! <br>Output: '+data
+			}); 
+		}
+	  });
+  }
   
   function destroyDataset(zdataset) {
 	  Swal2.fire({

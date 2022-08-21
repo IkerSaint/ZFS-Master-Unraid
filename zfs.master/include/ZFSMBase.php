@@ -3,6 +3,7 @@
 	$docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 	$plugin_scripts = $docroot."/plugins/".$plugin."/scripts/";
 	$plugin_include = $docroot."/plugins/".$plugin."/include/";
+	$plugin_session_file = "/tmp/".$plugin."-session.data";
 	
 	$script_get_pool_data = $plugin_scripts."zfs_get_pool_data.lua";
 	
