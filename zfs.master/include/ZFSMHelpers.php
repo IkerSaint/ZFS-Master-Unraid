@@ -129,11 +129,11 @@ function cleanZFSCreateDatasetParams($params) {
 		if (!isset($retParams['passphrase']) || $retParams['passphrase'] == ''):
 			unset($retParams['encryption']);
 			unset($retParams['passphrase']);
+		else:
+			$retParams['encryption'] = 'on';
+			$retParams['keylocation'] = 'prompt';
+			$retParams['keyformat'] = 'passphrase';
 		endif;
-
-		$retParams['encryption'] = 'on';
-		$retParams['keyformat'] = 'passphrase';
-		$retParams['keylocation'] = 'prompt';
 	endif;
 		
 	unset($retParams['mount']);
