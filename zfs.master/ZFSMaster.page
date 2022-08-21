@@ -28,7 +28,7 @@ foreach ($zpool_global as $zpool):
 	$zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
 endforeach;
 
-saveJSONToDisk($plugin_session_file,$zpool_datasets);
+saveJSONToDisk($plugin_session_file, $zpool_datasets);
 
 ?>
 

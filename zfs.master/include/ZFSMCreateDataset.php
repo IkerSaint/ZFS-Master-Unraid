@@ -9,7 +9,8 @@ require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
 require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 
 $zpool = $_GET['zpool'];
-$zpool_datasets = loadJSONFromDisk($plugin_session_file)['zpool_datasets'];
+$session_file = loadJSONFromDisk($plugin_session_file);
+$zpool_datasets = $session_file['zpool_datasets'];
 ?>
 
 <!DOCTYPE html>
