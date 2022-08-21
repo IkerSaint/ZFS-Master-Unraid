@@ -185,6 +185,14 @@ input[type=email]{margin-top:8px;float:left}
 			<hr>
 			<div id="dataset-advanced-options">
 				<dl>
+					Encryption
+					<select id="encryption" name="encryption" class="zfsm-input">
+						<option value="yes" selected>Yes</option>
+						<option value="no">No</option>
+					</select>
+					<input id="passphrase" name="passphrase" class="zfsm-input zfsm-w70 zfsm-unraid-border" placeholder="Encryption PassPhrase">
+				</dl>
+				<dl>
 					Extended Attributes:
 					<select id="xattr" name="xattr" class="zfsm-input">
 						<option value="inherit" selected>Inherit</option>
@@ -252,6 +260,10 @@ input[type=email]{margin-top:8px;float:left}
   
   $("select[name='mount']").change(function() {
 	 $("#mountpoint").attr('disabled', $(this).val() == 'no');
+  });
+
+  $("select[name='encryption']").change(function() {
+	 $("#passphrase").attr('disabled', $(this).val() == 'no');
   });
    
   function createDataset() {
