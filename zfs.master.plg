@@ -19,7 +19,7 @@
 - Change - UI into "folder" structure
 - Add - Support for ZFS Encryption
 - Add - Unlock & Lock actions for encrypted datasets
-- Fix - Error on unRaid 6.9.3 associated with session management
+- Fix - Error on unRaid 6.9.2 associated with session management
 
 ###2022.08.02
 - Warning - Please Update your exclusion pattern!
