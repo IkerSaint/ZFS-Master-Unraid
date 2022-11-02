@@ -28,49 +28,73 @@ $dataset = findDatasetInArray($zdataset, $zpool_datasets);
 
 
 <style type="text/css">	
-#zfs_master.disk_status.zfs_snap_table thead tr td{
-  text-align: center !important ;
-}
-#zfs_master.disk_status.zfs_snap_table thead tr td:nth-child(4){
-  white-space: normal;
-  padding: 0 12px;
-}
-#zfs_master.disk_status.zfs_snap_table tbody tr td{
-  padding-left: 0;
-  text-align: center;
-  white-space: nowrap;
-}
-#zfs_master.disk_status.zfs_snap_table tbody tr td:first-child{
-  padding-left: 12px;
-  white-space: normal;
-  word-break: break-all; 
-}
+	.zfs_snap_table {
+		display: table;
+		width: 96%;
+		border: 1px solid #ccc;
+		max-height: 600px;
+		overflow: auto;
+		margin: 2%;
+	}
 
-#zfs_master.disk_status.zfs_snap_table tbody tr td:last-child{
-  display: table-cell;
-  vertical-align: middle;
-  padding: 0 10px;
-}
-#zfs_master.disk_status.zfs_snap_table tbody tr td:last-child span:first-child{
-  margin-left: 0;
-}
+	.zfs_table tr>td{
+		width:auto!important;
+		white-space: normal!important;
+	}
+	
+	.zfs_delete_btn {
+		text-align: center;
+  	}
 
-#zfs_master.disk_status.zfs_snap_table tbody tr td:last-child span{
-  margin: 0 5px;
-  float: none;
-  padding: 0;
-}
-#zfs_master.disk_status.zfs_snap_table tbody tr td:last-child span:last-child{
-  margin-right: 0;
-}
-#zfs_master.disk_status thead tr>td+td+td+td, #zfs_master.disk_status thead tr>td+td+td, #zfs_master.disk_status thead tr>td{
-  padding: 0;
-  text-align: center;
-}
+	#zfs_master.disk_status.zfs_snap_table thead tr td{
+		text-align: center !important ;
+	}
 
-#adminsnaps-form-div #zfs_master.disk_status tr>td{
-  width: auto;
-}
+	#zfs_master.disk_status.zfs_snap_table thead tr td:nth-child(4){
+		white-space: normal;
+		padding: 0 12px;
+	}
+
+	#zfs_master.disk_status.zfs_snap_table tbody tr td{
+		padding-left: 0;
+		text-align: center;
+		white-space: nowrap;
+	}
+
+	#zfs_master.disk_status.zfs_snap_table tbody tr td:first-child{
+		padding-left: 12px;
+		white-space: normal;
+		word-break: break-all; 
+	}
+
+	#zfs_master.disk_status.zfs_snap_table tbody tr td:last-child{
+		display: table-cell;
+		vertical-align: middle;
+		padding: 0 10px;
+	}
+
+	#zfs_master.disk_status.zfs_snap_table tbody tr td:last-child span:first-child{
+		margin-left: 0;
+	}
+
+	#zfs_master.disk_status.zfs_snap_table tbody tr td:last-child span{
+		margin: 0 5px;
+		float: none;
+		padding: 0;
+	}
+
+	#zfs_master.disk_status.zfs_snap_table tbody tr td:last-child span:last-child{
+		margin-right: 0;
+	}
+
+	#zfs_master.disk_status thead tr>td+td+td+td, #zfs_master.disk_status thead tr>td+td+td, #zfs_master.disk_status thead tr>td{
+		padding: 0;
+		text-align: center;
+	}
+
+	#adminsnaps-form-div #zfs_master.disk_status tr>td{
+		width: auto;
+	}
 </style>
 
 <script type="text/javascript">
@@ -88,22 +112,6 @@ window.onload = function() {
     }
 }
 </script>
-
-<style type="text/css">	
-  .zfs_snap_table {
-	  display: table;
-	  width: 96%;
-	  border: 1px solid #ccc;
-	  max-height: 600px;
-	  overflow: auto;
-	  margin: 2%;
-  }
-
-  .zfs_table tr>td{
-	  width:auto!important;
-	  white-space: normal!important;
-  }
-</style>
 
 <script src="<?autov('/webGui/javascript/dynamix.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/default-fonts.css');?>">
@@ -135,7 +143,7 @@ window.onload = function() {
 		<?
 		foreach ($dataset['snapshots'] as $snap):
 			echo '<tr>';
-			echo '<td class="snapl-check"><input type="checkbox" id="'.$snap['name'].'"></td>';
+			echo '<td class="snapl-delete"><input class="snapl-check" type="checkbox" id="'.$snap['name'].'"></td>';
 			echo '<td class="snapl-attribute-name">';
 				echo '<i class="fa fa-hdd-o icon" style="color:#486dba"></i>';
 				echo $snap['name'];
@@ -168,20 +176,18 @@ window.onload = function() {
 		endforeach;?>
 	</tbody>
 	</table>
-	<button id="delete-snaps" type="button">Delete Snapshots</button>
+	<button id="delete-snaps" class=""zfs_delete_btn" type="button">Delete Snapshots</button>
 	</div>
 </body>
 </html>
 
 <script>
-  $(document).ready(function() {
-	$("#delete-snaps").click(function(){
-		var checkedVals = $('.snapl-check:checkbox:checked').map(function() {
-    		return this.value;
-		}).get();
-		alert(checkedVals.join(","));
-	}); 
-  });
+  $("#delete-snaps").click(function(){
+	var checkedVals = $('.snapl-check:checkbox:checked').map(function() {
+		return this.id;
+	}).get();
+	alert(checkedVals.join(","));
+  }); 
 
   function rollbackSnapshot(snapshot) {
 	$.post('<?=$urlzmadmin?>',{cmd: 'rollbacksnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
