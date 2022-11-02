@@ -91,7 +91,7 @@ window.onload = function() {
 
 <style type="text/css">	
   .zfs_snap_table {
-	  display: block;
+	  display: table;
 	  width: 96%;
 	  border: 1px solid #ccc;
 	  max-height: 600px;
