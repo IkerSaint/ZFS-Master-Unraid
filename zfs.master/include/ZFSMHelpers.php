@@ -367,7 +367,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
 }
 
 function generateDatasetArrayRows($zpool, $dataset_array, $display, $zfsm_cfg, $zclass){
-	if (count($dataset_array['child']) > 0):
+	if (count($dataset_array['child']) < 0):
 		return;
 	endif;
 
@@ -381,7 +381,7 @@ function generateDatasetArrayRows($zpool, $dataset_array, $display, $zfsm_cfg, $
 }
 
 function generatePoolDatasetOptions($dataset_array) {
-	if (count($dataset_array['child']) > 0):
+	if (count($dataset_array['child']) < 0):
 		return;
 	endif;
 	
