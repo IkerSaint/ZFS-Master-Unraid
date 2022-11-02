@@ -189,6 +189,10 @@ function cleanupZPoolInfo($matched) {
 }
 
 function sortDatasetArray($datasetArray) {
+	if (count($datasetArray['child']) <= 0):
+		return $datasetArray;
+	endif;
+
 	ksort($datasetArray['child']);
 	usort($datasetArray['snapshots'], function($item1, $item2) { 
 		return $item1['creation'] > $item2['creation'];
@@ -363,6 +367,10 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
 }
 
 function generateDatasetArrayRows($zpool, $dataset_array, $display, $zfsm_cfg, $zclass){
+	if (count($dataset_array['child']) > 0):
+		return;
+	endif;
+
 	foreach ($dataset_array['child'] as $zdataset):
 		generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass);
 
@@ -373,6 +381,10 @@ function generateDatasetArrayRows($zpool, $dataset_array, $display, $zfsm_cfg, $
 }
 
 function generatePoolDatasetOptions($dataset_array) {
+	if (count($dataset_array['child']) > 0):
+		return;
+	endif;
+	
 	foreach ($dataset_array['child'] as $zdataset):
 		$option = ltrim(stristr($zdataset['name'], '/'), '/')."/";
 		echo '<option value="'.$option.'">';
