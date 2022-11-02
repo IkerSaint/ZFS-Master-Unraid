@@ -41,9 +41,9 @@ $dataset = findDatasetInArray($zdataset, $zpool_datasets);
 		width:auto!important;
 		white-space: normal!important;
 	}
-	
+
 	.zfs_delete_btn {
-		text-align: center;
+		text-align: center !important;
   	}
 
 	#zfs_master.disk_status.zfs_snap_table thead tr td{
@@ -176,7 +176,7 @@ window.onload = function() {
 		endforeach;?>
 	</tbody>
 	</table>
-	<button id="delete-snaps" class=""zfs_delete_btn" type="button">Delete Snapshots</button>
+	<button id="delete-snaps" class="zfs_delete_btn" type="button">Delete Snapshots</button>
 	</div>
 </body>
 </html>
