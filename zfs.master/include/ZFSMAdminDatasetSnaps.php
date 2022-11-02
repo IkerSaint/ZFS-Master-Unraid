@@ -135,7 +135,7 @@ window.onload = function() {
 		<?
 		foreach ($dataset['snapshots'] as $snap):
 			echo '<tr>';
-			echo '<td class="snapl-attribute-name"><input type="checkbox" id="'.$snap['name'].'"></td>';
+			echo '<td class="snapl-check"><input type="checkbox" id="'.$snap['name'].'"></td>';
 			echo '<td class="snapl-attribute-name">';
 				echo '<i class="fa fa-hdd-o icon" style="color:#486dba"></i>';
 				echo $snap['name'];
@@ -168,12 +168,21 @@ window.onload = function() {
 		endforeach;?>
 	</tbody>
 	</table>
+	<button id="delete-snaps" type="button">Delete Snapshots</button>
 	</div>
 </body>
 </html>
 
 <script>
-  
+  $(document).ready(function() {
+	$("#delete-snaps").click(function(){
+		var checkedVals = $('.snapl-check:checkbox:checked').map(function() {
+    		return this.value;
+		}).get();
+		alert(checkedVals.join(","));
+	}); 
+  });
+
   function rollbackSnapshot(snapshot) {
 	$.post('<?=$urlzmadmin?>',{cmd: 'rollbacksnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
 		if (data == 'Ok') {
