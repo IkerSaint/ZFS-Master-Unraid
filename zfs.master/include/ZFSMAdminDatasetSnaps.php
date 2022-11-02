@@ -121,6 +121,7 @@ window.onload = function() {
 	<table id="zfs_master" class="zfs_snap_table disk_status wide">
 	<thead>
 		<tr>
+		<td>Select</td>
 		<td>Name</td>
 		<td>Used</td>
 		<td>Refer</td>
@@ -133,36 +134,37 @@ window.onload = function() {
 	<tbody id="zpools">
 		<?
 		foreach ($dataset['snapshots'] as $snap):
-		echo '<tr>';
-		echo '<td class="snapl-attribute-name">';
-			echo '<i class="fa fa-hdd-o icon" style="color:#486dba"></i>';
-			echo $snap['name'];
-		echo '</td>';
-		echo '<td class="snapl-attribute-used">';
-			echo fromBytesToString($snap['used']);
-		echo '</td>';
-		echo '<td class="snapl-attribute-referenced">';
-			echo fromBytesToString($snap['referenced']);
-		echo '</td>';
-		echo '<td class="snapl-attribute-defer_destroy">';
-			echo $snap['defer_destroy'];
-		echo '</td>';
-		echo '<td class="snapl-attribute-userrefs">';
-			echo $snap['userrefs'];
-		echo '</td>';
-		echo '<td class="snapl-attribute-creation">';
-			$snapdate = new DateTime();
-			$snapdate->setTimestamp($snap['creation']);
-			$detail = $snapdate->format('Y-m-d H:i:s');
-			echo '<span>'.$detail.'</span>';
-		echo '</td>';
-		echo '<td id="snapl-attribute-actions">';
-			echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Rollback Snapshot" onclick="rollbackSnapshot(\''.$snap['name'].'\')"><i id="zfsm-rollback" class="fa fa-backward" style="color:orange"></i></a></span>';
-			echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Hold Snapshot" onclick="holdSnapshot(\''.$snap['name'].'\')"><i id="zfsm-hold" class="fa fa-pause"></i></a></span>';
-			echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Release Snapshot" onclick="releaseSnapshot(\''.$snap['name'].'\')"><i id="zfsm-release" class="fa fa-play"></i></a></span>';
-			echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Destroy Snapshot" onclick="destroySnapshot(\''.$snap['name'].'\')"><i id="zfsm-destroy" class="fa fa-trash" style="color:red"></i></a></span>';
-		echo '</td>';
-		echo '</tr>';
+			echo '<tr>';
+			echo '<td class="snapl-attribute-name"><input type="checkbox" id="'.$snap['name'].'"></td>';
+			echo '<td class="snapl-attribute-name">';
+				echo '<i class="fa fa-hdd-o icon" style="color:#486dba"></i>';
+				echo $snap['name'];
+			echo '</td>';
+			echo '<td class="snapl-attribute-used">';
+				echo fromBytesToString($snap['used']);
+			echo '</td>';
+			echo '<td class="snapl-attribute-referenced">';
+				echo fromBytesToString($snap['referenced']);
+			echo '</td>';
+			echo '<td class="snapl-attribute-defer_destroy">';
+				echo $snap['defer_destroy'];
+			echo '</td>';
+			echo '<td class="snapl-attribute-userrefs">';
+				echo $snap['userrefs'];
+			echo '</td>';
+			echo '<td class="snapl-attribute-creation">';
+				$snapdate = new DateTime();
+				$snapdate->setTimestamp($snap['creation']);
+				$detail = $snapdate->format('Y-m-d H:i:s');
+				echo '<span>'.$detail.'</span>';
+			echo '</td>';
+			echo '<td id="snapl-attribute-actions">';
+				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Rollback Snapshot" onclick="rollbackSnapshot(\''.$snap['name'].'\')"><i id="zfsm-rollback" class="fa fa-backward" style="color:orange"></i></a></span>';
+				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Hold Snapshot" onclick="holdSnapshot(\''.$snap['name'].'\')"><i id="zfsm-hold" class="fa fa-pause"></i></a></span>';
+				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Release Snapshot" onclick="releaseSnapshot(\''.$snap['name'].'\')"><i id="zfsm-release" class="fa fa-play"></i></a></span>';
+				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Destroy Snapshot" onclick="destroySnapshot(\''.$snap['name'].'\')"><i id="zfsm-destroy" class="fa fa-trash" style="color:red"></i></a></span>';
+			echo '</td>';
+			echo '</tr>';
 		endforeach;?>
 	</tbody>
 	</table>

@@ -51,9 +51,6 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 	  margin: 2px 2px!important;
   }
   
-  .swal2-popup {
-	  font-size: 1.1rem !important;
-  }
 </style>
 
 <link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/jquery.ui.css')?>">
