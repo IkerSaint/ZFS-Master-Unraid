@@ -51,8 +51,8 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 	  margin: 2px 2px!important;
   }
   
-  .swal2-container.swal2-center>.swal2-popup {
-	  font-size: 1.1em;
+  .swal2-popup {
+	  font-size: 1.1rem !important;
   }
 </style>
 
