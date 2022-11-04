@@ -186,7 +186,23 @@ window.onload = function() {
 	var checkedVals = $('.snapl-check:checkbox:checked').map(function() {
 		return this.id;
 	}).get();
-	alert(checkedVals.join(","));
+
+	var success = 0, failed = 0;
+	for (const snapshot of checkedVals) {
+		$.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
+			if (data == 'Ok') {
+				success += 1;
+			} else {
+				failed += 1;
+			}
+		});
+	}
+
+	top.Swal2.fire({
+		title: 'Deletion Results',
+		icon:'info',
+		html: 'Successful: '+ success+', Failed: '+ failed+''
+	});
   }); 
 
   function rollbackSnapshot(snapshot) {
