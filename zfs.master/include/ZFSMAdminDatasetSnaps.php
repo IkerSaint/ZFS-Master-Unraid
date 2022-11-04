@@ -28,6 +28,13 @@ $dataset = findDatasetInArray($zdataset, $zpool_datasets);
 
 
 <style type="text/css">	
+<style type="text/css">	
+	.zfsm-dialog {
+		width: 90%;
+		height: 90%;
+		margin: auto;
+	}
+	
 	.zfs_snap_table {
 		display: table;
 		width: 96%;
