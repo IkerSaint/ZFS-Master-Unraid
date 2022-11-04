@@ -28,13 +28,13 @@ $dataset = findDatasetInArray($zdataset, $zpool_datasets);
 
 
 <style type="text/css">	
-<style type="text/css">	
 	.zfsm-dialog {
 		width: 90%;
 		height: 90%;
 		margin: auto;
+		text-align: center;
 	}
-	
+
 	.zfs_snap_table {
 		display: table;
 		width: 96%;
@@ -194,15 +194,20 @@ window.onload = function() {
 		return this.id;
 	}).get();
 
+	if (checkedVals.length <=0)
+		return;
+
 	var success = 0, failed = 0;
 	for (const snapshot of checkedVals) {
-		$.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
-			if (data == 'Ok') {
-				success += 1;
-			} else {
-				failed += 1;
-			}
+		val ret = $.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
+			return data;
 		});
+
+		if (ret == 'Ok') {
+			success += 1;
+		} else {
+			failed += 1;
+		}
 	}
 
 	top.Swal2.fire({
@@ -210,6 +215,8 @@ window.onload = function() {
 		icon:'info',
 		html: 'Successful: '+ success+', Failed: '+ failed+''
 	});
+
+	top.Shadowbox.close();
   }); 
 
   function rollbackSnapshot(snapshot) {
