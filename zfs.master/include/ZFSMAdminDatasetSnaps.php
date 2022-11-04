@@ -197,24 +197,23 @@ window.onload = function() {
 	if (checkedVals.length <=0)
 		return;
 
-	var success = 0, failed = 0;
 	for (const snapshot of checkedVals) {
-		val ret = $.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
-			return data;
+		$.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
+			if (data == 'Ok') {
+			top.Swal2.fire({
+				title: 'Success!',
+				icon:'success',
+				html: 'Destroy of Snapshot '+snapshot+' Successful'
+			});
+			} else {
+				top.Swal2.fire({
+					title: 'Error!',
+					icon:'error',
+					html: 'Unable to destroy snapshot '+snapshot+'<br>Output: '+data
+				}); 
+			}
 		});
-
-		if (ret == 'Ok') {
-			success += 1;
-		} else {
-			failed += 1;
-		}
 	}
-
-	top.Swal2.fire({
-		title: 'Deletion Results',
-		icon:'info',
-		html: 'Successful: '+ success+', Failed: '+ failed+''
-	});
 
 	top.Shadowbox.close();
   }); 
