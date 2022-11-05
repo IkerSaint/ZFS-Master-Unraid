@@ -15,6 +15,11 @@
 		min="6.9.2">
 <CHANGES>
 
+###2022.11.05
+- Fix - Error on pools with snapshots but without datasets
+- Fix - Dialogs not sizing properly
+- Add - Snapshot Batch Deletion
+
 ###2022.08.21
 - Change - UI into "folder" structure
 - Add - Support for ZFS Encryption
