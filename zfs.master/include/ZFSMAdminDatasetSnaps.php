@@ -223,7 +223,7 @@ window.onload = function() {
 	if (data == 'Ok') {
 		updateStatus('Destroy of Snapshot '+snapshot+' Successful;' + ' '+index+' of '+total+' completed');
 	} else {
-		updateStatus('Destroy of Snapshot '+snapshot+' Failed;' + ' '+index+' of '+total+' completed');
+		updateStatus('Destroy of Snapshot '+snapshot+' Failed; <br>Output: '+data + '; '+index+' of '+total+' completed');
 	}
   }
 
