@@ -47,6 +47,7 @@ $dataset = findDatasetInArray($zdataset, $zpool_datasets);
 	.zfs_status_box {
 		width: 80%;
 		border: 1px solid #ccc;
+		margin-left: 10%;
 	}
 
 	.zfs_table tr>td{
@@ -182,13 +183,13 @@ window.onload = function() {
 				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Rollback Snapshot" onclick="rollbackSnapshot(\''.$snap['name'].'\')"><i id="zfsm-rollback" class="fa fa-backward" style="color:orange"></i></a></span>';
 				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Hold Snapshot" onclick="holdSnapshot(\''.$snap['name'].'\')"><i id="zfsm-hold" class="fa fa-pause"></i></a></span>';
 				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Release Snapshot" onclick="releaseSnapshot(\''.$snap['name'].'\')"><i id="zfsm-release" class="fa fa-play"></i></a></span>';
-				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Destroy Snapshot" onclick="destroySnapshot(\''.$snap['name'].'\')"><i id="zfsm-destroy" class="fa fa-trash" style="color:red"></i></a></span>';
 			echo '</td>';
 			echo '</tr>';
 		endforeach;?>
 	</tbody>
 	</table>
 	<div id="zfs_status" class="zfs_status_box">
+		Ready!
 	</div>
 	<button id="delete-snaps" class="zfs_delete_btn" type="button">Delete Snapshots</button>
 	</div>
@@ -201,18 +202,22 @@ window.onload = function() {
 		return this.id;
 	}).get();
 
-	if (checkedVals.length <=0)
-		return;
-
 	var i = 0;
 
 	for (const snapshot of checkedVals) {
 		i += 1;
-		$.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data, snapshot, i, checkedVals.length) {
-			updateStatusOnDeletion(data, i, checkedVals.length);
+		$.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
+			updateStatusOnDeletion(data, snapshot, i, checkedVals.length);
 		});
 	}
-  }); 
+  });
+
+  var checkBoxes = $('.snapl-check');
+  checkBoxes.change(function () {
+	$('#delete-snaps').prop('disabled', checkBoxes.filter(':checked').length < 1);
+  });
+
+  $('.snapl-check').change();
 
   function updateStatusOnDeletion(data, snapshot, index, total) {
 	if (data == 'Ok') {
@@ -220,10 +225,6 @@ window.onload = function() {
 	} else {
 		updateStatus('Destroy of Snapshot '+snapshot+' Failed;' + ' '+index+' of '+total+' completed');
 	}
-  }
-
-  function updateStatus(text) {
-	$("#zfs_status").text(text);
   }
 
   function rollbackSnapshot(snapshot) {
@@ -256,13 +257,8 @@ window.onload = function() {
 	});
   }
 
-  function destroySnapshot(snapshot) {
-	$.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
-		if (data == 'Ok') {
-			updateStatus('Destroy of Snapshot '+snapshot+' Successful');
-		} else {
-			updateStatus('Unable to destroy snapshot '+snapshot+'<br>Output: '+data);
-		}
-	});
+  function updateStatus(text) {
+	$("#zfs_status").text(text);
   }
+
 </script>
