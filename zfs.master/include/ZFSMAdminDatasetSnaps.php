@@ -28,7 +28,7 @@ $dataset = findDatasetInArray($zdataset, $zpool_datasets);
 
 
 <style type="text/css">	
-	.zfsm-dialog {
+	.zfsm_dialog {
 		width: 90%;
 		height: 90%;
 		margin: auto;
@@ -42,6 +42,11 @@ $dataset = findDatasetInArray($zdataset, $zpool_datasets);
 		max-height: 600px;
 		overflow: auto;
 		margin: 2%;
+	}
+
+	.zfs_status_box {
+		width: 80%;
+		border: 1px solid #ccc;
 	}
 
 	.zfs_table tr>td{
@@ -132,7 +137,7 @@ window.onload = function() {
 </head>
 
 <body>
-	<div id="adminsnaps-form-div" class="zfsm-dialog">
+	<div id="adminsnaps-form-div" class="zfsm_dialog">
 	<table id="zfs_master" class="zfs_snap_table disk_status wide">
 	<thead>
 		<tr>
@@ -183,6 +188,8 @@ window.onload = function() {
 		endforeach;?>
 	</tbody>
 	</table>
+	<div id="zfs_status" class="zfs_status_box">
+	</div>
 	<button id="delete-snaps" class="zfs_delete_btn" type="button">Delete Snapshots</button>
 	</div>
 </body>
@@ -197,100 +204,65 @@ window.onload = function() {
 	if (checkedVals.length <=0)
 		return;
 
+	var i = 0;
+
 	for (const snapshot of checkedVals) {
-		$.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
-			if (data == 'Ok') {
-			top.Swal2.fire({
-				title: 'Success!',
-				icon:'success',
-				html: 'Destroy of Snapshot '+snapshot+' Successful'
-			});
-			} else {
-				top.Swal2.fire({
-					title: 'Error!',
-					icon:'error',
-					html: 'Unable to destroy snapshot '+snapshot+'<br>Output: '+data
-				}); 
-			}
+		i += 1;
+		$.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data, snapshot, i, checkedVals.length) {
+			updateStatusOnDeletion(data, i, checkedVals.length);
 		});
 	}
-
-	top.Shadowbox.close();
   }); 
+
+  function updateStatusOnDeletion(data, snapshot, index, total) {
+	if (data == 'Ok') {
+		updateStatus('Destroy of Snapshot '+snapshot+' Successful;' + ' '+index+' of '+total+' completed');
+	} else {
+		updateStatus('Destroy of Snapshot '+snapshot+' Failed;' + ' '+index+' of '+total+' completed');
+	}
+  }
+
+  function updateStatus(text) {
+	$("#zfs_status").text(text);
+  }
 
   function rollbackSnapshot(snapshot) {
 	$.post('<?=$urlzmadmin?>',{cmd: 'rollbacksnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
 		if (data == 'Ok') {
-			top.Swal2.fire({
-				title: 'Success!',
-				icon:'success',
-				html: 'Rollback of Snapshot '+snapshot+' Successful'
-			});
+			updateStatus('Rollback of Snapshot '+snapshot+' Successful');
 		} else {
-			top.Swal2.fire({
-				title: 'Error!',
-				icon:'error',
-				html: 'Unable to rollback snapshot '+snapshot+'<br>Output: '+data
-			}); 
+			updateStatus('Unable to rollback snapshot '+snapshot+'<br>Output: '+data);
 		}
-		top.Shadowbox.close();
 	});
   }
 
   function holdSnapshot(snapshot) {
 	$.post('<?=$urlzmadmin?>',{cmd: 'holdsnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
 		if (data == 'Ok') {
-			top.Swal2.fire({
-				title: 'Success!',
-				icon:'success',
-				html: 'Hold of Snapshot '+snapshot+' Successful'
-			});
+			updateStatus('Hold of Snapshot '+snapshot+' Successful');
 		} else {
-			top.Swal2.fire({
-				title: 'Error!',
-				icon:'error',
-				html: 'Unable to add reference to snapshot '+snapshot+'<br>Output: '+data
-			}); 
+			updateStatus('Unable to add reference to snapshot '+snapshot+'<br>Output: '+data);
 		}
-		top.Shadowbox.close();
 	});
   }
 
   function releaseSnapshot(snapshot) {
 	$.post('<?=$urlzmadmin?>',{cmd: 'releasesnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
 		if (data == 'Ok') {
-			top.Swal2.fire({
-				title: 'Success!',
-				icon:'success',
-				html: 'Release of Snapshot '+snapshot+' Successful'
-			});
+			updateStatus('Release of Snapshot '+snapshot+' Successful');
 		} else {
-			top.Swal2.fire({
-				title: 'Error!',
-				icon:'error',
-				html: 'Unable to remove reference from snapshot '+snapshot+'<br>Output: '+data
-			}); 
+			updateStatus('Unable to remove reference from snapshot '+snapshot+'<br>Output: '+data);
 		}
-		top.Shadowbox.close();
 	});
   }
 
   function destroySnapshot(snapshot) {
 	$.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
 		if (data == 'Ok') {
-			top.Swal2.fire({
-				title: 'Success!',
-				icon:'success',
-				html: 'Destroy of Snapshot '+snapshot+' Successful'
-			});
+			updateStatus('Destroy of Snapshot '+snapshot+' Successful');
 		} else {
-			top.Swal2.fire({
-				title: 'Error!',
-				icon:'error',
-				html: 'Unable to destroy snapshot '+snapshot+'<br>Output: '+data
-			}); 
+			updateStatus('Unable to destroy snapshot '+snapshot+'<br>Output: '+data);
 		}
-		top.Shadowbox.close();
 	});
   }
 </script>
