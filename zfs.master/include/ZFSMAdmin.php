@@ -130,6 +130,19 @@ switch ($_POST['cmd']) {
 		endif;
 		
 		break;
+	case 'promotedataset':
+		$cmd_line = 'zfs promote '.escapeshellarg($_POST['data']).$boutput_str;
+		
+		$ret = execCommand($cmd_line, $exec_result);
+		
+		if ($ret == 0):
+			zfsnotify( "ZFS Promote ", "Dataset ".$_POST['data']." promoted successfully", $cmdoutput_str.$exec_result."","normal");
+			echo 'Ok';
+		else:
+			zfsnotify( "ZFS Promote", "Unable to promote dataset ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			echo $exec_result;
+		endif;
+		break;
 	case 'rollbacksnapshot':
 		$cmd_line = "zfs rollback -rf ".escapeshellarg($_POST['data']).$boutput_str;
 
@@ -166,6 +179,19 @@ switch ($_POST['cmd']) {
 			echo 'Ok';
 		else:
 			zfsnotify( "ZFS Release", "Unable to remove reference from snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			echo $exec_result;
+		endif;
+		break;
+	case 'clonesnapshot':
+		$cmd_line = "zfs clone ".escapeshellarg($_POST['data'])." ".escapeshellarg($_POST['destination']).$boutput_str;
+
+		$ret = execCommand($cmd_line, $exec_result);
+
+		if ($ret == 0):
+			zfsnotify( "ZFS Clone", "Snapshot ".$_POST['data']." cloned successfully", $cmdoutput_str.$exec_result."","normal");
+			echo 'Ok';
+		else:
+			zfsnotify( "ZFS Clone", "Unable to clone snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		break;

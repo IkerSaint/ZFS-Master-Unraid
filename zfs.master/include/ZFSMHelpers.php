@@ -319,7 +319,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
 
 	echo '<td>';
 		$id = md5($zdataset['name']);
-		echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zpool.'\', \''.$zdataset['name'].'\', '.count($zdataset['snapshots']).', \''.$id.'\', '.$zfsm_cfg['destructive_mode'].', \''.$zdataset['keystatus'].'\');" class="zfs_compact">Actions</button></span>';
+		echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zpool.'\', \''.$zdataset['name'].'\', '.count($zdataset['snapshots']).', \''.$id.'\', '.$zfsm_cfg['destructive_mode'].', \''.$zdataset['keystatus'].'\', \''.$zdataset['origin'].'\');" class="zfs_compact">Actions</button></span>';
 	echo '</td>';
 
 	//mountpoint

@@ -183,6 +183,7 @@ window.onload = function() {
 				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Rollback Snapshot" onclick="rollbackSnapshot(\''.$snap['name'].'\')"><i id="zfsm-rollback" class="fa fa-backward" style="color:orange"></i></a></span>';
 				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Hold Snapshot" onclick="holdSnapshot(\''.$snap['name'].'\')"><i id="zfsm-hold" class="fa fa-pause"></i></a></span>';
 				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Release Snapshot" onclick="releaseSnapshot(\''.$snap['name'].'\')"><i id="zfsm-release" class="fa fa-play"></i></a></span>';
+				echo '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Clone Snapshot" onclick="cloneSnapshot(\''.$snap['name'].'\')"><i id="zfsm-release" class="fa fa-clone"></i></a></span>';
 			echo '</td>';
 			echo '</tr>';
 		endforeach;?>
@@ -255,6 +256,38 @@ window.onload = function() {
 			updateStatus('Unable to remove reference from snapshot '+snapshot+'<br>Output: '+data);
 		}
 	});
+  }
+
+  function cloneSnapshot(snapshot) {
+	Swal2.fire({
+		  title: '<strong>Clone Destination Dataset for '+snapshot+'</strong>',
+		  input: 'text',
+		  inputPlaceholder: 'Dataset path',
+		  inputAttributes: {
+			autocapitalize: 'off',
+			autocorrect: 'off'
+		  },
+		  showConfirmButton: true,
+		  showCancelButton: true
+	  }).then((result) => {
+		  if (result.isConfirmed) {
+			  $.post('<?=$urlzmadmin?>',{cmd: 'clonesnapshot', data: snapshot, destination: result.value}, function(data) {
+				  if (data == 'Ok') {
+					Swal2.fire({
+						title: 'Success!',
+						icon: 'success',
+						text: 'Snapshot '+snapshot+' Cloned'
+					});
+				  } else {
+					Swal2.fire({
+						title: 'Error!',
+						icon: 'error',
+						html: 'Unable to clone snapshot '+snapshot+'<br>Output: '+data
+					}); 
+				  }
+			  });
+		  }
+	  });
   }
 
   function updateStatus(text) {
