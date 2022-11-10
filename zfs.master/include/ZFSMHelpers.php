@@ -312,6 +312,10 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
 			endif;
 		endif;
 
+		if ($zdataset['origin']):
+			echo '<i class="fa fa-clone fa-append"></i>';
+		endif;
+
 		echo substr( $zdataset['name'], strrpos($zdataset['name'], "/")  + 1,  strlen($zdataset['name']) );
 	echo '</td>';
 
