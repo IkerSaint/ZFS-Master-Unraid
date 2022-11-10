@@ -260,7 +260,7 @@ window.onload = function() {
 
   function cloneSnapshot(snapshot) {
 	Swal2.fire({
-		  title: '<strong>Clone Destination Dataset for '+snapshot+'</strong>',
+		  title: '<strong>Destination Dataset for '+snapshot+'</strong>',
 		  input: 'text',
 		  inputPlaceholder: 'Dataset path',
 		  inputAttributes: {
@@ -271,7 +271,7 @@ window.onload = function() {
 		  showCancelButton: true
 	  }).then((result) => {
 		  if (result.isConfirmed) {
-			  $.post('<?=$urlzmadmin?>',{cmd: 'clonesnapshot', data: snapshot, destination: result.value}, function(data) {
+			  $.post('<?=$urlzmadmin?>',{cmd: 'clonesnapshot', data: snapshot, destination: result.value, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
 				  if (data == 'Ok') {
 					Swal2.fire({
 						title: 'Success!',
