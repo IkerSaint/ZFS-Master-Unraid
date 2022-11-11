@@ -442,6 +442,7 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 			  });
 		  }
 	  });
+	  $(".swal2-input").attr("type", "mytext");
   }
 
   function lockDataset(zdataset) {
@@ -509,6 +510,7 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 			  });
 		  }
 	  });
+	  $(".swal2-input").attr("type", "mytext");
   }
   
   function scrubPool(zpool) {
@@ -558,5 +560,6 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 			  });
 		  }
 	  });
+	  $(".swal2-input").attr("type", "mytext");
   }
 </script>
