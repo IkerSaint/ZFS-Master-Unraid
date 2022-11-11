@@ -205,12 +205,14 @@ window.onload = function() {
 
 	var i = 0;
 
+	$.ajaxSetup({async: false});
 	for (const snapshot of checkedVals) {
 		i += 1;
 		$.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
 			updateStatusOnDeletion(data, snapshot, i, checkedVals.length);
 		});
 	}
+	$.ajaxSetup({async: true});  
   });
 
   var checkBoxes = $('.snapl-check');
