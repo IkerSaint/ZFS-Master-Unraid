@@ -290,6 +290,8 @@ window.onload = function() {
 			  });
 		  }
 	  });
+	  
+	  $(".swal2-input").attr("type", "mytext");
   }
 
   function updateStatus(text) {

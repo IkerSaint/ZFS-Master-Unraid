@@ -403,6 +403,7 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 			  });
 		  }
 	  });
+	  $(".swal2-input").attr("type", "mytext");
   }
 
   function adminDatasetSnaps(zpool, zdataset) {
