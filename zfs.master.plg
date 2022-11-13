@@ -18,7 +18,7 @@
 ###2022.11.12
 - Fix - Error on dialogs and input controls
 - Add - Clone capabilities for snapshots
-- Add - Promote capabilities for snapshots
+- Add - Promote capabilities for datasets
 
 ###2022.11.05
 - Fix - Error on pools with snapshots but without datasets
