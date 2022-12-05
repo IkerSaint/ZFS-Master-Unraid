@@ -196,7 +196,7 @@ function sortDatasetArray($datasetArray) {
 		});
 	endif;
 
-	if (count($datasetArray['child']) <= 0):
+	if (is_null($datasetArray['child']) || count($datasetArray['child']) <= 0):
 		return $datasetArray;
 	endif;
 
@@ -376,7 +376,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
 }
 
 function generateDatasetArrayRows($zpool, $dataset_array, $display, $zfsm_cfg, $zclass){
-	if (count($dataset_array['child']) < 0):
+	if (is_null($dataset_array['child']) || count($dataset_array['child']) < 0):
 		return;
 	endif;
 
