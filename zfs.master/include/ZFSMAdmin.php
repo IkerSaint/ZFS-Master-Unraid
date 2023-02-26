@@ -9,7 +9,7 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 
-$_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+$_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 switch ($_POST['cmd']) {
 	case 'scrubpool':
