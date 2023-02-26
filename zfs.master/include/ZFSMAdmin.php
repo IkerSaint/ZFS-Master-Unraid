@@ -81,7 +81,7 @@ switch ($_POST['cmd']) {
 		break;
 	case 'exportpool':
 		$force = ($_POST['force'] == '1') ? '-f ' : '';
-		$cmd_line = 'zfs export '.$force.escapeshellarg($_POST['data']).$boutput_str;
+		$cmd_line = 'zpool export '.$force.escapeshellarg($_POST['data']).$boutput_str;
 		
 		$ret = execCommand($cmd_line, $exec_result);
 		
