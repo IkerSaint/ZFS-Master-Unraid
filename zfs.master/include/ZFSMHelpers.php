@@ -304,7 +304,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
 			echo '<i class="fa fa-minus-square fa-append" name="'.$zdataset['name'].'"></i>';
 		endif;
 
-		if ($zdataset['origin']):
+		if (isset($zdataset['origin'])):
 			echo '<i class="fa fa-clone fa-append"></i>';
 		endif;
 
@@ -405,7 +405,7 @@ function generatePoolDatasetOptions($dataset_array) {
 }
 	
 function getZFSPoolDevices($zpool) {
-	$cmd_line = "zpool status -v ".$zpool." | awk 'NR > 8 {print last} {last=$1}'";
+	$cmd_line = "zpool status -v ".$zpool." | awk '/config:/{flag=1;next}/errors:/{flag=0}flag{if($1!=\"NAME\" && NF>1)print $1}'"; 
 	return trim(shell_exec($cmd_line.' 2>&1'));
 }
 	
