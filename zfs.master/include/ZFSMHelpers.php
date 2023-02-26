@@ -323,7 +323,10 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
 
 	echo '<td>';
 		$id = md5($zdataset['name']);
-		echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zpool.'\', \''.$zdataset['name'].'\', '.count($zdataset['snapshots']).', \''.$id.'\', '.$zfsm_cfg['destructive_mode'].', \''.$zdataset['keystatus'].'\', \''.$zdataset['origin'].'\');" class="zfs_compact">Actions</button></span>';
+		echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zpool.'\', \''.$zdataset['name'].'\', '.count($zdataset['snapshots']).', \''.$id.'\', '.$zfsm_cfg['destructive_mode'].', \''.$zdataset['keystatus'].'\'';
+		if (isset($zdataset['origin'])):
+			echo ',\''.$zdataset['origin'].'\'';
+		echo ');" class="zfs_compact">Actions</button></span>';
 	echo '</td>';
 
 	//mountpoint
@@ -405,7 +408,7 @@ function generatePoolDatasetOptions($dataset_array) {
 }
 	
 function getZFSPoolDevices($zpool) {
-	$cmd_line = "zpool status -v ".$zpool." | awk '/config:/{flag=1;next}/errors:/{flag=0}flag{if($1!=\"NAME\" && NF>1)print $1}'"; 
+	$cmd_line = "zpool status -v ".$zpool." | awk '/config:/{flag=1;next}/errors:/{flag=0}flag{if($1!=\"NAME\" && NF>1)print $1}'|tail -n+2"; 
 	return trim(shell_exec($cmd_line.' 2>&1'));
 }
 	

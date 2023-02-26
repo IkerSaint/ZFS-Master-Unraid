@@ -101,7 +101,7 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 				echo $zdetail;
 			elseif ($key == "Name"):
 				$showTableButtonText = "Show Datasets";
-				if ($_COOKIE['zdataset-'.$zpool['Pool']] != "none"):
+				if (isset($_COOKIE['zdataset-'.$zpool['Pool']]) == false || $_COOKIE['zdataset-'.$zpool['Pool']] != "none"):
 					$showTableButtonText = "Hide Datasets";
 				endif;
 
@@ -128,7 +128,7 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 		<?endforeach;?>
 	</tr>
 		<?
-			generateDatasetArrayRows($zpool['Pool'], $zpool_datasets[$zpool['Pool']], $_COOKIE['zdataset-'.$zpool['Pool']], $zfsm_cfg, $zpool['Pool']);
+			generateDatasetArrayRows($zpool['Pool'], $zpool_datasets[$zpool['Pool']], $_COOKIE['zdataset-'.$zpool['Pool']] ?? 'none', $zfsm_cfg, $zpool['Pool']);
 		?>
 	<?endforeach;?>
   </tbody>
