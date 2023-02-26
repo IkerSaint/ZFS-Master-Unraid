@@ -69,8 +69,8 @@ function fromBytesToString($bytes) {
 }
 	  
 function calculateFreePercent($used,$free) {
-	$used_tmp = fromStringToBytes($used);
-	$free_tmp = fromStringToBytes($free);
+	$used_tmp = gettype($used) == "string" ? fromStringToBytes($used) : $used;
+	$free_tmp = gettype($free) == "string" ? fromStringToBytes($free) : $free;
 		
 	$result = $free_tmp/($free_tmp+$used_tmp);
 	return $result*100;
@@ -326,6 +326,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
 		echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zpool.'\', \''.$zdataset['name'].'\', '.count($zdataset['snapshots']).', \''.$id.'\', '.$zfsm_cfg['destructive_mode'].', \''.$zdataset['keystatus'].'\'';
 		if (isset($zdataset['origin'])):
 			echo ',\''.$zdataset['origin'].'\'';
+		endif;
 		echo ');" class="zfs_compact">Actions</button></span>';
 	echo '</td>';
 
