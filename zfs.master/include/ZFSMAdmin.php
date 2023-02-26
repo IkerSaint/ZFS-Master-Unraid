@@ -33,7 +33,7 @@ switch ($_POST['cmd']) {
 
 		$zfs_cparams = cleanZFSCreateDatasetParams($_POST['data']);
 
-		$passphrase = $zfs_cparams['passphrase'];
+		$passphrase = $zfs_cparams['passphrase'] ?? "";
 		unset($zfs_cparams['passphrase']);
 
 		$cmd_line = createZFSCreateDatasetCMDLine($zfs_cparams).$boutput_str;
