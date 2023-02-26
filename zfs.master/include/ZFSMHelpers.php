@@ -268,7 +268,7 @@ function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
 				"Read Only" =>  $zdataset['readonly'],
 				"Case Sensitive" =>  $zdataset['casesensitivity'],
 				"Sync" =>  $zdataset['sync'],
-				"Origin" =>  $zdataset['origin'],
+				"Origin" =>  $zdataset['origin'] ?? "",
 				"Space used by Snaps" =>  fromBytesToString($zdataset['usedbysnapshots'])];
 
 		$icon_color = 'grey';
