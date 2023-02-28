@@ -3,7 +3,6 @@
   <Plugin>True</Plugin>
   <PluginURL>https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main/zfs.master.plg</PluginURL>
   <PluginAuthor>IkerSaint</PluginAuthor>
-  <Beta>True</Beta>
   <Category>Tools:System</Category>
   <Name>ZFS Master</Name>
   <Description>The ZFS Master plugin provides information and control over the ZFS Pools in your Unraid. Available ZFS Pools are listed under the "Main/ZFSMaster" tab.
