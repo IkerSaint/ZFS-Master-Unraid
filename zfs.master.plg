@@ -15,6 +15,11 @@
 		min="6.9.2">
 <CHANGES>
 
+###2023.02.28
+- Fix - PHP 8 Upgrades
+- Fix - Export pool command
+- Fix - Error on parsing dataset origin property
+
 ###2022.12.04
 - Fix - Error on counting childs
 
