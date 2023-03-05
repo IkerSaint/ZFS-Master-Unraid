@@ -498,9 +498,12 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
   function renameDataset(zdataset) {
 	  Swal2.fire({
 		  title: '<strong>New name for '+zdataset+'</strong>',
-		  html: '<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Dataset new name (Entire path)" type="mytext" style="display: flex;">'+
+		  html: '<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Dataset new name (Entire name)" type="mytext" style="display: flex;">'+
 		        '<input type="checkbox" id="swal2-checkbox" class="swal2-input">'+
-				'<span class="swal2-label">Force unmount any file systems that need to be unmounted in the process</span>',
+				'<label for="swal2-checkbox" class="swal2-checkbox" style="display: flex;">'+
+				'<input type="checkbox" id="swal2-checkbox">'+
+				'<span class="swal2-label">Force unmount any file systems that need to be unmounted in the process</span>'+
+				'</label>',
 		  showConfirmButton: true,
 		  showCancelButton: true,
 		  preConfirm: function () {
@@ -512,7 +515,7 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 				Swal2.resetValidationMessage();
 				resolve([
 				  $('#swal2-input').val(),
-				  $('#swal2-checkbox').is(":checked")
+				  $('#swal2-checkbox').attr("checked") ? 1 : 0
 				])
 			  }
 		    })
@@ -520,7 +523,7 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 	  }).then((result) => {
 		  console.log(result);
 		  if (result.isConfirmed) {
-			$.post('<?=$urlzmadmin?>',{cmd: 'renamedataset', data: zdataset, force: result.text, newname: result}, function(data) {
+			$.post('<?=$urlzmadmin?>',{cmd: 'renamedataset', data: zdataset, force: result.value[0], newname: result.value[1]}, function(data) {
 			  if (data == 'Ok') {
 				Swal2.fire({
 				  title: 'Success!',
@@ -537,6 +540,7 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 			});
 		  }
 	  });
+	  $(".swal2-html-container").attr("style", "display: grid;");
   }
   
   function destroyDataset(zdataset) {
