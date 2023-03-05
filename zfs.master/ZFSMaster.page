@@ -170,8 +170,8 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
   }
   
   function getUnraidParentElement() {
-	  if ($zfsm_cfg['version'].localeCompare('6.11.9', undefined, { numeric: true, sensitivity: 'base' }) == 1) {
-		return $(".title.left").filter(function(){return $(this).text() === 'ZFS Master';}).parent();
+	  if ('<?=$zfsm_cfg['version']?>'.localeCompare('6.11.9', undefined, { numeric: true, sensitivity: 'base' }) == 1) {
+		return $(".title .left").filter(function(){return $(this).text() === 'ZFS Master';}).parent();
 	  }
 	  return $("div#title > span.left").filter(function(){return $(this).text() === 'ZFS Master';}).parent();
   }
