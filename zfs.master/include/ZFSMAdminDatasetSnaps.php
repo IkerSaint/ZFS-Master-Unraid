@@ -233,9 +233,9 @@ window.onload = function() {
 
   function rollbackSnapshot(snapshot) {
 	Swal2.fire({
-		  title: '<strong>Rollback Snapshot<br>'+snapshot+'</strong>',
+		  title: '<strong>Rollback Snapshot<br>'+zdataset+'</strong>',
 		  icon: 'warning',
-		  html: 'This operation will rollback to a snapshot, <b>which cannot be undone</b>, are you sure?',
+		  html: 'This operation will rollback the Dataset, <b>which cannot be undone</b>, are you sure?',
 		  showConfirmButton: true,
 		  confirmButtonText: "Rollback",
 		  showCancelButton: true
@@ -248,7 +248,6 @@ window.onload = function() {
 						icon: 'success',
 						text: 'Snapshot '+snapshot+' rolled back'
 					});
-					window.location.reload();
 				} else {
 					Swal2.fire({
 						title: 'Error!',
@@ -257,9 +256,11 @@ window.onload = function() {
 					}); 
 				}
 			});
-		  }
 	  });
 	  $(".swal2-input").attr("type", "mytext");
+
+
+	
   }
 
   function holdSnapshot(snapshot) {
