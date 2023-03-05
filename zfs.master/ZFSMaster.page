@@ -533,7 +533,6 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 	      }
 	  }).then((result) => {
 		  console.log(result);
-		  console.log(result);
 		  if (result.isConfirmed) {
 			$.post('<?=$urlzmadmin?>',{cmd: 'renamedataset', data: zdataset, newname: result.value[0], force: result.value[1]}, function(data) {
 			  if (data == 'Ok') {
