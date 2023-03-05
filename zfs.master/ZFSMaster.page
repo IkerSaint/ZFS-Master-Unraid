@@ -310,9 +310,17 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 			action: function (e) {
 				e.preventDefault();
 				destroyDataset(zdataset);
-		    }
-		  },
-		  { divider: true }
+			},
+		},
+		{
+			text: _("Rename"),
+			icon: "fa-text-slash",
+			action: function (e) {
+				e.preventDefault();
+				renameDataset(zdataset);
+			},
+		},
+		{ divider: true }
 		);
 	}
 
@@ -498,23 +506,22 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
   function renameDataset(zdataset) {
 	  Swal2.fire({
 		  title: '<strong>New name for '+zdataset+'</strong>',
-		  html: '<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Dataset new name (Entire name)" type="mytext" style="display: flex;">'+
-				'<label for="swal2-checkbox" class="swal2-checkbox" style="display: flex;">'+
-				'<input type="checkbox" id="swal2-checkbox">'+
-				'<span class="swal2-label">Force unmount any file systems that need to be unmounted in the process</span>'+
-				'</label>',
+		  html:
+			'<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Dataset new name (Entire path)" type="mytext" style="display: flex;">'+
+			'<input type="checkbox" id="swal2-checkbox" class="class="swal2-input">'+
+			'<span class="swal2-label">Force unmount any file systems that need to be unmounted in the process</span>',
 		  showConfirmButton: true,
 		  showCancelButton: true,
 		  preConfirm: function () {
 			return new Promise(function (resolve) {
-			  if ($('#swal2-input').val() == '') {
-				Swal2.showValidationMessage("Enter a value for the dataset name");
-				Swal2.enableButtons(); // Enable the confirm button again.
+			  if ($('#swal-input').val() == '') {
+				swal.showValidationMessage("Enter a value for the dataset name");
+				swal.enableConfirmButton(); // Enable the confirm button again.
               } else {
-				Swal2.resetValidationMessage();
+				swal.resetValidationMessage();
 				resolve([
-				  $('#swal2-input').val(),
-				  $('#swal2-checkbox').attr("checked") ? 1 : 0
+				  $('#swal-input1').val(),
+				  $('#swal2-checkbox').val()
 				])
 			  }
 		    })
@@ -522,7 +529,7 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 	  }).then((result) => {
 		  console.log(result);
 		  if (result.isConfirmed) {
-			$.post('<?=$urlzmadmin?>',{cmd: 'renamedataset', data: zdataset, newname: result.value[0], force: result.value[1]}, function(data) {
+			$.post('<?=$urlzmadmin?>',{cmd: 'renamedataset', data: zdataset, force: result.text, newname: result.[1]}, function(data) {
 			  if (data == 'Ok') {
 				Swal2.fire({
 				  title: 'Success!',
@@ -539,7 +546,6 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 			});
 		  }
 	  });
-	  $(".swal2-html-container").attr("style", "display: grid;");
   }
   
   function destroyDataset(zdataset) {
