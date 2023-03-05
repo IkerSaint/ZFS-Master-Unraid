@@ -72,7 +72,7 @@ switch ($_POST['cmd']) {
 		$ret = execCommand($cmd_line, $exec_result);
 		
 		if ($ret == 0):
-			zfsnotify( "ZFS Rename ", "Dataset ".$_POST['data']." renamed successfully to ".$_POST['newname']., $cmdoutput_str.$exec_result."","normal");
+			zfsnotify( "ZFS Rename ", "Dataset ".$_POST['data']." renamed successfully to ".$_POST['newname'], $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
 			zfsnotify( "ZFS Rename", "Unable to rename dataset ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
