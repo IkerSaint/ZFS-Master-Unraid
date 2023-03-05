@@ -506,19 +506,18 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 		  preConfirm: function () {
 			return new Promise(function (resolve) {
 			  if ($('#swal2-input').val() == '') {
-				swal.showValidationMessage("Enter a value for the dataset name");
-				swal.enableConfirmButton(); // Enable the confirm button again.
+				Swal2.showValidationMessage("Enter a value for the dataset name");
+				Swal2.enableButtons(); // Enable the confirm button again.
               } else {
-				swal.resetValidationMessage();
+				Swal2.resetValidationMessage();
 				resolve([
 				  $('#swal2-input').val(),
-				  $('#swal2-checkbox').val()
+				  $('#swal2-checkbox').is(":checked")
 				])
 			  }
 		    })
 	      }
 	  }).then((result) => {
-		  console.log(result);
 		  console.log(result);
 		  if (result.isConfirmed) {
 			$.post('<?=$urlzmadmin?>',{cmd: 'renamedataset', data: zdataset, force: result.text, newname: result}, function(data) {
