@@ -12,8 +12,22 @@ $csrf_token = $_GET['csrf_token'];
 $zpool = $_GET['zpool'];
 $zdataset = $_GET['zdataset'];
 $session_file = loadJSONFromDisk($plugin_session_file);
-$zpool_datasets = $session_file[$zpool];
-$dataset = findDatasetInArray($zdataset, $zpool_datasets);
+
+$fields_post = array(
+	"cmd" => "getsnapshots",
+	"zpool" => $zpool ,
+	"zdataset" => $zdataset
+);
+
+$ch = curl_init();
+//set the url, number of POST vars, POST data
+curl_setopt($ch, CURLOPT_URL, $urlzmadmin);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_post);
+
+$snapshots = curl_exec($ch);
+
+curl_close($ch);
 ?>
 
 <!DOCTYPE html>
@@ -154,7 +168,7 @@ window.onload = function() {
 	</thead>
 	<tbody id="zpools">
 		<?
-		foreach ($dataset['snapshots'] as $snap):
+		foreach ($snapshots as $snap):
 			echo '<tr>';
 			echo '<td class="snapl-delete"><input class="snapl-check" type="checkbox" id="'.$snap['name'].'"></td>';
 			echo '<td class="snapl-attribute-name">';
