@@ -522,7 +522,7 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 	  }).then((result) => {
 		  console.log(result);
 		  if (result.isConfirmed) {
-			$.post('<?=$urlzmadmin?>',{cmd: 'renamedataset', data: zdataset, force: result.value[0], newname: result.value[1]}, function(data) {
+			$.post('<?=$urlzmadmin?>',{cmd: 'renamedataset', data: zdataset, newname: result.value[0], force: result.value[1]}, function(data) {
 			  if (data == 'Ok') {
 				Swal2.fire({
 				  title: 'Success!',
