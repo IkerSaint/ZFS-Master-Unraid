@@ -301,10 +301,18 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 				e.preventDefault();
 				destroyDataset(zdataset);
 			},
-		});
+		},
+		{
+			text: _("Rename"),
+			icon: "fa-text-slash",
+			action: function (e) {
+				e.preventDefault();
+				renameDataset(zdataset);
+			},
+		},
+		{ divider: true }
+		);
 	}
-
-	opts.push({ divider: true });
 
     opts.push({
         text: _("Take Snapshot"),
@@ -482,6 +490,51 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 				html: 'Promotion of '+zdataset+' failed! <br>Output: '+data
 			}); 
 		}
+	  });
+  }
+
+  function renameDataset(zdataset) {
+	  Swal2.fire({
+		  title: '<strong>New name for '+zdataset+'</strong>',
+		  html:
+			'<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Dataset new name (Entire path)" type="mytext" style="display: flex;">'+
+			'<input type="checkbox" id="swal2-checkbox" class="class="swal2-input">'+
+			'<span class="swal2-label">Force unmount any file systems that need to be unmounted in the process</span>',
+		  showConfirmButton: true,
+		  showCancelButton: true,
+		  preConfirm: function () {
+			return new Promise(function (resolve) {
+			  if ($('#swal-input').val() == '') {
+				swal.showValidationMessage("Enter a value for the dataset name");
+				swal.enableConfirmButton(); // Enable the confirm button again.
+              } else {
+				swal.resetValidationMessage();
+				resolve([
+				  $('#swal-input1').val(),
+				  $('#swal2-checkbox').val()
+				])
+			  }
+		    })
+	      }
+	  }).then((result) => {
+		  console.log(result);
+		  if (result.isConfirmed) {
+			$.post('<?=$urlzmadmin?>',{cmd: 'renamedataset', data: zdataset, force: result.text, newname: result.[1]}, function(data) {
+			  if (data == 'Ok') {
+				Swal2.fire({
+				  title: 'Success!',
+				  icon: 'success',
+				  text: 'Dataset '+zdataset+' renamed'
+			    });
+			  } else {
+				Swal2.fire({
+				  title: 'Error!',
+				  icon: 'error',
+				  html: 'Unable to rename dataset '+zdataset+'<br>Output: '+data
+				}); 
+			  }
+			});
+		  }
 	  });
   }
   

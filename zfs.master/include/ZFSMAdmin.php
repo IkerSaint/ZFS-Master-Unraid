@@ -65,6 +65,21 @@ switch ($_POST['cmd']) {
 		endif;
 
 		break;
+	case 'renamedataset':
+		$force = ($_POST['force'] == '1') ? '-f ' : '';
+		$cmd_line = 'zfs rename '.$force.escapeshellarg($_POST['data']). ' '.escapeshellarg($_POST['newname']).$boutput_str;
+
+		$ret = execCommand($cmd_line, $exec_result);
+		
+		if ($ret == 0):
+			zfsnotify( "ZFS Rename ", "Dataset ".$_POST['data']." renamed successfully to ".$_POST['newname']., $cmdoutput_str.$exec_result."","normal");
+			echo 'Ok';
+		else:
+			zfsnotify( "ZFS Rename", "Unable to rename dataset ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			echo $exec_result;
+		endif;
+
+		break;
 	case 'destroydataset':
 		$force = ($_POST['force'] == '1') ? '-fRr ' : '';
 		$cmd_line = 'zfs destroy -vp '.$force.escapeshellarg($_POST['data']).$boutput_str;
