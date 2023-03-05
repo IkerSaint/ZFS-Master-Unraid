@@ -232,13 +232,35 @@ window.onload = function() {
   }
 
   function rollbackSnapshot(snapshot) {
-	$.post('<?=$urlzmadmin?>',{cmd: 'rollbacksnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
-		if (data == 'Ok') {
-			updateStatus('Rollback of Snapshot '+snapshot+' Successful');
-		} else {
-			updateStatus('Unable to rollback snapshot '+snapshot+'<br>Output: '+data);
-		}
-	});
+	Swal2.fire({
+		  title: '<strong>Rollback Snapshot<br>'+zdataset+'</strong>',
+		  icon: 'warning',
+		  html: 'This operation will rollback the Dataset, <b>which cannot be undone</b>, are you sure?',
+		  showConfirmButton: true,
+		  confirmButtonText: "Rollback",
+		  showCancelButton: true
+	  }).then((result) => {
+		  if (result.isConfirmed) {
+			$.post('<?=$urlzmadmin?>',{cmd: 'rollbacksnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
+				if (data == 'Ok') {
+					Swal2.fire({
+						title: 'Success!',
+						icon: 'success',
+						text: 'Snapshot '+snapshot+' rolled back'
+					});
+				} else {
+					Swal2.fire({
+						title: 'Error!',
+						icon: 'error',
+						html: 'Unable to rollback to snapshot '+snapshot+'<br>Output: '+data
+					}); 
+				}
+			});
+	  });
+	  $(".swal2-input").attr("type", "mytext");
+
+
+	
   }
 
   function holdSnapshot(snapshot) {
