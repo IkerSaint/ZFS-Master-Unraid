@@ -287,22 +287,13 @@ function getDatasetSnapshots($zpool, $zdataset) {
 	$json_ret = shell_exec($cmd_line.' 2>&1');
 	$array_ret = json_decode($json_ret, true)['return'];
 
-	if (count($array_ret) > 0):
+	if (count(array_ret) > 0):
 		usort($array_ret, function($item1, $item2) { 
-			return $item1['creation'] <=> $item2['creation'];
+			return $item1['creation'] > $item2['creation'];
 		});
 	endif;
 
-	return $array_ret;
-}
-
-function getDatasetProperties($zpool, $zdataset) {
-	$cmd_line = "zfs program -jn -m 20971520 ".escapeshellarg($zpool)." ".$GLOBALS["script_get_pool_dataset_properties"]." ".escapeshellarg($zdataset)." ";
-	
-	$json_ret = shell_exec($cmd_line.' 2>&1');
-	$array_ret = json_decode($json_ret, true)['return'];
-
-	return $array_ret;
+	return a$rray_ret;
 }
 
 function getZFSPoolDatasets($zpool, $exc_pattern) {
