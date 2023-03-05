@@ -192,7 +192,7 @@ function cleanupZPoolInfo($matched) {
 function sortDatasetArray($datasetArray) {
 	if ($datasetArray['snapshots'] > 0):
 		usort($datasetArray['snapshots'], function($item1, $item2) { 
-			return $item1['creation'] > $item2['creation'];
+			return $item1['creation'] <=> $item2['creation'];
 		});
 	endif;
 
@@ -231,13 +231,13 @@ function getDatasetSnapshots($zpool, $zdataset) {
 	$json_ret = shell_exec($cmd_line.' 2>&1');
 	$array_ret = json_decode($json_ret, true)['return'];
 
-	if (count(array_ret) > 0):
+	if (count($array_ret) > 0):
 		usort($array_ret, function($item1, $item2) { 
-			return $item1['creation'] > $item2['creation'];
+			return $item1['creation'] <=> $item2['creation'];
 		});
 	endif;
 
-	return a$rray_ret;
+	return $array_ret;
 }
 
 function getZFSPoolDatasets($zpool, $exc_pattern) {

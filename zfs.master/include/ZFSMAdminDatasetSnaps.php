@@ -212,7 +212,8 @@ window.onload = function() {
 			updateStatusOnDeletion(data, snapshot, i, checkedVals.length);
 		});
 	}
-	$.ajaxSetup({async: true});  
+	$.ajaxSetup({async: true});
+	window.location.reload();
   });
 
   var checkBoxes = $('.snapl-check');
