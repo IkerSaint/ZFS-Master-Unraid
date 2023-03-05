@@ -12,22 +12,8 @@ $csrf_token = $_GET['csrf_token'];
 $zpool = $_GET['zpool'];
 $zdataset = $_GET['zdataset'];
 $session_file = loadJSONFromDisk($plugin_session_file);
+$snapshots = getDatasetSnapshots($zpool, $zdataset);
 
-$fields_post = array(
-	"cmd" => "getsnapshots",
-	"zpool" => $zpool ,
-	"zdataset" => $zdataset
-);
-
-$ch = curl_init();
-//set the url, number of POST vars, POST data
-curl_setopt($ch, CURLOPT_URL, $urlzmadmin);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $fields_post);
-
-$snapshots = curl_exec($ch);
-
-curl_close($ch);
 ?>
 
 <!DOCTYPE html>
