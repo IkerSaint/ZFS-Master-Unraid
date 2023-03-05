@@ -26,6 +26,13 @@ switch ($_POST['cmd']) {
 		endif;
 		
 		break;
+	case 'getsnapshots':
+		$cmd_line = "zfs program -jn -m 20971520 ".escapeshellarg($_POST['zpool'])." ".$GLOBALS["script_get_snapsthots_data"]." ".escapeshellarg($_POST['zdataset']);
+		$json_ret = shell_exec($cmd_line.' 2>&1');
+
+		echo $json_ret;
+
+		break;
 	case 'createdataset':
 		$permissions = isset($_POST['data']['permissions']) ? $_POST['data']['permissions'] : '';
 
