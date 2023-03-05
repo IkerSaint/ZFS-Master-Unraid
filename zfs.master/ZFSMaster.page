@@ -297,30 +297,22 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 	if (destructive_mode != 0) {
 		opts.push(
 		  {
-			text: _("Rename"),
-			icon: "fa-pencil",
-			action: function (e) {
-				e.preventDefault();
-				renameDataset(zdataset);
-			}
-		  },
-		  {
 			text: _("Destroy"),
 			icon: "fa-trash",
 			action: function (e) {
 				e.preventDefault();
 				destroyDataset(zdataset);
-			},
-		},
-		{
+		    }
+		  },
+		  {
 			text: _("Rename"),
 			icon: "fa-text-slash",
 			action: function (e) {
 				e.preventDefault();
 				renameDataset(zdataset);
-			},
-		},
-		{ divider: true }
+			}
+		  },
+		  { divider: true }
 		);
 	}
 
