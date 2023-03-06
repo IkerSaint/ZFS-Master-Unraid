@@ -498,7 +498,7 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
   function renameDataset(zdataset) {
 	  Swal2.fire({
 		  title: '<strong>New name for '+zdataset+'</strong>',
-		  html: '<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Dataset new name (Entire name)" type="mytext" style="display: flex;">'+
+		  html: '<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Dataset new name (Entire name)" value="'+zdataset+'" type="mytext" style="display: flex;">'+
 				'<label for="swal2-checkbox" class="swal2-checkbox" style="display: flex;">'+
 				'<input type="checkbox" id="swal2-checkbox">'+
 				'<span class="swal2-label">Force unmount any file systems that need to be unmounted in the process</span>'+
