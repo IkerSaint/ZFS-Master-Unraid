@@ -235,7 +235,7 @@ window.onload = function() {
 	Swal2.fire({
 		  title: '<strong>Rollback Snapshot<br>'+snapshot+'</strong>',
 		  icon: 'warning',
-		  html: 'This operation will rollback the Dataset, <b>which cannot be undone</b>, are you sure?',
+		  html: 'This operation will rollback to a snapshot, <b>which cannot be undone</b>, are you sure?',
 		  showConfirmButton: true,
 		  confirmButtonText: "Rollback",
 		  showCancelButton: true
