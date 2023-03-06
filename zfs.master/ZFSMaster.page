@@ -296,20 +296,20 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 	if (destructive_mode != 0) {
 		opts.push(
 		  {
-			text: _("Destroy"),
-			icon: "fa-trash",
-			action: function (e) {
-				e.preventDefault();
-				destroyDataset(zdataset);
-		    }
-		  },
-		  {
 			text: _("Rename"),
 			icon: "fa-pencil",
 			action: function (e) {
 				e.preventDefault();
 				renameDataset(zdataset);
 			}
+		  },
+		  {
+			text: _("Destroy"),
+			icon: "fa-trash",
+			action: function (e) {
+				e.preventDefault();
+				destroyDataset(zdataset);
+		    }
 		  },
 		  { divider: true }
 		);
@@ -324,17 +324,6 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
         },
     });
     
-	if (snapscount >= 1) {
-        opts.push({
-			text: _("Snapshots Admin"),
-			icon: "fa-gears",
-			action: function(e) {
-				e.preventDefault();
-				adminDatasetSnaps(zpool, zdataset);
-			},
-		});
-    }
-
 	if (encryption == 'available') {
 		opts.push({
 			text: _("Lock Dataset"),
@@ -365,6 +354,17 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 			},
 		});
 	}
+
+	if (snapscount >= 1) {
+        opts.push({
+			text: _("Snapshots Admin"),
+			icon: "fa-gears",
+			action: function(e) {
+				e.preventDefault();
+				adminDatasetSnaps(zpool, zdataset);
+			},
+		});
+    }
 
     context.attach("#" + id, opts);
 
