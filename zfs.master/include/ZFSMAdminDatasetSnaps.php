@@ -233,7 +233,7 @@ window.onload = function() {
 
   function rollbackSnapshot(snapshot) {
 	Swal2.fire({
-		  title: '<strong>Rollback Snapshot<br>'+zdataset+'</strong>',
+		  title: '<strong>Rollback Snapshot<br>'+snapshot+'</strong>',
 		  icon: 'warning',
 		  html: 'This operation will rollback the Dataset, <b>which cannot be undone</b>, are you sure?',
 		  showConfirmButton: true,
@@ -248,6 +248,7 @@ window.onload = function() {
 						icon: 'success',
 						text: 'Snapshot '+snapshot+' rolled back'
 					});
+					window.location.reload();
 				} else {
 					Swal2.fire({
 						title: 'Error!',
@@ -256,17 +257,16 @@ window.onload = function() {
 					}); 
 				}
 			});
+		  }
 	  });
 	  $(".swal2-input").attr("type", "mytext");
-
-
-	
   }
 
   function holdSnapshot(snapshot) {
 	$.post('<?=$urlzmadmin?>',{cmd: 'holdsnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
 		if (data == 'Ok') {
 			updateStatus('Hold of Snapshot '+snapshot+' Successful');
+			window.location.reload();
 		} else {
 			updateStatus('Unable to add reference to snapshot '+snapshot+'<br>Output: '+data);
 		}
@@ -277,6 +277,7 @@ window.onload = function() {
 	$.post('<?=$urlzmadmin?>',{cmd: 'releasesnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
 		if (data == 'Ok') {
 			updateStatus('Release of Snapshot '+snapshot+' Successful');
+			window.location.reload();
 		} else {
 			updateStatus('Unable to remove reference from snapshot '+snapshot+'<br>Output: '+data);
 		}
@@ -303,6 +304,7 @@ window.onload = function() {
 						icon: 'success',
 						text: 'Snapshot '+snapshot+' Cloned'
 					});
+					window.location.reload();
 				  } else {
 					Swal2.fire({
 						title: 'Error!',
