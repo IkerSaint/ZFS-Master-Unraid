@@ -310,7 +310,7 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 			icon: "fa-pencil",
 			action: function (e) {
 				e.preventDefault();
-				editDataset(zdataset);
+				editDataset(zpool, zdataset);
 			}
 		  },
 		  {
