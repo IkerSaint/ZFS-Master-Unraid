@@ -10,8 +10,9 @@ require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 $csrf_token = $_GET['csrf_token'];
 
 $zpool = $_GET['zpool'];
-$zdataset = $_GET['zdataset'];
+$zdataset_name = $_GET['zdataset'];
 $session_file = loadJSONFromDisk($plugin_session_file);
+$zdataset = $session_file[$zpool][$zdataset_name];
 ?>
 
 <!DOCTYPE html>
@@ -81,82 +82,82 @@ $session_file = loadJSONFromDisk($plugin_session_file);
 	</thead>
 	<tbody id="zpools">
 	<?
-		echo '<tr>'
-		echo '<td>Used</td>'
-		echo '<td>'.$zdataset['used'].'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Available</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Referenced</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Encryption</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Key Status</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Mount Point</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Compression</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Compress Ratio</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Used by Snapshots</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Quota</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Record Size</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Access Time (atime)</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Extended Attributes (xattr)</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Primary Cache</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Read Only</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Case Sentitivity</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Sync</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Creation</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
-		echo '<tr>'
-		echo '<td>Origin</td>'
-		echo '<td>'.value.'</td>'
-		echo '</tr>'
+		echo '<tr>';
+		echo '<td>Used</td>';
+		echo '<td>'.var_dump($zdataset).'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Available</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Referenced</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Encryption</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Key Status</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Mount Point</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Compression</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Compress Ratio</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Used by Snapshots</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Quota</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Record Size</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Access Time (atime)</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Extended Attributes (xattr)</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Primary Cache</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Read Only</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Case Sentitivity</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Sync</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Creation</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
+		echo '<tr>';
+		echo '<td>Origin</td>';
+		echo '<td>'.value.'</td>';
+		echo '</tr>';
 	?>
 	</tbody>
 	</table>
