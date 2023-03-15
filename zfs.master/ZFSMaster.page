@@ -297,10 +297,18 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 		opts.push(
 		  {
 			text: _("Rename"),
-			icon: "fa-pencil",
+			icon: "fa-font",
 			action: function (e) {
 				e.preventDefault();
 				renameDataset(zdataset);
+			}
+		  },
+		  {
+			text: _("Edit Dataset"),
+			icon: "fa-pencil",
+			action: function (e) {
+				e.preventDefault();
+				editDataset(zdataset);
 			}
 		  },
 		  {
@@ -417,6 +425,11 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 		  }
 	  });
 	  $(".swal2-input").attr("type", "mytext");
+  }
+
+  function editDataset(zpool, zdataset) {
+	  var csrf_token = $("input[name='csrf_token']").val();	 
+	  openBox('<?=$urleditdataset?>?zpool='+zpool+'&zdataset='+zdataset+'&csrf_token='+csrf_token, zdataset+" - Edit Dataset",680,680,false);
   }
 
   function adminDatasetSnaps(zpool, zdataset) {

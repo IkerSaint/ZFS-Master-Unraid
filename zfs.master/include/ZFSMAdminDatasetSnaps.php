@@ -11,7 +11,6 @@ $csrf_token = $_GET['csrf_token'];
 
 $zpool = $_GET['zpool'];
 $zdataset = $_GET['zdataset'];
-$session_file = loadJSONFromDisk($plugin_session_file);
 $snapshots = getDatasetSnapshots($zpool, $zdataset);
 
 ?>
