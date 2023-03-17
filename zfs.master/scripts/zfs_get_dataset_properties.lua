@@ -16,6 +16,6 @@ end
 args = ... 
 argv = args["argv"]
 
-ret = list_datasets(argv[1], argv[2])
+ret = get_properties(argv[1])
 
 return ret
