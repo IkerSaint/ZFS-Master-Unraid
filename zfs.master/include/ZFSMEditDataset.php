@@ -81,7 +81,6 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 	</thead>
 	<tbody id="zpools">
 	<?
-		echo var_dump($zdataset);
 		echo '<tr>';
 		echo '<td colspan="2">Read Only</td>';
 		echo '</tr>';
@@ -115,7 +114,7 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Creation</td>';
-		echo '<td>'.$zdataset["creation:"].'</td>';
+		echo '<td>'.$zdataset["creation"].'</td>';
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Origin</td>';
