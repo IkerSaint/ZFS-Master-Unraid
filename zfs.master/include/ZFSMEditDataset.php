@@ -11,7 +11,7 @@ $csrf_token = $_GET['csrf_token'];
 
 $zpool = $_GET['zpool'];
 $zdataset_name = $_GET['zdataset'];
-$zdataset = getDatasetProperties($zpool, $zdataset);
+$zdataset = getDatasetProperties($zpool, $zdataset_name);
 ?>
 
 <!DOCTYPE html>
@@ -81,6 +81,7 @@ $zdataset = getDatasetProperties($zpool, $zdataset);
 	</thead>
 	<tbody id="zpools">
 	<?
+		echo var_dump($zdataset);
 		echo '<tr>';
 		echo '<td colspan="2">Read Only</td>';
 		echo '</tr>';
