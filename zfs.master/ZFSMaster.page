@@ -430,7 +430,7 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 
   function editDataset(zpool, zdataset) {
 	  var csrf_token = $("input[name='csrf_token']").val();	 
-	  openBox('<?=$urleditdataset?>?zpool='+zpool+'&zdataset='+zdataset+'&csrf_token='+csrf_token, "Edit Dataset - "+zdataset,480,480,false);
+	  openBox('<?=$urleditdataset?>?zpool='+zpool+'&zdataset='+zdataset+'&csrf_token='+csrf_token, zdataset+"- Edit Dataset",480,480,false);
   }
 
   function adminDatasetSnaps(zpool, zdataset) {
