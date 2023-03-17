@@ -57,67 +57,45 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 		text-align: center !important;
   	}
 
-	.switch {
-		position: relative;
-		display: inline-block;
-		width: 20px;
-		height: 12px;
-	}
-
-	/* Hide default HTML checkbox */
-	.switch input {
-  		opacity: 0;
-  		width: 0;
-  		height: 0;
-	}
-
-	/* The slider */
-	.slider {
-  		position: absolute;
-  		cursor: pointer;
-  		top: 0;
-  		left: 0;
-  		right: 0;
-		bottom: 0;
-		background-color: #ccc;
-		-webkit-transition: .4s;
-		transition: .4s;
-	}
-
-	.slider:before {
-		position: absolute;
-		content: "";
-		height: 9px;
-		width: 9px;
-		left: 1px;
-		bottom: 1px;
-		background-color: white;
-		-webkit-transition: .4s;
-		transition: .4s;
-	}
-
-	input:checked + .slider {
-		background-color: #2196F3;
-	}
-
-	input:focus + .slider {
-		box-shadow: 0 0 1px #2196F3;
-	}
-
-	input:checked + .slider:before {
-		-webkit-transform: translateX(9px);
-		-ms-transform: translateX(9px);
-		transform: translateX(9px);
-	}
-
-	/* Rounded sliders */
-	.slider.round {
-		border-radius: 12px;
-	}
-
-	.slider.round:before {
-		border-radius: 50%;
-	}
+               
+        /* toggle in label designing */
+        .toggle {
+            position : relative ;
+            display : inline-block;
+            width : 100px;
+            height : 52px;
+            background-color: red;
+            border-radius: 30px;
+            border: 2px solid gray;
+        }
+               
+        /* After slide changes */
+        .toggle:after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: gray;
+            top: 1px;
+            left: 1px;
+            transition:  all 0.5s;
+        }
+                              
+        /* Checkbox checked effect */
+        .checkbox:checked + .toggle::after {
+            left : 49px;
+        }
+               
+        /* Checkbox checked toggle label bg color */
+        .checkbox:checked + .toggle {
+            background-color: green;
+        }
+               
+        /* Checkbox vanished */
+        .checkbox {
+            display : none;
+        }
 </style>
 
 <script src="<?autov('/webGui/javascript/dynamix.js')?>"></script>
@@ -217,8 +195,8 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Read Only</td>';
-		echo '<td><label class="switch"><input type="checkbox" '.($zdataset["readonly"] == "off" ? 'unchecked' : 'checked').'';
-		echo '><span class="slider round"></span></label>';
+		echo '<td><input type="checkbox" id="switch"class="checkbox" '.($zdataset["readonly"] == "off" ? 'unchecked' : 'checked').'';
+		echo '/><label for="switch" class="toggle"><p>OFF    ON</p></label>';
 		echo '</td>';
 		echo '</tr>';
 		echo '<tr>';
