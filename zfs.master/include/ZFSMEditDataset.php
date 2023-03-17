@@ -35,9 +35,9 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 
 	.zfs_snap_table {
 		display: table;
-		width: 96%;
+		width: 90%;
 		border: 1px solid #ccc;
-		max-height: 600px;
+		max-height: 360px;
 		overflow: auto;
 		margin: 2%;
 	}
@@ -60,8 +60,8 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 	.switch {
 		position: relative;
 		display: inline-block;
-		width: 60px;
-		height: 34px;
+		width: 20px;
+		height: 12px;
 	}
 
 	/* Hide default HTML checkbox */
@@ -87,10 +87,10 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 	.slider:before {
 		position: absolute;
 		content: "";
-		height: 26px;
-		width: 26px;
-		left: 4px;
-		bottom: 4px;
+		height: 9px;
+		width: 9px;
+		left: 1px;
+		bottom: 1px;
 		background-color: white;
 		-webkit-transition: .4s;
 		transition: .4s;
@@ -105,14 +105,14 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 	}
 
 	input:checked + .slider:before {
-		-webkit-transform: translateX(26px);
-		-ms-transform: translateX(26px);
-		transform: translateX(26px);
+		-webkit-transform: translateX(9px);
+		-ms-transform: translateX(9px);
+		transform: translateX(9px);
 	}
 
 	/* Rounded sliders */
 	.slider.round {
-		border-radius: 34px;
+		border-radius: 12px;
 	}
 
 	.slider.round:before {
@@ -218,7 +218,7 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 		echo '<tr>';
 		echo '<td>Read Only</td>';
 		echo '<td><label class="switch"><input type="checkbox" '.($zdataset["readonly"] == "off" ? 'unchecked' : 'checked').'';
-		echo '><span class="slider round"></span></label>'
+		echo '><span class="slider round"></span></label>';
 		echo '</td>';
 		echo '</tr>';
 		echo '<tr>';
