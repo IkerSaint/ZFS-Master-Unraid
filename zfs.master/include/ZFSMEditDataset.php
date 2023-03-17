@@ -197,6 +197,7 @@ window.onload = function() {
 	</thead>
 	<tbody id="zpools">
 	<?
+		echo var_dump($zdataset);
 		echo '<tr>';
 		echo '<td>Mount Point</td>';
 		echo '<td><input id="mountpoint" name="mountpoint" class="zfsm-input zfsm-w0 " value="'.$zdataset["mountpoint"].'""></td>';
