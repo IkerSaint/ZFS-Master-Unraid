@@ -57,45 +57,48 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 		text-align: center !important;
   	}
 
-               
-        /* toggle in label designing */
-        .toggle {
-            position : relative ;
-            display : inline-block;
-            width : 100px;
-            height : 52px;
-            background-color: red;
-            border-radius: 30px;
-            border: 2px solid gray;
-        }
-               
-        /* After slide changes */
-        .toggle:after {
-            content: '';
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: gray;
-            top: 1px;
-            left: 1px;
-            transition:  all 0.5s;
-        }
-                              
-        /* Checkbox checked effect */
-        .checkbox:checked + .toggle::after {
-            left : 49px;
-        }
-               
-        /* Checkbox checked toggle label bg color */
-        .checkbox:checked + .toggle {
-            background-color: green;
-        }
-               
-        /* Checkbox vanished */
-        .checkbox {
-            display : none;
-        }
+	input[type=checkbox]{
+		height: 0;
+		width: 0;
+		visibility: hidden;
+	}
+
+	label {
+		cursor: pointer;
+		text-indent: -99px;
+		width: 30px;
+		height: 15px;
+		background: grey;
+		display: block;
+		border-radius: 3px;
+		position: relative;
+	}
+
+	label:after {
+		content: '';
+		position: absolute;
+		top: 1px;
+		left: 1px;
+		width: 12px;
+		height: 12px;
+		background: #fff;
+		border-radius: 7px;
+		transition: 0.3s;
+	}
+
+	input:checked + label {
+		background: #bada55;
+	}
+
+	input:checked + label:after {
+		left: calc(100% - 1px);
+		transform: translateX(-100%);
+	}
+
+	label:active:after {
+		width: 130px;
+	}
+
 </style>
 
 <script src="<?autov('/webGui/javascript/dynamix.js')?>"></script>
@@ -187,7 +190,8 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Extended Attributes (xattr)</td>';
-		echo '<td>'.$zdataset["xattr"].'</td>';
+		echo '<td><input type="checkbox" id="readonly" '.($zdataset["xattr"] == "off" ? 'unchecked' : 'checked').'';
+		echo '/><label for="switch"></label>';
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Primary Cache</td>';
@@ -195,8 +199,8 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Read Only</td>';
-		echo '<td><input type="checkbox" id="switch"class="checkbox" '.($zdataset["readonly"] == "off" ? 'unchecked' : 'checked').'';
-		echo '/><label for="switch" class="toggle"><p>OFF    ON</p></label>';
+		echo '<td><input type="checkbox" id="readonly" '.($zdataset["readonly"] == "off" ? 'unchecked' : 'checked').'';
+		echo '/><label for="switch"></label>';
 		echo '</td>';
 		echo '</tr>';
 		echo '<tr>';
