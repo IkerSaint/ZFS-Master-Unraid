@@ -7,6 +7,7 @@
 	
 	$script_get_pool_data = $plugin_scripts."zfs_get_pool_data.lua";
 	$script_get_snapsthots_data =  $plugin_scripts."zfs_get_snapshots_data.lua";
+	$script_get_pool_dataset_properties =  $plugin_scripts."zfs_get_dataset_properties.lua";
 	
 	$urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
 	$urlcreatedataset = "/plugins/".$plugin."/include/ZFSMCreateDataset.php";
