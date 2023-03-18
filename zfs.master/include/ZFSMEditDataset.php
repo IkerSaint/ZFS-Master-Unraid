@@ -33,19 +33,13 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 		text-align: center;
 	}
 
-	.zfs_snap_table {
+	.zfs_table {
 		display: table;
 		width: 90%;
 		border: 1px solid #ccc;
 		max-height: 360px;
 		overflow: auto;
 		margin: 2%;
-	}
-
-	.zfs_status_box {
-		width: 80%;
-		border: 1px solid #ccc;
-		margin-left: 10%;
 	}
 
 	.zfs_table tr>td{
@@ -56,6 +50,47 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 	.zfs_update_btn {
 		text-align: center !important;
   	}
+
+	#zfs_dataset.zfs_table thead tr td{
+		text-align: center !important ;
+	}
+
+	#zfs_dataset.zfs_table tbody tr td{
+		padding-left: 0;
+		text-align: center;
+		white-space: nowrap;
+	}
+
+	#zfs_dataset.zfs_table tbody tr td:first-child{
+		padding-left: 12px;
+		white-space: normal;
+		word-break: break-all; 
+	}
+
+	#zfs_dataset.zfs_table tbody tr td:last-child{
+		display: table-cell;
+		vertical-align: middle;
+		padding: 0 10px;
+	}
+
+	#zfs_dataset.zfs_table tbody tr td:last-child span:first-child{
+		margin-left: 0;
+	}
+
+	#zfs_dataset.zfs_table tbody tr td:last-child span{
+		margin: 0 5px;
+		float: none;
+		padding: 0;
+	}
+
+	#zfs_dataset.zfs_table tbody tr td:last-child span:last-child{
+		margin-right: 0;
+	}
+
+	#zfs_dataset thead tr>td+td+td+td, #zfs_dataset thead tr>td+td+td, #zfs_dataset thead tr>td{
+		padding: 0;
+		text-align: center;
+	}
 
 	.switch {
 		position: relative;
@@ -128,7 +163,7 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 
 <body>
 	<div id="editdataset-form-div" class="zfsm_dialog">
-	<table id="zfs_master" class="zfs_snap_table disk_status wide">
+	<table id="zfs_dataset" class="zfs_table wide">
 	<thead>
 		<tr>
 		<td>Property</td>
@@ -204,7 +239,7 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Extended Attributes (xattr)</td>';
-		echo '<td><label class="switch"><input type="checkbox" '.($zdataset["xattr"] == "off" ? 'unchecked' : 'checked').'';
+		echo '<td><label class="switch"><input type="checkbox" id="xattr" '.($zdataset["xattr"] == "off" ? 'unchecked' : 'checked').'';
 		echo '><span class="slider round"></span></label>';
 		echo '</tr>';
 		echo '<tr>';
@@ -213,7 +248,7 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Read Only</td>';
-		echo '<td><label class="switch"><input type="checkbox" '.($zdataset["readonly"] == "off" ? 'unchecked' : 'checked').'';
+		echo '<td><label class="switch"><input type="checkbox" id="readonly" '.($zdataset["readonly"] == "off" ? 'unchecked' : 'checked').'';
 		echo '><span class="slider round"></span></label>';
 		echo '</td>';
 		echo '</tr>';
