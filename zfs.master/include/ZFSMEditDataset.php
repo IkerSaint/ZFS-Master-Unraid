@@ -92,6 +92,15 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 		text-align: center;
 	}
 
+	.zfsm-input {
+		background-color: #fff;
+		width: auto;
+		border: 1px solid rgba(0,0,0,.10);
+		display: inline-block;
+		padding: 2px 2px;
+		border-radius: 2px;
+  	}
+
 	.switch {
 		position: relative;
 		display: inline-block;
@@ -188,55 +197,11 @@ window.onload = function() {
 	</thead>
 	<tbody id="zpools">
 	<?
-		$creationdate = new DateTime();
-		$creationdate->setTimestamp($zdataset['creation']);
-
-		echo '<tr>';
-		echo '<td colspan="2">Read Only</td>';
-		echo '</tr>';
-		echo '<tr>';
-		echo '<td>Creation</td>';
-		echo '<td>'.$creationdate->format('Y-m-d H:i:s').'</td>';
-		echo '</tr>';
-		echo '<tr>';
-		echo '<td>Used</td>';
-		echo '<td>'.fromBytesToString($zdataset["used"]).'</td>';
-		echo '</tr>';
-		echo '<tr>';
-		echo '<td>Available</td>';
-		echo '<td>'.fromBytesToString($zdataset["available"]).'</td>';
-		echo '</tr>';
-		echo '<tr>';
-		echo '<td>Referenced</td>';
-		echo '<td>'.fromBytesToString($zdataset["referenced"]).'</td>';
-		echo '</tr>';
-		echo '<tr>';
-		echo '<td>Encryption</td>';
-		echo '<td>'.$zdataset["encryption"].'</td>';
-		echo '</tr>';
-		echo '<tr>';
-		echo '<td>Key Status</td>';
-		echo '<td>'.$zdataset["keystatus"].'</td>';
-		echo '</tr>';
-		echo '<tr>';
-		echo '<td>Compress Ratio</td>';
-		echo '<td>'.($zdataset["compressratio"]/100).'</td>';
-		echo '</tr>';
-		echo '<tr>';
-		echo '<td>Used by Snapshots</td>';
-		echo '<td>'.fromBytesToString($zdataset["usedbysnapshots"]).'</td>';
-		echo '</tr>';
-		echo '<tr>';
-		echo '<td>Origin</td>';
-		echo '<td>'.$zdataset['origin'] ?? ''.'</td>';
-		echo '</tr>';
-		echo '<tr>';
-		// Editable attributes
 		echo '<td colspan="2">Editable</td>';
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Mount Point</td>';
-		echo '<td><input id="mountpoint" name="mountpoint" class="zfsm-input zfsm-w0 zfsm-unraid-border" value="'.$zdataset["mountpoint"].'""></td>';
+		echo '<td><input id="mountpoint" name="mountpoint" class="zfsm-input zfsm-w0 " value="'.$zdataset["mountpoint"].'""></td>';
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Compression</td>';
