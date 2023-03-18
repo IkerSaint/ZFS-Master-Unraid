@@ -179,7 +179,7 @@ window.onload = function() {
 
 <body>
 	<div id="editdataset-form-div" class="zfsm_dialog">
-	<table id="zfs_dataset" class="zfs_table wide">
+	<table id="zfs_dataset" class="zfs_table disk_status wide">
 	<thead>
 		<tr>
 		<td>Property</td>
@@ -231,32 +231,53 @@ window.onload = function() {
 		echo '<td>'.$zdataset['origin'] ?? ''.'</td>';
 		echo '</tr>';
 		echo '<tr>';
+		// Editable attributes
 		echo '<td colspan="2">Editable</td>';
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Mount Point</td>';
-		echo '<td>'.$zdataset["mountpoint"].'</td>';
+		echo '<td><input id="mountpoint" name="mountpoint" class="zfsm-input zfsm-w0 zfsm-unraid-border" value="'.$zdataset["mountpoint"].'""></td>';
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Compression</td>';
-		echo '<td>'.$zdataset["compression"].'</td>';
+		echo '<td><select id="compression" name="compression" class="zfsm-input">
+		<option value="inherit" selected>Inherit</option>
+		<option value="off">Off</option>
+		<option value="'.$zdataset["compression"].'">'.$zdataset["compression"].'</option>
+		<option value="lz4">lz4</option>
+		<option value="gzip">gzip</option>
+		<option value="zstd">zstd</option>
+		</select></td>';
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Quota</td>';
-		echo '<td>'.fromBytesToString($zdataset["quota"]).'</td>';
+		echo '<td><input id="quota" name="quota" class="zfsm-input zfsm-w10" maxlength="7" value="'.fromBytesToString($zdataset["quota"]).'"></td>';
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Record Size</td>';
-		echo '<td>'.fromBytesToString($zdataset["recordsize"]).'</td>';
+		echo '<td><select id="recordsize" name="recordsize" class="zfsm-input">
+		<option value="inherit" selected>Inherit</option>
+		<option value="512">512</option>
+		<option value="4K">4K</option>
+		<option value="'.fromBytesToString($zdataset["recordsize"]).'">'.fromBytesToString($zdataset["recordsize"]).'</option>
+		<option value="8K">8K</option>
+		<option value="16K">16K</option>
+		<option value="64K">64K</option>
+		<option value="128K">128K</option>
+		<option value="1MB">1MB</option>
+		</select></td>';
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Access Time (atime)</td>';
-		echo '<td>'.$zdataset["atime"].'</td>';
+		echo '<td><label class="switch"><input type="checkbox" id="atime" '.($zdataset["atime"] == "off" ? 'unchecked' : 'checked').'';
+		echo '><span class="slider round"></span></label>';
+		echo '</td>';
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Extended Attributes (xattr)</td>';
 		echo '<td><label class="switch"><input type="checkbox" id="xattr" '.($zdataset["xattr"] == "off" ? 'unchecked' : 'checked').'';
 		echo '><span class="slider round"></span></label>';
+		echo '</td>';
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Primary Cache</td>';
