@@ -150,6 +150,22 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 	}
 </style>
 
+<script type="text/javascript">
+window.onload = function() {
+    if (parent) {
+        var oHead = document.getElementsByTagName("head")[0];
+        var arrStyleSheets = parent.document.getElementsByTagName("style");
+        for (var i = 0; i < arrStyleSheets.length; i++)
+            oHead.appendChild(arrStyleSheets[i].cloneNode(true));
+
+		var arrStyleSheets = parent.document.getElementsByTagName("link");
+
+        for (var i = 0; i < arrStyleSheets.length; i++)
+            oHead.appendChild(arrStyleSheets[i].cloneNode(true));
+    }
+}
+</script>
+
 <script src="<?autov('/webGui/javascript/dynamix.js')?>"></script>
 <link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/default-fonts.css');?>">
 <link type="text/css" rel="stylesheet" href="<?autov('/webGui/styles/default-popup.css');?>">
