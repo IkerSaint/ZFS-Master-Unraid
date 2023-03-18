@@ -241,9 +241,9 @@ window.onload = function() {
 		echo '<tr>';
 		echo '<td>Compression</td>';
 		echo '<td><select id="compression" name="compression" class="zfsm-input">
-		<option value="inherit" selected>Inherit</option>
+		<option value="inherit">Inherit</option>
 		<option value="off">Off</option>
-		<option value="'.$zdataset["compression"].'">'.$zdataset["compression"].'</option>
+		<option value="'.$zdataset["compression"].'" selected>'.$zdataset["compression"].'</option>
 		<option value="lz4">lz4</option>
 		<option value="gzip">gzip</option>
 		<option value="zstd">zstd</option>
@@ -259,7 +259,7 @@ window.onload = function() {
 		<option value="inherit" selected>Inherit</option>
 		<option value="512">512</option>
 		<option value="4K">4K</option>
-		<option value="'.fromBytesToString($zdataset["recordsize"]).'">'.fromBytesToString($zdataset["recordsize"]).'</option>
+		<option value="'.fromBytesToString($zdataset["recordsize"]).'" selected>'.fromBytesToString($zdataset["recordsize"]).'</option>
 		<option value="8K">8K</option>
 		<option value="16K">16K</option>
 		<option value="64K">64K</option>
@@ -281,7 +281,13 @@ window.onload = function() {
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Primary Cache</td>';
-		echo '<td>'.$zdataset["primarycache"].'</td>';
+		echo '<td><select id="primarycache" name="primarycache" class="zfsm-input">
+		<option value="inherit" selected>Inherit</option>
+		<option value="'.$zdataset["primarycache"].'" selected>'.$zdataset["primarycache"].'</option>
+		<option value="all">All</option>
+		<option value="metadata">Metadata</option>
+		<option value="none">None</option>
+		</select></td>';
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Read Only</td>';
@@ -291,11 +297,21 @@ window.onload = function() {
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Case Sentitivity</td>';
-		echo '<td>'.$zdataset["casesensitivity"].'</td>';
+		echo '<td><select id="casesensitivity" name="casesensitivity" class="zfsm-input">
+		<option value="sensitive">Sensitive (Default)</option>
+		<option value="'.$zdataset["casesensitivity"].'" selected>'.$zdataset["casesensitivity"].'</option>
+		<option value="insensitive">Insensitive</option>
+		<option value="mixed">Mixed</option>
+		</select></td>';
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Sync</td>';
-		echo '<td>'.$zdataset["sync"].'</td>';
+		echo '<td><select id="sync" name="sync" class="zfsm-input">
+		<option value="standard">Standard (Default)</option>
+		<option value="always">Always</option>
+		<option value="'.$zdataset["sync"].'" selected>'.$zdataset["sync"].'</option>
+		<option value="disabled">Disabled</option>
+		</select></td>';
 		echo '</tr>';
 	?>
 	</tbody>
