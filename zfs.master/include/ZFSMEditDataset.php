@@ -197,8 +197,6 @@ window.onload = function() {
 	</thead>
 	<tbody id="zpools">
 	<?
-		echo '<td colspan="2">Editable</td>';
-		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Mount Point</td>';
 		echo '<td><input id="mountpoint" name="mountpoint" class="zfsm-input zfsm-w0 " value="'.$zdataset["mountpoint"].'""></td>';
