@@ -57,48 +57,62 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 		text-align: center !important;
   	}
 
-	input[type=checkbox]{
-		height: 0;
-		width: 0;
-		visibility: hidden;
-	}
-
-	label {
-		cursor: pointer;
-		text-indent: -99px;
-		width: 30px;
-		height: 15px;
-		background: grey;
-		display: block;
-		border-radius: 3px;
+	.switch {
 		position: relative;
+		display: inline-block;
+		width: 28px;
+		height: 16px;
 	}
 
-	label:after {
-		content: '';
+	.switch input {
+		opacity: 0;
+		width: 0;
+		height: 0;
+	}
+
+	.slider {
 		position: absolute;
-		top: 1px;
-		left: 1px;
-		width: 12px;
+		cursor: pointer;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: #ccc;
+		-webkit-transition: .4s;
+		transition: .4s;
+		border-radius: 16px;
+	}
+
+	.slider:before {
+		position: absolute;
+		content: "";
 		height: 12px;
-		background: #fff;
-		border-radius: 7px;
-		transition: 0.3s;
+		width: 12px;
+		left: 2px;
+		bottom: 2px;
+		background-color: white;
+		-webkit-transition: .4s;
+		transition: .4s;
+		border-radius: 50%;
 	}
 
-	input:checked + label {
-		background: #bada55;
+	input:checked + .slider {
+		background-color: #2196F3;
 	}
 
-	input:checked + label:after {
-		left: calc(100% - 1px);
-		transform: translateX(-100%);
+	input:focus + .slider {
+		box-shadow: 0 0 1px #2196F3;
 	}
 
-	label:active:after {
-		width: 130px;
+	input:checked + .slider:before {
+		-webkit-transform: translateX(12px);
+		-ms-transform: translateX(12px);
+		transform: translateX(12px);
 	}
 
+	.slider.round {
+		border-radius: 16px;
+	}
 </style>
 
 <script src="<?autov('/webGui/javascript/dynamix.js')?>"></script>
@@ -190,8 +204,8 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Extended Attributes (xattr)</td>';
-		echo '<td><input type="checkbox" id="readonly" '.($zdataset["xattr"] == "off" ? 'unchecked' : 'checked').'';
-		echo '/><label for="switch"></label>';
+		echo '<td><label class="switch"><input type="checkbox" '.($zdataset["xattr"] == "off" ? 'unchecked' : 'checked').'';
+		echo '><span class="slider round"></span></label>';
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Primary Cache</td>';
@@ -199,8 +213,8 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Read Only</td>';
-		echo '<td><input type="checkbox" id="readonly" '.($zdataset["readonly"] == "off" ? 'unchecked' : 'checked').'';
-		echo '/><label for="switch"></label>';
+		echo '<td><label class="switch"><input type="checkbox" '.($zdataset["readonly"] == "off" ? 'unchecked' : 'checked').'';
+		echo '><span class="slider round"></span></label>';
 		echo '</td>';
 		echo '</tr>';
 		echo '<tr>';
