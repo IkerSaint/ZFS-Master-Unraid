@@ -220,12 +220,12 @@ window.onload = function() {
 		echo '<td><select id="recordsize" name="recordsize" class="zfsm-input">
 		<option value="inherit" selected>Inherit</option>
 		<option value="512">512</option>
-		<option value="4K">4K</option>
-		<option value="8K">8K</option>
-		<option value="16K">16K</option>
-		<option value="64K">64K</option>
-		<option value="128K">128K</option>
-		<option value="1MB">1MB</option>
+		<option value="4 KB">4 KB</option>
+		<option value="8 KB">8 KB</option>
+		<option value="16 KB">16 KB</option>
+		<option value="64 KB">64 KB</option>
+		<option value="128 KB">128 KB</option>
+		<option value="1 MB">1 MB</option>
 		</select></td>';
 		echo '</tr>';
 		echo '<tr>';
@@ -280,17 +280,15 @@ window.onload = function() {
 </html>
 
 <script>
-  $(function() {
+  $(document).ready(function() {
 	  setDefaults();
   });
 
   function setDefaults() {
-	$("#compression option[value='<?=$zdataset["compression"]>']").attr("selected", true);
-	$("#recordsize option[value='<?=fromBytesToString($zdataset["recordsize"])>']").attr("selected", true);
-	$("#casesensitivity option[value='<?=$zdataset["primarycache"]>']").attr("selected", true);
-	$("#sync option[value='<?=$zdataset["sync"]>']").attr("selected", true);
+	$("#compression).val('<?=$zdataset["compression"]>');
+	$("#recordsize").val('<?=fromBytesToString($zdataset["recordsize"])>');
+	$("#casesensitivity).val('<?=$zdataset["casesensitivity"]>');
+	$("#sync.val('<?=$zdataset["sync"]>');
   }
-
-
 
 </script>
