@@ -292,11 +292,13 @@ window.onload = function() {
   }
 
   function updateDataset() {
-	var formElements = new Array();
+	var inputs = {};
 
 	$(":input").each(function(){
-      formElements.push($(this));
+		inputs[$(this).id]=$(this).value;
     });
+
+	console.log(inputs);
 		
 	/*$.post('<?=$urlzmadmin?>',{cmd: 'createdataset', 'data': formData, 'csrf_token': '<?=$csrf_token?>'}, function(data){
 		if (data == 'Ok') {
