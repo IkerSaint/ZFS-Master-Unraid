@@ -285,10 +285,10 @@ window.onload = function() {
   });
 
   function setDefaults() {
-	$("#compression).val('<?=$zdataset["compression"]>');
-	$("#recordsize").val('<?=fromBytesToString($zdataset["recordsize"])>');
-	$("#casesensitivity).val('<?=$zdataset["casesensitivity"]>');
-	$("#sync.val('<?=$zdataset["sync"]>');
+	$("#compression").val('<?=$zdataset["compression"]?>');
+	$("#recordsize").val('<?=fromBytesToString($zdataset["recordsize"])?>');
+	$("#casesensitivity").val('<?=$zdataset["casesensitivity"]?>');
+	$("#sync").val('<?=$zdataset["sync"]?>');
   }
 
 </script>
