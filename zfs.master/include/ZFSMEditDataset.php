@@ -292,10 +292,10 @@ window.onload = function() {
   }
 
   function updateDataset() {
-	var inputs = {};
+	let inputs = {};
 
 	$(":input").each(function(){
-		inputs[$(this).id]=$(this).value;
+		inputs[$(this).attr('id')]=$(this).val();
     });
 
 	console.log(inputs);
