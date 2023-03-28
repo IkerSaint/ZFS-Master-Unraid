@@ -104,7 +104,7 @@ $zdataset = getDatasetProperties($zpool, $zdataset_name);
 	.switch {
 		position: relative;
 		display: inline-block;
-		width: 28px;
+		width: 32px;
 		height: 16px;
 	}
 
@@ -274,7 +274,7 @@ window.onload = function() {
 	?>
 	</tbody>
 	</table>
-	<button id="update-dataset" class="zfs_update_btn" type="button">Update Dataset</button>
+	<button id="update-dataset" class="zfs_update_btn" type="button" onclick="updateDataset()">Update Dataset</button>
 	</div>
 </body>
 </html>
@@ -289,6 +289,31 @@ window.onload = function() {
 	$("#recordsize").val('<?=fromBytesToString($zdataset["recordsize"])?>');
 	$("#casesensitivity").val('<?=$zdataset["casesensitivity"]?>');
 	$("#sync").val('<?=$zdataset["sync"]?>');
+  }
+
+  function updateDataset() {
+	var formElements = new Array();
+
+	$(":input").each(function(){
+      formElements.push($(this));
+    });
+		
+	/*$.post('<?=$urlzmadmin?>',{cmd: 'createdataset', 'data': formData, 'csrf_token': '<?=$csrf_token?>'}, function(data){
+		if (data == 'Ok') {
+			top.Swal2.fire({
+				title: 'Success!',
+				icon:'success',
+				html: 'Dataset '+formData['zpool']+'/'+formData['name']+' created'
+			});
+		} else {
+			top.Swal2.fire({
+				title: 'Error!',
+				icon:'error',
+				html: 'Unable to create dataset '+formData['zpool']+'/'+formData['name']+'<br>Output: '+data
+			}); 
+		}
+		top.Shadowbox.close();
+	});*/
   }
 
 </script>
