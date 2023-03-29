@@ -155,6 +155,18 @@ function createZFSCreateDatasetCMDLine($params) {
 		
 	return $cmd_line;
 }
+
+function createZFSUpdateDatasetCMDLine($params) {
+	unset($params['update-dataset']);
+
+	$params['quota'] = trim($params['quota']);
+	$params['recordsize'] = trim($params['recordsize']);
+		
+	$cmd_line = 'zfs set';
+	$cmd_line .= ' -o '.implodeWithKeys(' -o ', $params, '=');
+
+	return $cmd_line;
+}
 	
 function processCmdLine($regex, $cmd_line, $cleanfunction) {
 	$data = shell_exec($cmd_line.' 2>&1');
