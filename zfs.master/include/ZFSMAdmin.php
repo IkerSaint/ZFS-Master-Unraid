@@ -67,8 +67,17 @@ switch ($_POST['cmd']) {
 		break;
 	case 'updatedataset':
 		$cmd_line = createZFSUpdateDatasetCMDLine($_POST['data']);
-		
-		echo $cmd_line;
+
+		$ret = execCommand($cmd_line, $exec_result);
+
+		if ($ret == 0):
+			zfsnotify( "ZFS Update", "Dataset update successful", $cmdoutput_str.$exec_result."","normal");
+			echo 'Ok';
+		else:
+			zfsnotify( "ZFS Update", "Dataset update fail, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			echo $exec_result;
+		endif;
+
 		break;
 	case 'renamedataset':
 		$force = ($_POST['force'] == '1') ? '-f ' : '';
