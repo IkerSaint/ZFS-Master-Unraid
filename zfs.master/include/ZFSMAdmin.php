@@ -66,7 +66,7 @@ switch ($_POST['cmd']) {
 
 		break;
 	case 'updatedataset':
-		$cmd_line = createZFSUpdateDatasetCMDLine($_POST['data']);
+		$cmd_line = createZFSUpdateDatasetCMDLine($_POST['data']).$boutput_str;;
 
 		$ret = execCommand($cmd_line, $exec_result);
 
