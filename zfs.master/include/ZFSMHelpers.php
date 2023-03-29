@@ -159,8 +159,12 @@ function createZFSCreateDatasetCMDLine($params) {
 function createZFSUpdateDatasetCMDLine($params) {
 	unset($params['update-dataset']);
 
-	$params['quota'] = trim($params['quota']);
-	$params['recordsize'] = trim($params['recordsize']);
+	$params['quota'] = str_replace(' ', '', $params['quota']);
+	$params['recordsize'] = str_replace(' ', '', $params['recordsize']);
+	
+	$params['quota'] = rtrim($params,'B');
+	$params['recordsize'] = rtrim($params,'B');
+	$params['mountpoint'] = '.$params['mountpoint'].';
 		
 	$cmd_line = 'zfs set';
 	$cmd_line .= ' -o '.implodeWithKeys(' -o ', $params, '=');
