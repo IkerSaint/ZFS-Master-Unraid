@@ -149,7 +149,7 @@ function createZFSCreateDatasetCMDLine($params) {
 	unset($params['zpool']);
 	unset($params['name']);
 		
-	$cmd_line = 'zfs create -vP';		
+	$cmd_line = 'zfs create -vP';
 	$cmd_line .= ' -o '.implodeWithKeys(' -o ', $params, '=');
 	$cmd_line .= ' '.$zdataset_name;
 		

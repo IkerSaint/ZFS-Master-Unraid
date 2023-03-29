@@ -300,22 +300,22 @@ window.onload = function() {
 
 	console.log(inputs);
 		
-	/*$.post('<?=$urlzmadmin?>',{cmd: 'createdataset', 'data': formData, 'csrf_token': '<?=$csrf_token?>'}, function(data){
+	$.post('<?=$urlzmadmin?>',{cmd: 'updatedataset', 'data': inputs, 'csrf_token': '<?=$csrf_token?>'}, function(data){
 		if (data == 'Ok') {
 			top.Swal2.fire({
 				title: 'Success!',
 				icon:'success',
-				html: 'Dataset '+formData['zpool']+'/'+formData['name']+' created'
+				html: 'Dataset updated'
 			});
 		} else {
 			top.Swal2.fire({
 				title: 'Error!',
 				icon:'error',
-				html: 'Unable to create dataset '+formData['zpool']+'/'+formData['name']+'<br>Output: '+data
+				html: 'Unable to update dataset <br>Output: '+data
 			}); 
 		}
 		top.Shadowbox.close();
-	});*/
+	});
   }
 
 </script>
