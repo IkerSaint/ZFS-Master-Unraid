@@ -66,8 +66,8 @@ switch ($_POST['cmd']) {
 
 		break;
 	case 'updatedataset':
-		$cmd_line = 'zfs set';
-		$cmd_line .= ' -o '.implodeWithKeys(' -o ', $params, '=');
+		$cmd_line = createZFSUpdateDatasetCMDLine($_POST['data']);
+		
 		echo $cmd_line;
 		break;
 	case 'renamedataset':
