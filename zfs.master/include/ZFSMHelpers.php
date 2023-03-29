@@ -151,63 +151,19 @@ function createZFSCreateDatasetCMDLine($params) {
 		
 	$cmd_line = 'zfs create -vP';
 	$cmd_line .= ' -o '.implodeWithKeys(' -o ', $params, '=');
-	$cmd_line .= ' '.escapeshellarg($zdataset_name);
+	$cmd_line .= ' '.$zdataset_name;
 		
 	return $cmd_line;
 }
 
 function createZFSUpdateDatasetCMDLine($params) {
-	$zdataset_name = $params['name'];
-
 	unset($params['update-dataset']);
-	unset($params['name']);
 
-	foreach ($params as $key => $value):
-		if ($value == 'inherit'):
-			unset($params[$key]);
-		endif;
-	endforeach;
-
-	if ($params['quota'] != '0 B' && $params['quota'] != ''):
-		$params['quota'] = str_replace(' ', '', $params['quota']);
-		$params['quota'] = rtrim($params['quota'],'B');
-	else:
-		$params['quota'] = 'none';
-	endif;
-
-	if (isset($params['recordsize'])):
-		$params['recordsize'] = str_replace(' ', '', $params['recordsize']);
-		$params['recordsize'] = rtrim($params['recordsize'],'B');
-	endif;
-
+	$params['quota'] = trim($params['quota']);
+	$params['recordsize'] = trim($params['recordsize']);
+		
 	$cmd_line = 'zfs set';
-	$cmd_line .= ' '.implodeWithKeys(' ', $params, '=');
-	$cmd_line .= ' '.escapeshellarg($zdataset_name);
-
-	return $cmd_line;
-}
-
-function createZFSInheritDatasetCMDLine($params) {
-	$zdataset_name = $params['name'];
-
-	unset($params['update-dataset']);
-	unset($params['name']);
-
-	$cmd_line = 'zfs inherit';
-
-	foreach ($params as $key => $value):
-		if ($value != 'inherit'):
-			unset($params[$key]);
-			continue;
-		endif;
-
-		$cmd_line .= ' '.$key;
-	endforeach;
-
-	if (!count($params))
-		return '';
-
-	$cmd_line .= ' '.escapeshellarg($zdataset_name);
+	$cmd_line .= ' -o '.implodeWithKeys(' -o ', $params, '=');
 
 	return $cmd_line;
 }
