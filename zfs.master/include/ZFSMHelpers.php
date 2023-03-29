@@ -157,7 +157,10 @@ function createZFSCreateDatasetCMDLine($params) {
 }
 
 function createZFSUpdateDatasetCMDLine($params) {
+	$zdataset_name = $params['name'];
+
 	unset($params['update-dataset']);
+	unset($params['name']);
 
 	$params['quota'] = str_replace(' ', '', $params['quota']);
 	$params['recordsize'] = str_replace(' ', '', $params['recordsize']);

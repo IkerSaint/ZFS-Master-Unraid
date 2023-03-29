@@ -274,7 +274,7 @@ window.onload = function() {
 	?>
 	</tbody>
 	</table>
-	<button id="update-dataset" class="zfs_update_btn" type="button" onclick="updateDataset()">Update Dataset</button>
+	<button id="update-dataset" class="zfs_update_btn" type="button" onclick="updateDataset(<?=''.$zdataset_name.''?>)">Update Dataset</button>
 	</div>
 </body>
 </html>
@@ -291,14 +291,14 @@ window.onload = function() {
 	$("#sync").val('<?=$zdataset["sync"]?>');
   }
 
-  function updateDataset() {
+  function updateDataset(dataset) {
 	let inputs = {};
 
 	$(":input").each(function(){
 		inputs[$(this).attr('id')]=$(this).val();
     });
 
-	console.log(inputs);
+	inputs['name'] = dataset;
 		
 	$.post('<?=$urlzmadmin?>',{cmd: 'updatedataset', 'data': inputs, 'csrf_token': '<?=$csrf_token?>'}, function(data){
 		if (data == 'Ok') {
