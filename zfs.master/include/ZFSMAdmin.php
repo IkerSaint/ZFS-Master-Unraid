@@ -66,7 +66,7 @@ switch ($_POST['cmd']) {
 
 		break;
 	case 'updatedataset':
-		$cmd_line = createZFSUpdateDatasetCMDLine($_POST['data']).$boutput_str;;
+		$cmd_line = createZFSUpdateDatasetCMDLine($_POST['data']).$boutput_str;
 
 		$ret = execCommand($cmd_line, $exec_result);
 
@@ -77,6 +77,10 @@ switch ($_POST['cmd']) {
 			zfsnotify( "ZFS Update", "Dataset update fail, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
+
+		$cmd_line = createZFSInheritDatasetCMDLine($_POST['data']).$boutput_str;
+
+		echo $cmd_line;
 
 		break;
 	case 'renamedataset':
