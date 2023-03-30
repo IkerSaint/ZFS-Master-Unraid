@@ -78,9 +78,18 @@ switch ($_POST['cmd']) {
 			echo $exec_result;
 		endif;
 
-		//$cmd_line = createZFSInheritDatasetCMDLine($_POST['data']).$boutput_str;
+		$cmd_line = createZFSInheritDatasetCMDLine($_POST['data']).$boutput_str;
 
-		//echo $cmd_line;
+		if ($cmd_line == '' || $ret != 0)):
+			break;
+		endif;
+
+		$ret = execCommand($cmd_line, $exec_result);
+
+		if ($ret != 0):
+			zfsnotify( "ZFS Update", "Dataset update partially fail, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			echo $exec_result;
+		endif;
 
 		break;
 	case 'renamedataset':
