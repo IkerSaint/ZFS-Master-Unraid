@@ -181,7 +181,7 @@ function createZFSUpdateDatasetCMDLine($params) {
 	endif;
 
 	$cmd_line = 'zfs set';
-	$cmd_line .= ' -o '.implodeWithKeys(' -o ', $params, '=');
+	$cmd_line .= ' '.implodeWithKeys(' ', $params, '=');
 	$cmd_line .= ' '.$zdataset_name;
 
 	return $cmd_line;
