@@ -78,9 +78,9 @@ switch ($_POST['cmd']) {
 			echo $exec_result;
 		endif;
 
-		$cmd_line = createZFSInheritDatasetCMDLine($_POST['data']).$boutput_str;
+		//$cmd_line = createZFSInheritDatasetCMDLine($_POST['data']).$boutput_str;
 
-		echo $cmd_line;
+		//echo $cmd_line;
 
 		break;
 	case 'renamedataset':
