@@ -274,7 +274,7 @@ window.onload = function() {
 	?>
 	</tbody>
 	</table>
-	<button id="update-dataset" class="zfs_update_btn" type="button" onclick="updateDataset(<?=''.$zdataset_name.''?>)">Update Dataset</button>
+	<button id="update-dataset" class="zfs_update_btn" type="button" onclick="updateDataset(<?='\''.$zdataset_name.'\''?>)">Update Dataset</button>
 	</div>
 </body>
 </html>
