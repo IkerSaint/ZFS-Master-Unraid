@@ -78,7 +78,7 @@ switch ($_POST['cmd']) {
 			echo $exec_result;
 		endif;
 
-		//$cmd_line = createZFSInheritDatasetCMDLine($_POST['data']).$boutput_str;
+		$cmd_line = createZFSInheritDatasetCMDLine($_POST['data']).$boutput_str;
 
 		if ($cmd_line == '' || $ret != 0):
 			break;

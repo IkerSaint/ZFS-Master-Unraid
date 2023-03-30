@@ -204,7 +204,7 @@ function createZFSInheritDatasetCMDLine($params) {
 	endforeach;
 
 	if (!count($params))
-		return "";
+		return '';
 
 	$cmd_line .= ' '.$zdataset_name;
 
