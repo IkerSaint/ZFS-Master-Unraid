@@ -175,8 +175,10 @@ function createZFSUpdateDatasetCMDLine($params) {
 		$params['quota'] = 'none';
 	endif;
 
-	$params['recordsize'] = str_replace(' ', '', $params['recordsize']);
-	$params['recordsize'] = rtrim($params['recordsize'],'B');
+	if (isset($params['recordsize'])):
+		$params['recordsize'] = str_replace(' ', '', $params['recordsize']);
+		$params['recordsize'] = rtrim($params['recordsize'],'B');
+	endif;
 
 	$cmd_line = 'zfs set';
 	$cmd_line .= ' '.implodeWithKeys(' ', $params, '=');
@@ -202,7 +204,7 @@ function createZFSInheritDatasetCMDLine($params) {
 	endforeach;
 
 	if (!count($params))
-		return "";
+		return '';
 
 	$cmd_line .= ' '.$zdataset_name;
 
