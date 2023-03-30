@@ -168,14 +168,18 @@ function createZFSUpdateDatasetCMDLine($params) {
 		endif;
 	endforeach;
 
-	$params['quota'] = str_replace(' ', '', $params['quota']);
-	$params['recordsize'] = str_replace(' ', '', $params['recordsize']);
+	if ($params['quota'] != '0 B'):
+		$params['quota'] = str_replace(' ', '', $params['quota']);
+		$params['quota'] = rtrim($params['quota'],'B');
+	else:
+		$params['quota'] = 'none';
+	endif;
 
-	$params['quota'] = rtrim($params['quota'],'B');
+	$params['recordsize'] = str_replace(' ', '', $params['recordsize']);
 	$params['recordsize'] = rtrim($params['recordsize'],'B');
 
 	$cmd_line = 'zfs set';
-	$cmd_line .= ' -o '.implodeWithKeys(' -o ', $params, '=');
+	$cmd_line .= ' '.implodeWithKeys(' ', $params, '=');
 	$cmd_line .= ' '.$zdataset_name;
 
 	return $cmd_line;

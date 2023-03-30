@@ -218,7 +218,7 @@ window.onload = function() {
 		echo '<tr>';
 		echo '<td>Record Size</td>';
 		echo '<td><select id="recordsize" name="recordsize" class="zfsm-input">
-		<option value="inherit" selected>Inherit</option>
+		<option value="inherit">Inherit</option>
 		<option value="512">512</option>
 		<option value="4 KB">4 KB</option>
 		<option value="8 KB">8 KB</option>
@@ -243,7 +243,7 @@ window.onload = function() {
 		echo '<tr>';
 		echo '<td>Primary Cache</td>';
 		echo '<td><select id="primarycache" name="primarycache" class="zfsm-input">
-		<option value="inherit" selected>Inherit</option>
+		<option value="inherit">Inherit</option>
 		<option value="all">All</option>
 		<option value="metadata">Metadata</option>
 		<option value="none">None</option>
@@ -254,14 +254,6 @@ window.onload = function() {
 		echo '<td><label class="switch"><input type="checkbox" id="readonly" '.($zdataset["readonly"] == "off" ? 'unchecked' : 'checked').'';
 		echo '><span class="slider round"></span></label>';
 		echo '</td>';
-		echo '</tr>';
-		echo '<tr>';
-		echo '<td>Case Sentitivity</td>';
-		echo '<td><select id="casesensitivity" name="casesensitivity" class="zfsm-input">
-		<option value="sensitive">Sensitive (Default)</option>
-		<option value="insensitive">Insensitive</option>
-		<option value="mixed">Mixed</option>
-		</select></td>';
 		echo '</tr>';
 		echo '<tr>';
 		echo '<td>Sync</td>';
@@ -287,7 +279,6 @@ window.onload = function() {
   function setDefaults() {
 	$("#compression").val('<?=$zdataset["compression"]?>');
 	$("#recordsize").val('<?=fromBytesToString($zdataset["recordsize"])?>');
-	$("#casesensitivity").val('<?=$zdataset["casesensitivity"]?>');
 	$("#sync").val('<?=$zdataset["sync"]?>');
   }
 
