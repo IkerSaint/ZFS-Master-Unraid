@@ -219,7 +219,7 @@ window.onload = function() {
 		echo '<td>Record Size</td>';
 		echo '<td><select id="recordsize" name="recordsize" class="zfsm-input">
 		<option value="inherit">Inherit</option>
-		<option value="512">512</option>
+		<option value="512 B">512 B</option>
 		<option value="4 KB">4 KB</option>
 		<option value="8 KB">8 KB</option>
 		<option value="16 KB">16 KB</option>
