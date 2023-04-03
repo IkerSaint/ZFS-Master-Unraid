@@ -286,14 +286,6 @@ window.onload = function() {
 	$("#sync").val('<?=$zdataset["sync"]?>');
   }
 
-  checkBox = document.getElementById('readonly').addEventListener('click', event => {
-	if(event.target.checked) {
-		$("#readonly").prop('checked', true);
-	} else {
-		$("#readonly").prop('checked', false);
-	}
-  });
-
   function updateDataset(dataset) {
 	let inputs = {};
 
