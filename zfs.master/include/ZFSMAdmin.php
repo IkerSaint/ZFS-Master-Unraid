@@ -87,7 +87,7 @@ switch ($_POST['cmd']) {
 		$ret = execCommand($cmd_line, $exec_result);
 
 		if ($ret != 0):
-			zfsnotify( "ZFS Update", "Dataset update partially fail, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+			zfsnotify( "ZFS Update", "Dataset update partially failed, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 
