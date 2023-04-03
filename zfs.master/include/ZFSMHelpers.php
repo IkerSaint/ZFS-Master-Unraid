@@ -198,6 +198,7 @@ function createZFSInheritDatasetCMDLine($params) {
 	foreach ($params as $key => $value):
 		if ($value != 'inherit'):
 			unset($params[$key]);
+			continue;
 		endif;
 
 		$cmd_line .= ' '.$key;
