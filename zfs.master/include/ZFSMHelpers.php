@@ -168,7 +168,7 @@ function createZFSUpdateDatasetCMDLine($params) {
 		endif;
 	endforeach;
 
-	if ($params['quota'] != '0 B'):
+	if ($params['quota'] != '0 B' && $params['quota'] != ''):
 		$params['quota'] = str_replace(' ', '', $params['quota']);
 		$params['quota'] = rtrim($params['quota'],'B');
 	else:
@@ -198,6 +198,7 @@ function createZFSInheritDatasetCMDLine($params) {
 	foreach ($params as $key => $value):
 		if ($value != 'inherit'):
 			unset($params[$key]);
+			continue;
 		endif;
 
 		$cmd_line .= ' '.$key;
