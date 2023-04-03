@@ -282,6 +282,7 @@ window.onload = function() {
 	$("#recordsize").val('<?=fromBytesToString($zdataset["recordsize"])?>');
 	$("#primarycache").val('<?=$zdataset["primarycache"]?>');
 	$("#sync").val('<?=$zdataset["sync"]?>');
+	$("#primarycache").val('<?=$zdataset["primarycache"]?>');
   }
 
   function updateDataset(dataset) {
