@@ -288,7 +288,9 @@ window.onload = function() {
 
   checkBox = document.getElementById('readonly').addEventListener('click', event => {
 	if(event.target.checked) {
-		alert("Checkbox checked!");
+		$("#readonly").prop('checked', true);
+	} else {
+		$("#readonly").prop('checked', false);
 	}
   });
 
