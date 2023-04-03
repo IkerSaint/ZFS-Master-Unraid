@@ -293,7 +293,6 @@ window.onload = function() {
 			} else {
 				inputs[$(this).attr('id')]='off';
 			}
-			continue;
 		} else {
 			inputs[$(this).attr('id')]=$(this).val();
 		}
