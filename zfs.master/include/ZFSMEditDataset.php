@@ -279,9 +279,15 @@ window.onload = function() {
   function setDefaults() {
 	$("#compression").val('<?=$zdataset["compression"]?>');
 	$("#recordsize").val('<?=fromBytesToString($zdataset["recordsize"])?>');
-	$("#sync").val('<?=$zdataset["sync"]?>');
 	$("#primarycache").val('<?=$zdataset["primarycache"]?>');
+	$("#sync").val('<?=$zdataset["sync"]?>');
   }
+
+  checkBox = document.getElementById('readonly').addEventListener('click', event => {
+	if(event.target.checked) {
+		alert("Checkbox checked!");
+	}
+  });
 
   function updateDataset(dataset) {
 	let inputs = {};
