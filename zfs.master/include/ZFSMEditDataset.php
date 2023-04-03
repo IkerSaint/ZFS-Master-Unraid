@@ -294,9 +294,9 @@ window.onload = function() {
 				inputs[$(this).attr('id')]='off';
 			}
 			continue;
+		} else {
+			inputs[$(this).attr('id')]=$(this).val();
 		}
-
-		inputs[$(this).attr('id')]=$(this).val();
     });
 
 	inputs['name'] = dataset;
