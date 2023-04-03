@@ -297,7 +297,7 @@ function getDatasetSnapshots($zpool, $zdataset) {
 }
 
 function getDatasetProperties($zpool, $zdataset) {
-	$cmd_line = "zfs program -jn -m 20971520 ".escapeshellarg($zpool)." ".$GLOBALS["script_get_pool_dataset_properties"]." ".escapeshellarg($zdataset)." ".escapeshellarg($exc_pattern);
+	$cmd_line = "zfs program -jn -m 20971520 ".escapeshellarg($zpool)." ".$GLOBALS["script_get_pool_dataset_properties"]." ".escapeshellarg($zdataset)." ";
 	
 	$json_ret = shell_exec($cmd_line.' 2>&1');
 	$array_ret = json_decode($json_ret, true)['return'];

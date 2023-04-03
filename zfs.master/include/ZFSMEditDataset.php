@@ -280,6 +280,7 @@ window.onload = function() {
 	$("#compression").val('<?=$zdataset["compression"]?>');
 	$("#recordsize").val('<?=fromBytesToString($zdataset["recordsize"])?>');
 	$("#sync").val('<?=$zdataset["sync"]?>');
+	$("#primarycache").val('<?=$zdataset["primarycache"]?>');
   }
 
   function updateDataset(dataset) {
