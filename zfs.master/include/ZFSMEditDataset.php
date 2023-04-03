@@ -283,18 +283,19 @@ window.onload = function() {
 	$("#sync").val('<?=$zdataset["sync"]?>');
   }
 
-  checkBox = document.getElementById('readonly').addEventListener('click', event => {
-	if(event.target.checked) {
-		$("#readonly").prop('checked', true);
-	} else {
-		$("#readonly").prop('checked', false);
-	}
-  });
-
   function updateDataset(dataset) {
 	let inputs = {};
 
 	$(":input").each(function(){
+		if ($(this).attr('type') == 'checkbox') {
+			if ($(this).is(':checked')) {
+				inputs[$(this).attr('id')]='on';
+			} else {
+				inputs[$(this).attr('id')]='off';
+			}
+			continue;
+		}
+
 		inputs[$(this).attr('id')]=$(this).val();
     });
 
