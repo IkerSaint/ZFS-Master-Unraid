@@ -15,6 +15,13 @@
 		min="6.9.2">
 <CHANGES>
 
+###2023.04.03
+- Add - Snapshots admin UI
+- Add - Rename datasets UI
+- Add - Edit datasets UI
+- Add - unRaid 6.12 compatiblity 
+- Add - Lazy load for snapshots admin UI
+- Fix - Improve PHP 8 Compatibility
 
 ###2023.03.07
 - Fix - PHP 8 Upgrades
