@@ -229,6 +229,13 @@ function processCmdLine($regex, $cmd_line, $cleanfunction) {
 
 	return $returnData;
 }
+
+function executeZFSProgram($zprogram, $zpool, $zargs) {
+	$cmd_line = "zfs program -jn -m 20971520 ".escapeshellarg($zpool)." ".$zprogram." ".escapeshellarg($zpool)." ".$zargs);
+	$json_ret = shell_exec($cmd_line.' 2>&1');
+	
+	return json_decode($json_ret, true)['return'];
+}
 	
 function cleanupZPoolInfo($matched) {
 	return array(

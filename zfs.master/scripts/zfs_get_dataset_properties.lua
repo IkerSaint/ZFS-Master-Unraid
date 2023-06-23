@@ -1,21 +1,20 @@
 local zfs_get_prop = zfs.get_prop
-local dataset_properties = {'used','available','referenced','encryption', 'keystatus', 'mountpoint','compression','compressratio','usedbysnapshots','quota','recordsize','atime','xattr','primarycache','readonly','casesensitivity','sync','creation', 'origin'}
 
-function get_properties(name) 
+function get_dataset_properties(dataset, dataset_properties) 
 	local dataset = {}
 	
-	dataset['name'] = name
+	dataset['name'] = root
 	
 	for idx, property in ipairs(dataset_properties) do
-		dataset[property] = zfs_get_prop(name, property)
+		dataset[property] = zfs_get_prop(root, property)
 	end
-
+	
 	return dataset;
 end 
  
 args = ... 
 argv = args["argv"]
 
-ret = get_properties(argv[1])
+ret = get_dataset_properties(argv[1], argv[2])
 
 return ret
