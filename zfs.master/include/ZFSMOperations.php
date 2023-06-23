@@ -24,11 +24,9 @@ function getZFSPoolDevices($zpool) {
 }
 
 function getZFSPoolDatasets($zpool, $exc_pattern) {
-	$cmd_line = "zfs program -jn -m 20971520 ".escapeshellarg($zpool)." ".$GLOBALS["script_get_pool_data"]." ".escapeshellarg($zpool)." ".escapeshellarg($exc_pattern);
-
-	$json_ret = shell_exec($cmd_line.' 2>&1');
+	$result = executeZFSProgram($GLOBALS["script_get_pool_data"], $zpool, array($exc_pattern));
 	
-	return sortDatasetArray(json_decode($json_ret, true)['return']);
+	return sortDatasetArray($result);
 }
 
 #endregion zpools
@@ -37,29 +35,21 @@ function getZFSPoolDatasets($zpool, $exc_pattern) {
 
 #region getters
 
-function getDatasetProperty($zpool, $zdataset, $zproperty) {
-	$cmd_line = "zfs program -jn -m 20971520 ".escapeshellarg($zpool)." ".$GLOBALS["script_get_pool_dataset_properties"]." ".escapeshellarg($zdataset)." ".escapeshellarg($zproperty)." ";
-	
-	$json_ret = shell_exec($cmd_line.' 2>&1');
-	$array_ret = json_decode($json_ret, true)['return'];
+function getDatasetProperties($zpool, $zdataset, $zproperties) {
+	$array_ret = executeZFSProgram($GLOBALS["script_get_dataset_properties"], $zpool, array($zdataset, $zproperties));
 
 	return $array_ret;
 }
 
 function getAllDatasetProperties($zpool, $zdataset) {
-	$cmd_line = "zfs program -jn -m 20971520 ".escapeshellarg($zpool)." ".$GLOBALS["script_get_pool_dataset_properties"]." ".escapeshellarg($zdataset)." ";
-	
-	$json_ret = shell_exec($cmd_line.' 2>&1');
-	$array_ret = json_decode($json_ret, true)['return'];
+	$zproperties = "'used','available','referenced','encryption', 'keystatus', 'mountpoint','compression','compressratio','usedbysnapshots','quota','recordsize','atime','xattr','primarycache','readonly','casesensitivity','sync','creation', 'origin'";
+	$array_ret = executeZFSProgram($GLOBALS["script_get_dataset_properties"], $zpool, array($zdataset, $zproperties));
 
 	return $array_ret;
 }
 
 function getDatasetSnapshots($zpool, $zdataset) {
-	$cmd_line = "zfs program -jn -m 20971520 ".escapeshellarg($zpool)." ".$GLOBALS["script_get_snapsthots_data"]." ".escapeshellarg($zdataset);
-
-	$json_ret = shell_exec($cmd_line.' 2>&1');
-	$array_ret = json_decode($json_ret, true)['return'];
+	$array_ret = executeZFSProgram($GLOBALS["script_get_snapsthots_data"], $zpool, array($zdataset));
 
 	if (count($array_ret) > 0):
 		usort($array_ret, function($item1, $item2) { 
