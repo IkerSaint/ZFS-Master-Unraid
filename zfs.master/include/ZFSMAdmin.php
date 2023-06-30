@@ -12,20 +12,6 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 switch ($_POST['cmd']) {
-	case 'scrubpool':
-		$cmd_line = 'zpool scrub '.escapeshellarg($_POST['data']).$boutput_str;
-		
-		$ret = execCommand($cmd_line, $exec_result);
-		
-		if ($ret == 0):
-			zfsnotify( "ZPool Scrub", "Scrub of pool ".$_POST['data']." Started", $cmdoutput_str.$exec_result."","normal");
-			echo 'Ok';
-		else:
-			zfsnotify( "ZPool Scrub", "Scrub of pool ".$_POST['data']." failed to start, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-			echo $exec_result;
-		endif;
-		
-		break;
 	case 'createdataset':
 		$permissions = isset($_POST['data']['permissions']) ? $_POST['data']['permissions'] : '';
 
@@ -118,20 +104,6 @@ switch ($_POST['cmd']) {
 			echo 'Ok';
 		else:
 			zfsnotify( "ZFS Destroy", "Unable to destoy dataset ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-			echo $exec_result;
-		endif;
-		break;
-	case 'exportpool':
-		$force = ($_POST['force'] == '1') ? '-f ' : '';
-		$cmd_line = 'zpool export '.$force.escapeshellarg($_POST['data']).$boutput_str;
-		
-		$ret = execCommand($cmd_line, $exec_result);
-		
-		if ($ret == 0):
-			zfsnotify( "ZPool Export ", "Pool ".$_POST['data']." exported successfully", $cmdoutput_str.$exec_result."","normal");
-			echo 'Ok';
-		else:
-			zfsnotify( "ZPool Export", "Unable to export pool ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
 		break;
