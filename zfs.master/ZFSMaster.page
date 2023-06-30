@@ -109,10 +109,6 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 				endif;
 
 				echo '<button type="button" id="show-zpool-'.$zpool['Pool'].'" onclick="togglePoolTable(\'show-zpool-'.$zpool['Pool'].'\', \'zdataset-'.$zpool['Pool'].'\');">'.$showTableButtonText.'</button>';
-				echo '<button type="button" onclick="scrubPool(\''.$zpool['Pool'].'\')";">Scrub Pool</button>';
-				if ($zfsm_cfg['destructive_mode']):
-					echo '<button type="button" onclick="exportPool(\''.$zpool['Pool'].'\')";">Export Pool</button>';
-				endif;
 				echo '<button type="button" onclick="createDataset(\''.$zpool['Pool'].'\')";">Create Dataset</button>';
 			elseif ($key == "Used"):
 				$percent = 100-round(calculateFreePercent($zpool['Used'], $zpool['Free']));
@@ -580,56 +576,6 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 						title: 'Error!',
 						icon: 'error',
 						html: 'Unable to destroy dataset '+zdataset+'<br>Output: '+data
-					}); 
-				  }
-			  });
-		  }
-	  });
-	  $(".swal2-input").attr("type", "mytext");
-  }
-  
-  function scrubPool(zpool) {
-	$.post('<?=$urlzmadmin?>',{cmd: 'scrubpool', data: zpool},function(data) {
-		if (data == 'Ok') {
-			Swal2.fire({
-				title: 'Success!',
-				icon:'success',
-				html: 'Scrub of '+zpool+' started'
-			});
-		} else {
-			Swal2.fire({
-				title: 'Error!',
-				icon:'error',
-				html: 'Scrub of '+zpool+' failed to start<br>Output: '+data
-			}); 
-		}
-	});
-  }
-  
-  function exportPool(zpool) {
-	  Swal2.fire({
-		  title: '<strong>Export Pool<br>'+zpool+'</strong>',
-		  icon: 'warning',
-		  html: 'This operation will export the Pool, <b>This could lead to potential data corruption</b>, are you sure?',
-		  input: 'checkbox',
-		  inputPlaceholder: 'Forcefully unmount all datasets, and allow export of pool with active shared spares',
-		  showConfirmButton: true,
-		  confirmButtonText: "Export",
-		  showCancelButton: true
-	  }).then((result) => {
-		  if (result.isConfirmed) {
-			  $.post('<?=$urlzmadmin?>',{cmd: 'exportpool', data: zpool, force: result.value}, function(data) {
-				  if (data == 'Ok') {
-					Swal2.fire({
-						title: 'Success!',
-						icon: 'success',
-						text: 'Pool '+zpool+' Exported'
-					});
-				  } else {
-					Swal2.fire({
-						title: 'Error!',
-						icon: 'error',
-						html: 'Unable to Export pool '+zpool+'<br>Output: '+data
 					}); 
 				  }
 			  });

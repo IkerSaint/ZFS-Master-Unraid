@@ -143,14 +143,11 @@ function cleanZFSCreateDatasetParams($params) {
 	return $retParams;
 }
 	
-function createZFSCreateDatasetCMDLine($params) {
-	$zdataset_name = $params['zpool'].'/'.$params['name'];
-		
-	unset($params['zpool']);
-	unset($params['name']);
+function createZFSCreateDatasetCMDLine($zpool, $zdataset, $zparams) {
+	$zdataset_name = $zpool.'/'.$zdataset;
 		
 	$cmd_line = 'zfs create -vP';
-	$cmd_line .= ' -o '.implodeWithKeys(' -o ', $params, '=');
+	$cmd_line .= ' -o '.implodeWithKeys(' -o ', $zparams, '=');
 	$cmd_line .= ' '.$zdataset_name;
 		
 	return $cmd_line;
