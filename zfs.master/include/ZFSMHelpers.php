@@ -5,7 +5,7 @@ function loadConfig($config) {
 	$zfsm_ret['destructive_mode'] = isset($config['general']['destructive_mode']) ? intval($config['general']['destructive_mode']) : 0;
 
 	if (!isset($config['general']['exclussion']) || $config['general']['exclussion'] == ''):
-		$zfsm_ret['dataset_exclussion'] = ' ';
+		$zfsm_ret['dataset_exclussion'] = '';
 	else:
 		$zfsm_ret['dataset_exclussion'] = $config['general']['exclussion'];
 	endif;
@@ -151,7 +151,7 @@ function createZFSCreateDatasetCMDLine($params) {
 		
 	$cmd_line = 'zfs create -vP';
 	$cmd_line .= ' -o '.implodeWithKeys(' -o ', $params, '=');
-	$cmd_line .= ' '.$zdataset_name;
+	$cmd_line .= ' '.escapeshellarg($zdataset_name);
 		
 	return $cmd_line;
 }
