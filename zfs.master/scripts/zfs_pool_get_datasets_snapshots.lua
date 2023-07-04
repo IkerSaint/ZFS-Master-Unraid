@@ -5,6 +5,10 @@ local snap_properties = {'used','referenced','defer_destroy','userrefs','creatio
 local dataset_properties = {'used','available','referenced','encryption', 'keystatus', 'mountpoint','compression','compressratio','usedbysnapshots','quota','recordsize','atime','xattr','primarycache','readonly','casesensitivity','sync','creation', 'origin'}
 local total_snapshots = 0
 
+local function isempty(str)
+	return str == nil or str == ''
+end
+
 function list_snapshots(dataset)
 	local snapshot_list = {}
 	

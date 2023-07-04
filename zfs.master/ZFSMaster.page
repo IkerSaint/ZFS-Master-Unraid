@@ -2,6 +2,7 @@ Menu="Main:2"
 Title="ZFS Master"
 Tag="database"
 Cond="file_exists('/usr/sbin/zpool')"
+Nchan="zfs_master"
 ---
 <?php
 $plugin = "zfs.master";

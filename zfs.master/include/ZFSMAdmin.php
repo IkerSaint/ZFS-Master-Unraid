@@ -80,7 +80,7 @@ switch ($_POST['cmd']) {
 		break;
 	case 'renamedataset':
 		$force = ($_POST['force'] == '1') ? '-f ' : '';
-		$cmd_line = 'zfs rename '.$force.escapeshellarg($_POST['data']). ' '.escapeshellarg($_POST['newname']).$boutput_str;
+		$cmd_line = 'zfs rename '.$force.escapeshellarg($_POST['data'])." ".escapeshellarg($_POST["newname"]).$boutput_str;
 
 		$ret = execCommand($cmd_line, $exec_result);
 		

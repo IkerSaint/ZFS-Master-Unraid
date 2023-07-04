@@ -8,11 +8,11 @@ require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
 function getZFSPools() {
 	$regex = "/^(?'pool'[\w-]+)\s+(?'size'\d+.?\d+.)\s+(?'used'\d+.?\d+.)\s+(?'free'\d+.?\d+.)\s+(?'checkpoint'(\d+.?\d+.)|-)\s+(?'expandz'(\d+.?\d+.)|-)\s+(?'fragmentation'\d+.)\s+(?'usedpercent'\d+.)\s+(?'dedup'\d+.?\d+x)\s+(?'health'\w+)/";
 	  
-	$tmpPools = processCmdLine($regex, 'zpool list -v', 'cleanupZPoolInfo');
+	$tmpPools = processCmdLine($regex, "zpool list -v", "cleanupZPoolInfo");
 	$retPools = array();
 	  
 	foreach ($tmpPools as $pool):
-		$retPools[$pool['Pool']] = $pool;
+		$retPools[$pool["Pool"]] = $pool;
 	endforeach;
   
 	return $retPools;
@@ -24,7 +24,13 @@ function getZFSPoolDevices($zpool) {
 }
 
 function getZFSPoolDatasets($zpool, $zexc_pattern) {
-	$result = executeZFSProgram($GLOBALS["script_get_pool_data"], $zpool, array($zexc_pattern));
+	$result = executeZFSProgram($GLOBALS["script_pool_get_datasets"], $zpool, array($zpool, $zexc_pattern));
+	
+	return sortDatasetArray($result);
+}
+
+function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern) {
+	$result = executeZFSProgram($GLOBALS["script_pool_get_datasets_snapshots"], $zpool, array($zpool, $zexc_pattern));
 	
 	return sortDatasetArray($result);
 }
@@ -34,18 +40,18 @@ function getZFSPoolDatasets($zpool, $zexc_pattern) {
 #region datasets
 
 function getDatasetProperty($zpool, $zdataset, $zproperty) {
-	$array_ret = executeZFSProgram($GLOBALS["script_get_dataset_property"], $zpool, array($zdataset, $zproperty));
+	$array_ret = executeZFSProgram($GLOBALS["script_dataset_get_property"], $zpool, array($zdataset, $zproperty));
 
 	return $array_ret;
 }
 
 function getAllDatasetProperties($zpool, $zdataset) {
-	$array_ret = executeZFSProgram($GLOBALS["script_get_dataset_properties"], $zpool, array($zdataset));
+	$array_ret = executeZFSProgram($GLOBALS["script_dataset_get_properties"], $zpool, array($zdataset));
 
 	return $array_ret;
 
 function getDatasetSnapshots($zpool, $zdataset) {
-	$array_ret = executeZFSProgram($GLOBALS["script_get_dataset_snapshots"], $zpool, array($zdataset));
+	$array_ret = executeZFSProgram($GLOBALS["script_dataset_get_snapshots"], $zpool, array($zdataset));
 
 	if (count($array_ret) > 0):
 		usort($array_ret, function($item1, $item2) { 
@@ -57,14 +63,14 @@ function getDatasetSnapshots($zpool, $zdataset) {
 }
 
 function createDataset($zpool, $zdataset, $zoptions) {
-	$passphrase = $zoptions['passphrase'] ?? "";
-	unset($zoptions['passphrase']);
+	$passphrase = $zoptions["passphrase"] ?? "";
+	unset($zoptions["passphrase"]);
 		
-	$cmd_line = 'zfs create -vP';
-	$cmd_line .= ' -o '.implodeWithKeys(' -o ', $params, '=');
-	$cmd_line .= ' '.$zpool.'/'.$zdataset.$boutput_str;
+	$cmd_line = "zfs create -vP";
+	$cmd_line .= " -o ".implodeWithKeys(" -o ", $params, "=");
+	$cmd_line .= ' '.escapeshellarg($zpool.'/'.$zdataset).$boutput_str;
 
-	if ($zoptions['encryption'] == 'on'):
+	if ($zoptions["encryption"] == 'on'):
 		$cmd_line = "echo ".escapeshellarg($passphrase)." | echo ".escapeshellarg($passphrase)." | ".$cmd_line;
 	endif;
 
@@ -80,7 +86,7 @@ function createDataset($zpool, $zdataset, $zoptions) {
 }
 
 function renameDataset($zpool, $zdataset, $zdataset_new_name, $force) {
-	$cmd_line = 'zfs rename '.$force.escapeshellarg($zdataset_new_name). ' '.escapeshellarg($zdataset_new_name).$boutput_str;
+	$cmd_line = "zfs rename ".$force.escapeshellarg($zdataset_new_name). " ".escapeshellarg($zdataset_new_name).$boutput_str;
 
 	$ret = execCommand($cmd_line, $exec_result);
 	
@@ -143,53 +149,95 @@ function unlockDataset($zpool, $zdataset, $zpass) {
 }
 
 function promoteDataset($zpool, $zdataset, $zforce) {
+	$array_ret = executeZFSProgram($GLOBALS["script_promote_dataset"], $zpool, array($zdataset, $zforce));
 	
 	return $array_ret;
 }
 
 function destroyDataset($zpool, $zdataset, $zforce) {
+	$array_ret = executeZFSProgram($GLOBALS["script_dataset_destroy"], $zpool, array($zdataset, $zforce));
 	
 	return $array_ret;
 }
 
 #region snapshots
 
-function createDatasetSnapshot($zpool, $zdataset, $znapshot_name, $zrecursive) {
+function createDatasetSnapshot($zpool, $zdataset, $znapshot $zrecursive) {
+	$array_ret = executeZFSProgram($GLOBALS["script_dataset_create_snapshot"], $zpool, array($zdataset, $znapshot, $zrecursive));
 	
 	return $array_ret;
 }
 
 function rollbackDatasetSnapshot($zpool, $znapshot_name) {
+	$array_ret = executeZFSProgram($GLOBALS["script_dataset_rollback_snapshot"], $zpool, array($zdataset, $znapshot_name));
+	
 	return $array_ret;
 }
 
 function renameDatasetSnapshot($zpool, $zsnapshot, $znapshot_new_name) {
+	$array_ret = executeZFSProgram($GLOBALS["script_dataset_rename_snapshot"], $zpool, array($zdataset, $zsnapshot, $znapshot_new_name));
 	
 	return $array_ret;
 }
 
 function sendDatasetSnapshot($zpool, $znapshot_name, $zoptions) {
+	// TODO
 	return $array_ret;
 }
 
 function receiveDatasetSnapshot($zpool, $znapshot_name, $zoptions) {
+	// TODO
 	return $array_ret;
 }
 
-function holdDatasetSnapshot($zpool, $znapshot_name) {
-	return $array_ret;
-}
+function holdDatasetSnapshot($znapshot) {
+	$cmd_line = "zfs hold zfsmaster ".$znapshot.$boutput_str;
 
-function releaseDatasetSnapshot($zpool, $znapshot_name) {
-	return $array_ret;
-}
+	$ret = execCommand($cmd_line, $exec_result);
 
-function cloneDatasetSnapshot($zpool, $znapshot_name, $zclone_name) {
-	return $array_ret;
-}
-
-function deleteDatasetSnapshot($zpool, $zdataset, $zforce) {
+	if ($ret == 0):
+		zfsnotify( "ZFS Hold", "Snapshot ".$znapshot." reference added successfully", $cmdoutput_str.$exec_result."","normal");
+		return true;
+	endif;
 	
+	zfsnotify( "ZFS Hold", "Unable to add reference to snapshot ".$znapshot.", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+	
+	return false;
+}
+
+function releaseDatasetSnapshot($znapshot) {
+	$cmd_line = "zfs release zfsmaster ".escapeshellarg($znapshot).$boutput_str;
+
+	$ret = execCommand($cmd_line, $exec_result);
+
+	if ($ret == 0):
+		zfsnotify( "ZFS Release", "Snapshot ".$znapshot." reference removed successfully", $cmdoutput_str.$exec_result."","normal");
+		return true;
+	endif;
+	
+	zfsnotify( "ZFS Release", "Unable to remove reference from snapshot ".$znapshot.", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+	
+	return false;
+}
+
+function cloneDatasetSnapshot($znapshot, $zclone) {
+	$cmd_line = "zfs clone ".escapeshellarg($znapshot)." ".escapeshellarg($zclone).$boutput_str;
+
+	$ret = execCommand($cmd_line, $exec_result);
+
+	if ($ret == 0):
+		zfsnotify( "ZFS Clone", "Snapshot ".$znapshot." cloned successfully", $cmdoutput_str.$exec_result."","normal");
+		return true
+	endif;
+	
+	zfsnotify( "ZFS Clone", "Unable to clone snapshot ".$znapshot.", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+	
+	return false;
+}
+
+function deleteDatasetSnapshot($zpool, $zdataset, $znapshot, $destroy_all) {
+	$array_ret = executeZFSProgram($GLOBALS["script_dataset_destroy_snapshot"], $zpool, array($zdataset, $zsnapshot, $destroy_all));
+
 	return $array_ret;
 }
 
