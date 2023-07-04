@@ -4,7 +4,7 @@ function loadConfig($config) {
 	$zfsm_ret['refresh_interval'] = isset($config['general']['refresh_interval']) ? intval($config['general']['refresh_interval']) : 30;
 	$zfsm_ret['destructive_mode'] = isset($config['general']['destructive_mode']) ? intval($config['general']['destructive_mode']) : 0;
 
-	if (!isset($config['general']['exclussion']) || $config['general']['exclussion'] == ''):
+	if (!isset($config['general']['exclussion']) || $config['general']['exclussion'] == '' || $config['general']['exclussion'] == ' '):
 		$zfsm_ret['dataset_exclussion'] = '';
 	else:
 		$zfsm_ret['dataset_exclussion'] = $config['general']['exclussion'];
