@@ -15,6 +15,9 @@
 		min="6.9.2">
 <CHANGES>
 
+###2023.07.04
+- Fix - Dataset names with spaces not being properly handled
+
 ###2023.04.03
 - Add - Snapshots admin UI
 - Add - Rename datasets UI
