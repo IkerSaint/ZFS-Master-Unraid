@@ -182,7 +182,7 @@ function createZFSUpdateDatasetCMDLine($params) {
 
 	$cmd_line = 'zfs set';
 	$cmd_line .= ' '.implodeWithKeys(' ', $params, '=');
-	$cmd_line .= ' '.$zdataset_name;
+	$cmd_line .= ' '.escapeshellarg($zdataset_name);
 
 	return $cmd_line;
 }
@@ -207,7 +207,7 @@ function createZFSInheritDatasetCMDLine($params) {
 	if (!count($params))
 		return '';
 
-	$cmd_line .= ' '.$zdataset_name;
+	$cmd_line .= ' '.escapeshellarg($zdataset_name);
 
 	return $cmd_line;
 }
