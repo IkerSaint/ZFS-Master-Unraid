@@ -42,8 +42,7 @@ _(Destructive Mode)_:
 
 <div id="title" class="nocontrol">_(Datasets)_</div>
 _(Datasets Exclussion Patterns (Just One!))_:
-: <textarea name="exclussion" cols="40" rows="1" placeholder="/dockerfiles/.*
-/myhiddendataset/.*"><?=$zfsm_cfg['dataset_exclussion']?></textarea>
+: <textarea name="exclussion" cols="40" rows="1" placeholder="/dockerfiles/.*"><?=$zfsm_cfg['dataset_exclussion']?></textarea>
 
 :zc_settings_datasets_exclussion_plug:
 > Lua pattern to be used for datasets listing exclussion. Dataset descendants and snapshots also will be excluded.
