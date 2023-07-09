@@ -7,7 +7,7 @@ function get_properties(name)
 	dataset['name'] = name
 	
 	for idx, property in ipairs(dataset_properties) do
-                dataset[property] = zfs_get_prop(name, property)
+        dataset[property] = zfs_get_prop(name, property)
 	end
 
 	return dataset;
