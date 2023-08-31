@@ -1,36 +1,56 @@
-local zfs_sync_promote = zfs.sync.promote
-local zfs_check_promote = zfs.check.promote
+succeeded = {}
+failed = {}
 
 function force_promote(ds)
-    errno, details = zfs_check_promote(ds)
+    errno, details = zfs.check.promote(ds)
 
     if (errno == EEXIST) then
         assert(details ~= Nil)
         for i, snap in ipairs(details) do
-            zfs_sync_destroy(ds .. "@" .. snap)
+            zfs.sync.destroy(ds .. "@" .. snap)
         end
     elseif (errno ~= 0) then
-        return errno
+        failed[ds] = errno
+        return
     end
 
-    return zfs_sync_promote(ds)
+    errno = zfs.sync.promote(ds)
+
+    if (errno ~= 0) then
+        failed[ds] = errno
+    else
+        succeeded[ds] = errno
+    end
  end
 
 function promote(ds)
-    errno, details = zfs_check_promote(ds)
+    errno, details = zfs.check.promote(ds)
 
     if (errno ~= 0) then
-        return errno
+        failed[ds] = errno
+        return
     end
 
-    return zfs_sync_promote(ds)
+    errno = zfs.sync.promote(ds)
+
+    if (errno ~= 0) then
+        failed[ds] = errno
+    else
+        succeeded[ds] = errno
+    end
 end
 
 args = ...
 argv = args["argv"]
 
 if (argv[2] == 'true') then
-    return force_promote(argv[1])
+    force_promote(argv[1])
+else
+    promote(argv[1])
 end
 
-return promote(argv[1])
+results = {}
+results["succeeded"] = succeeded
+results["failed"] = failed
+
+return results

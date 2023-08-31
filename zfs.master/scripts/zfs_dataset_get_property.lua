@@ -1,12 +1,9 @@
-local zfs_get_prop = zfs.get_prop
-
 function get_dataset_property(name, property)
     local dataset  = {}
     
-    dataset['name'] = name
-    dataset[property] = zfs_get_prop(name, property)
+    dataset[property] = zfs.get_prop(name, property)
 
-    return ret;
+    return dataset;
 end
 
 args = ...

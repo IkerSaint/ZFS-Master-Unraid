@@ -1,19 +1,16 @@
-local zfs_get_prop = zfs.get_prop
-local zfs_list_snapshots = zfs.list.snapshots
 local snap_properties = {'used','referenced','defer_destroy','userrefs','creation'}
 
 function list_snapshots(dataset)
     local snapshot_list = {}
     
-    for snap in zfs_list_snapshots(dataset) do
+    for snap in zfs.list.snapshots(dataset) do
         local snapshot = {}
-        snapshot['name'] = snap
 
         for idx, property in ipairs(snap_properties) do
-            snapshot[property] = zfs_get_prop(snap, property)
+            snapshot[property] = zfs.get_prop(snap, property)
         end
 
-        table.insert(snapshot_list, snapshot)
+        snapshot_list[snap] = snapshot
     end
 
     return snapshot_list

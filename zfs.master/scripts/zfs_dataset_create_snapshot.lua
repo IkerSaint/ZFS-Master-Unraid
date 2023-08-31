@@ -1,19 +1,39 @@
-local zfs_sync_snapshot = zfs.sync.snapshot
-local zfs_check_snapshot = zfs.check.snapshot
+succeeded = {}
+failed = {}
 
-function snapshot(snap)
-    errno, details = zfs_check_snapshot(snap)
+function snapshot(dataset, snap, recursive)
+	snap_name = dataset .. "@" .. snap
+	err = zfs.check.snapshot(snap_name)
 
-    if (errno ~= 0) then
-        return errno
+    if (err ~= 0) then
+        failed[snap_name] = err
+    else
+        err = zfs.sync.snapshot(snap_name)
+
+        if (err ~= 0) then
+            failed[snap_name] = err
+        else
+            succeeded[snap_name] = err
+        end
     end
-    
-    return zfs_sync_snapshot(snap)
+
+    if recursive then 
+        for child in zfs.list.children(dataset) do
+            snapshot(child)
+        end
+    end
 end
 
 args = ...
 argv = args["argv"]
 
-## Add the recursive
+local dataset_name = string.match(argv[1], "@(.*)")
+local snap_name = string.match(argv[1], "(.*)@")
 
-return snapshot(argv[1])
+snapshot(dataset_name, snap_name, argv[2])
+
+results = {}
+results["succeeded"] = succeeded
+results["failed"] = failed
+
+return results

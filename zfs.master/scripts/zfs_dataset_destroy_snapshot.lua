@@ -1,12 +1,9 @@
-local zfs_sync_destroy = zfs.sync.destroy
-local zfs_list_snapshots = zfs.list.snapshots
-
 succeeded = {}
 failed = {}
 
 function destroy_all(dataset)
-    for snap in zfs_list_snapshots(dataset) do
-        err = zfs_sync_destroy(snap)
+    for snap in zfs.list.snapshots(dataset) do
+        err = zfs.sync.destroy(snap)
         if (err ~= 0) then
             failed[snap] = err
         else
@@ -16,7 +13,7 @@ function destroy_all(dataset)
 end
 
 function destroy_one(dataset, snap)
-    err = zfs_sync_destroy(snap)
+    err = zfs.sync.destroy(snap)
     if (err ~= 0) then
         failed[snap] = err
     else

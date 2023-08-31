@@ -1,19 +1,28 @@
-local zfs_sync_rollback = zfs.sync.rollback
-local zfs_check_rollback = zfs.check.rollback
+succeeded = {}
+failed = {}
 
 function rollback(snap)
-    errno, details = zfs_check_rollback(snap)
+    errno, details = zfs.check.rollback(snap)
 
     if (errno ~= 0) then
-        return errno
+        failed[snap] = errno
+        return 
     end
 
-    return zfs_sync_promote(snap)
+    errno = zfs.sync.rollback(snap)
+
+    if (err ~= 0) then
+        failed[snap] = errno
+    else
+        succeeded[snap] = errno
+    end
 end
 
 args = ...
 argv = args["argv"]
 
-# This one seems a little bit spooky
+results = {}
+results["succeeded"] = succeeded
+results["failed"] = failed
 
 return rollback(argv[1])

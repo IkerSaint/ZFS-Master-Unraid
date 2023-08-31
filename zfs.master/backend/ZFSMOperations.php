@@ -1,7 +1,9 @@
 <?php
 
-require_once "$docroot/webGui/include/Helpers.php";
-require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
+define('__ROOT__', dirname(dirname(__FILE__)));
+
+require_once __ROOT__."/include/ZFSMBase.php";
+require_once __ROOT__."/include/ZFSMHelpers.php";
 
 #region zpools
 
@@ -49,6 +51,7 @@ function getAllDatasetProperties($zpool, $zdataset) {
 	$array_ret = executeZFSProgram($GLOBALS["script_dataset_get_properties"], $zpool, array($zdataset));
 
 	return $array_ret;
+}
 
 function getDatasetSnapshots($zpool, $zdataset) {
 	$array_ret = executeZFSProgram($GLOBALS["script_dataset_get_snapshots"], $zpool, array($zdataset));
@@ -155,14 +158,14 @@ function promoteDataset($zpool, $zdataset, $zforce) {
 }
 
 function destroyDataset($zpool, $zdataset, $zforce) {
-	$array_ret = executeZFSProgram($GLOBALS["script_dataset_destroy"], $zpool, array($zdataset, $zforce));
+	$array_ret = executeSyncZFSProgram($GLOBALS["script_dataset_destroy"], $zpool, array($zdataset, $zforce));
 	
 	return $array_ret;
 }
 
 #region snapshots
 
-function createDatasetSnapshot($zpool, $zdataset, $znapshot $zrecursive) {
+function createDatasetSnapshot($zpool, $zdataset, $znapshot, $zrecursive) {
 	$array_ret = executeZFSProgram($GLOBALS["script_dataset_create_snapshot"], $zpool, array($zdataset, $znapshot, $zrecursive));
 	
 	return $array_ret;
@@ -227,7 +230,7 @@ function cloneDatasetSnapshot($znapshot, $zclone) {
 
 	if ($ret == 0):
 		zfsnotify( "ZFS Clone", "Snapshot ".$znapshot." cloned successfully", $cmdoutput_str.$exec_result."","normal");
-		return true
+		return true;
 	endif;
 	
 	zfsnotify( "ZFS Clone", "Unable to clone snapshot ".$znapshot.", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");

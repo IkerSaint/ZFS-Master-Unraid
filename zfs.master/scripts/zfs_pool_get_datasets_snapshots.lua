@@ -1,6 +1,3 @@
-local zfs_get_prop = zfs.get_prop
-local zfs_list_children = zfs.list.children
-local zfs_list_snapshots = zfs.list.snapshots
 local snap_properties = {'used','referenced','defer_destroy','userrefs','creation'}
 local dataset_properties = {'used','available','referenced','encryption', 'keystatus', 'mountpoint','compression','compressratio','usedbysnapshots','quota','recordsize','atime','xattr','primarycache','readonly','casesensitivity','sync','creation', 'origin'}
 local total_snapshots = 0
@@ -12,12 +9,12 @@ end
 function list_snapshots(dataset)
 	local snapshot_list = {}
 	
-	for snap in zfs_list_snapshots(dataset) do
+	for snap in zfs.list.snapshots(dataset) do
 		local snapshot = {}
 		snapshot['name'] = snap
 		
 		for idx, property in ipairs(snap_properties) do
-			snapshot[property] = zfs_get_prop(snap, property)
+			snapshot[property] = zfs.get_prop(snap, property)
 		end
 		
 		total_snapshots = total_snapshots+1
@@ -38,12 +35,12 @@ function list_datasets(root, exclussion_pattern)
 	dataset['name'] = root
 	
 	for idx, property in ipairs(dataset_properties) do
-		dataset[property] = zfs_get_prop(root, property)
+		dataset[property] = zfs.get_prop(root, property)
 	end
 
 	dataset['child'] = {}
 	
-    for child in zfs_list_children(root) do
+    for child in zfs.list.children(root) do
 		if (not isempty(exclussion_pattern) and string.match(child, exclussion_pattern)) then
 			goto continue
 		end
