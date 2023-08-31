@@ -233,6 +233,13 @@ function executeZFSProgram($zprogram, $zpool, $zargs) {
 	
 	return json_decode($json_ret, true)['return'];
 }
+
+function executeSyncZFSProgram($zprogram, $zpool, $zargs) {
+	$cmd_line = "zfs program -j -m 20971520 ".escapeshellarg($zpool)." ".$zprogram." ".implode(" ", array_map("escapeshellarg", $zargs));
+	$json_ret = shell_exec($cmd_line.' 2>&1');
+	
+	return json_decode($json_ret, true)['return'];
+}
 	
 function cleanupZPoolInfo($matched) {
 	return array(

@@ -6,6 +6,7 @@ $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 require_once "$docroot/webGui/include/Helpers.php";
 require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
 require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
+require_once "$docroot/plugins/$plugin/backend/ZFSMOperations.php"
 
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 
@@ -13,10 +14,6 @@ $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 switch ($_POST['cmd']) {
 	case 'createdataset':
-		$permissions = isset($_POST['data']['permissions']) ? $_POST['data']['permissions'] : '';
-
-		unset($_POST['data']['permissions']);
-
 		$zfs_cparams = cleanZFSCreateDatasetParams($_POST['data']);
 
 		$passphrase = $zfs_cparams['passphrase'] ?? "";
@@ -37,18 +34,9 @@ switch ($_POST['cmd']) {
 			zfsnotify( "ZFS Create", "Creation of dataset ".$zfs_cparams['zpool']."/".$zfs_cparams['name']." failed, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
 		endif;
-
-		if ($permissions == '' || $ret != 0):
-			break;
-		endif;
 			
-		$cmd_line = 'chmod '.$permissions.' /'.$zfs_cparams['zpool'].'/'.$zfs_cparams['name'].$boutput_str;
-		$ret = execCommand($cmd_line, $exec_result);
-
-		if ($ret != 0):
-			zfsnotify( "ZFS Create", "Unable to set permissions for dataset ".$zfs_cparams['zpool']."/".$zfs_cparams['name'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-			echo $exec_result;
-		endif;
+		# chgrp users <mountpoint>
+		# chown nobody <mountpoint>
 
 		break;
 	case 'updatedataset':
