@@ -10,7 +10,6 @@ $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 
 require_once $docroot."/plugins/".$plugin."/include/ZFSMBase.php";
 require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
-require_once $docroot."/plugins/".$plugin."/include/ZFSMOperations.php";
 
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
