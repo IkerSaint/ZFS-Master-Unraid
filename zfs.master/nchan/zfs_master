@@ -1,0 +1,43 @@
+#!/usr/bin/php -q
+<?PHP
+/* Copyright 2023, IkerSaint
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License version 2,
+ * as published by the Free Software Foundation.
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ */
+?>
+<?
+$docroot = '/usr/local/emhttp';
+$plugin = "zfs.master";
+
+require_once "$docroot/webGui/include/publish.php";
+require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
+require_once $docroot."/plugins/".$plugin."/backend/ZFSMOperations.php";
+
+
+
+while (true) {
+    $zpool_global = getZFSPools();
+    $zpool_devices = array();
+    $zpool_datasets = array();
+
+    foreach ($zpool_global as $zpool):
+        $zpool_name = $zpool['Pool'];
+    
+        $zpool_devices[$zpool_name] = getZFSPoolDevices($zpool_name);
+        $zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclussion']);
+        $zpool_global[$zpool_name]['Snapshots'] = $zpool_datasets[$zpool_name]['total_snapshots'];
+        $zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
+    endforeach;
+    
+    saveJSONToDisk($plugin_session_file, $zpool_datasets);
+
+    publish('myikerchan', $zpool_datasets);
+    
+    sleep(10);
+}
+?>
