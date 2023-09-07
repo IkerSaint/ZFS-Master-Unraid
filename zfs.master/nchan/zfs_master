@@ -14,7 +14,9 @@
 $docroot = '/usr/local/emhttp';
 $plugin = "zfs.master";
 
+require_once "$docroot/webGui/include/Wrappers.php";
 require_once "$docroot/webGui/include/publish.php";
+
 require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
 require_once $docroot."/plugins/".$plugin."/backend/ZFSMOperations.php";
 
