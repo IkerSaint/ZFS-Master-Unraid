@@ -119,7 +119,7 @@ fi
 <FILE Run="/bin/bash">
 <INLINE>
 tar -xf /boot/config/plugins/&name;/&name;-&version;.tgz -C /usr/local/emhttp/plugins 2>/dev/null
-chmod +x /usr/local/emhttp/plugins/&name/nchan/zfs_master
+chmod +x /usr/local/emhttp/plugins/&name;/nchan/zfs_master
 
 echo ""
 echo "-----------------------------------------------------------"
