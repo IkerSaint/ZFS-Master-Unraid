@@ -96,6 +96,17 @@
 
 </CHANGES>
 
+<!-- PRE-INSTALL SCRIPT -->
+<FILE Run="/bin/bash">
+<INLINE>
+# stop nchan script
+if [[ -e /var/run/nchan.pid ]]; then
+  pkill zfs_master
+  sed -ri '/zfs_master$/d' /var/run/nchan.pid
+fi
+</INLINE>
+</FILE>
+
 <!-- SOURCE FILE -->
 <FILE Name="/boot/config/plugins/&name;/&name;-&version;.tgz">
 <URL>"&gitURL;/&name;-&version;.tgz"</URL>
@@ -105,6 +116,7 @@
 <FILE Run="/bin/bash">
 <INLINE>
 tar -xf /boot/config/plugins/&name;/&name;-&version;.tgz -C /usr/local/emhttp/plugins 2>/dev/null
+chmod +x /usr/local/emhttp/plugins/&name/nchan/zfs_master
 
 echo ""
 echo "-----------------------------------------------------------"
