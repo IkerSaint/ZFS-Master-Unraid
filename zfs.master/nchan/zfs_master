@@ -16,14 +16,13 @@ $docroot = '/usr/local/emhttp';
 require_once "$docroot/webGui/include/Wrappers.php";
 require_once "$docroot/webGui/include/publish.php";
 
-require_once $docroot."/plugins/".$plugin."/include/ZFSMBase.php";
 require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
 require_once $docroot."/plugins/".$plugin."/backend/ZFSMOperations.php";
 
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
 
-while (true) {
+function getAllData() {
     $zpool_global = getZFSPools();
     $zpool_devices = array();
     $zpool_datasets = array();
@@ -38,22 +37,22 @@ while (true) {
     endforeach;
 
     $message = array();
-    
-    $message['data'] = $zpool_global;
-    $message['op'] = "pools"
+    $message['pools'] = $zpool_global;
+    $message['devices'] = $zpool_devices;
+    $message['datasets'] = $zpool_datasets;
 
-    publish('zfs_master', json_encode($zpool_global));
-    
-    $message['data'] = $zpool_devices;
-    $message['op'] = "devices"
-    
-    publish('zfs_master', json_encode($zpool_global));
+    return $message;
+}
 
-    $message['data'] = $zpool_datasets;
-    $message['op'] = "datasets"
-    
-    publish('zfs_master', json_encode($zpool_datasets));
+while (true) {
+    # if not lazy_load
+    $message = getAllData()
+    # else... implement lazy load
+    # getLazyLoad()???
+    #
+    publish('zfs_master', json_encode($message));
 
+    #sleeping time from config
     sleep(10);
 }
 ?>
