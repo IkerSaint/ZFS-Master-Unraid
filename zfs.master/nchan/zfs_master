@@ -12,20 +12,48 @@
 ?>
 <?
 $docroot = '/usr/local/emhttp';
-$plugin = "zfs.master";
 
 require_once "$docroot/webGui/include/Wrappers.php";
 require_once "$docroot/webGui/include/publish.php";
 
+require_once $docroot."/plugins/".$plugin."/include/ZFSMBase.php";
 require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
 require_once $docroot."/plugins/".$plugin."/backend/ZFSMOperations.php";
 
+$zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
+$zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
 
 while (true) {
     $zpool_global = getZFSPools();
+    $zpool_devices = array();
+    $zpool_datasets = array();
 
-    publish('myikerchan', $zpool_global);
+    foreach ($zpool_global as $zpool):
+        $zpool_name = $zpool['Pool'];
+
+        $zpool_devices[$zpool_name] = getZFSPoolDevices($zpool_name);
+        $zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclussion']);
+        $zpool_global[$zpool_name]['Snapshots'] = $zpool_datasets[$zpool_name]['total_snapshots'];
+        $zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
+    endforeach;
+
+    $message = array();
     
+    $message['data'] = $zpool_global;
+    $message['op'] = "pools"
+
+    publish('zfs_master', json_encode($zpool_global));
+    
+    $message['data'] = $zpool_devices;
+    $message['op'] = "devices"
+    
+    publish('zfs_master', json_encode($zpool_global));
+
+    $message['data'] = $zpool_datasets;
+    $message['op'] = "datasets"
+    
+    publish('zfs_master', json_encode($zpool_datasets));
+
     sleep(10);
 }
 ?>
