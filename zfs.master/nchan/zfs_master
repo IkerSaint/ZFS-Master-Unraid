@@ -12,6 +12,7 @@
 ?>
 <?
 $docroot = '/usr/local/emhttp';
+$plugin = "zfs.master";
 
 require_once "$docroot/webGui/include/Wrappers.php";
 require_once "$docroot/webGui/include/publish.php";
@@ -37,22 +38,56 @@ function getAllData() {
     endforeach;
 
     $message = array();
-    $message['pools'] = $zpool_global;
-    $message['devices'] = $zpool_devices;
-    $message['datasets'] = $zpool_datasets;
+    $message['data'] = array();
+    $message['op'] = "getAll";
+    $message['data']['pools'] = $zpool_global;
+    $message['data']['devices'] = $zpool_devices;
+    $message['data']['datasets'] = $zpool_datasets;
+
+    publish('zfs_master', json_encode($message));
+
+    return $message;
+}
+
+function getLazyLoadData() {
+    
+    $message = array();
+    
 
     return $message;
 }
 
 while (true) {
     # if not lazy_load
-    $message = getAllData()
-    # else... implement lazy load
-    # getLazyLoad()???
-    #
-    publish('zfs_master', json_encode($message));
+    # 
+    # if (!$zfsm_cfg['lazy_load']):
+    getAllData();    
+    # else:
+    # getLazyLoadData()
+    # endif;
+    # for every message
+    # publish('zfs_master', json_encode($message));
 
     #sleeping time from config
     sleep(10);
+    #usleep(50000)
+    # if ($zfsm_cfg['refresh_interval'] == 0)
+    #   if ($zfsm_cfg['refresh'] == true):
+    #      getAllData();     
+    #      unlink('reload');
+    #   else:
+    #      usleep(25000); 
+    #   endif;
+    #   continue;
+    # elseif ($zfsm_cfg['refresh_interval'] > 0):
+    #   if ($zfsm_cfg['lazy_load'] == false):
+    #       getAllData();
+    #   else:
+    #       getLazyLoadData()
+    #   endif;
+    #   sleep($zfsm_cfg['refresh_interval'])   
+    #   continue;
+    # endif;
+    #
 }
 ?>
