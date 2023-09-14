@@ -52,6 +52,9 @@ function getAllData() {
 function getLazyLoadData() {
     
     $message = array();
+    #$message = "pools";
+    #$message = "devices";
+    #$message = "datasets";
     
 
     return $message;
