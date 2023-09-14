@@ -1,14 +1,17 @@
 
 function createFullBodyTable(data, document) {
     data.pools.forEach((zpool) => {
-        zfs_table = document.getElementById('zfs_master');
+        zfs_table_body = document.getElementById('zfs_master_body');
 
         tr = document.createElement(tr);
 
         Object.keys(zpool).forEach(key => {
             var td = document.createElement('td');
             td.setAttribute('id', 'zpool-attribute-'+key);
+			tr.appendChild(td);
         });
+
+		zfs_table_body.appendChild(tr);
     });
 }
 

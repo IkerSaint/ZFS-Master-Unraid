@@ -79,7 +79,7 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 	  <td>Snapshots</td>
 	</tr>
   </thead>
-  <tbody id="zpools">
+  <tbody id="zfs_master_body">
 
   </tbody>
 </table>
@@ -100,9 +100,9 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
   var zfs_sub = new NchanSubscriber('/sub/zfs_master',{subscriber:'websocket'});
 
   zfs_sub.on('message', function(data) {
-	if (message.op == "getAll") {
-    	createFullBodyTable(message, document);
-	} else if (message.ip == "") {
+	if (data.op == "getAll") {
+      createFullBodyTable(data, document);
+	} else if (data.op == "") {
 
 	}
   });
