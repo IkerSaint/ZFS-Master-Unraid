@@ -1,17 +1,32 @@
-const { tomato } = require("color-name");
+function nl2br (str, is_xhtml) {
+    if (typeof str === 'undefined' || str === null) {
+        return '';
+    }
+    var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
+    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
+}
 
 function createFullBodyTable(data, document) {
 	var html_pools = "";
 	
-    Object.values(data.pools).forEach((zpool) => {
+	Object.values(data.pools).forEach((zpool) => {
         zfs_table_body = document.getElementById('zfs_master_body');
 
 		var tmp_tr = '<tr>';
 
-        tmp_tr += '<td id="zpool-attribute-pool"><a class="info hand"><i id="zpool-'+zpool['Pool']+'" class="fa fa-circle orb $zcolor-orb"></i><span>nl2br($zpool_devices[$zdetail])</span></a>'+zpool['Pool'];
-		tmp_tr += '<a class="info hand"><i class="fa fa-heartbeat" style="color:$zcolor"></i><span>$zmsg</span></a>'+zpool['Health'];
+        tmp_tr += '<td id="zpool-attribute-pool"><a class="info hand"><i id="zpool-'+zpool['Pool']+'" class="fa fa-circle orb $zcolor-orb"></i><span>'+nl2br(data['devices'][zpool['Pool']])+'</span></a>'+zpool['Pool']+'</td>';
+		tmp_tr += '<td id="zpool-attribute-health"><a class="info hand"><i class="fa fa-heartbeat" style="color:$zcolor"></i><span>$zmsg</span></a>'+zpool['Health']+'</td>';
+		//if (isset($_COOKIE['zdataset-'.$zpool['Pool']]) == true && $_COOKIE['zdataset-'.$zpool['Pool']] != "none"):
+		//$showTableButtonText = "Hide Datasets";
+		//endif;
+		tmp_tr += '<td id="zpool-attribute-name"><button type="button" id="show-zpool-'+zpool['Pool']+'" onclick="togglePoolTable(\'show-zpool-'+zpool['Pool']+'\', \'zdataset-'+zpool['Pool']+'\');">$showTableButtonText.</button></td>'; 
+		//$percent = 100-round(calculateFreePercent($zpool['Used'], $zpool['Free']));
+		tmp_tr += '<td id="zpool-attribute-used"><div class="usage-disk"><span style="position:absolute; width:$percent%" class=""><span>'+zpool['Used']+'B</span></div></td>';
+		//$percent = round(calculateFreePercent($zpool['Used'], $zpool['Free']));
+		tmp_tr += '<td id="zpool-attribute-free"><div class="usage-disk"><span style="position:absolute; width:$percent%" class=""><span>'+zpool['Free']+'B</span></div></td>';
+		tmp_tr += '<td id="zpool-attribute-free"><i class="fa fa-camera-retro icon"></i>'+zpool['Snapshots']+'</td>';
 
-		tmp_tr += '</td></tr>';
+		tmp_tr += '</tr>';
 
 		html_pools += tmp_tr;
 
@@ -25,7 +40,7 @@ function createFullBodyTable(data, document) {
 
 		//zfs_table_body.appendChild(tr);
     });
-
+	
 	zfs_table_body.innerHTML = html_pools;
 }
 
