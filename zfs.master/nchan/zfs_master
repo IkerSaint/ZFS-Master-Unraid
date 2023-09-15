@@ -40,7 +40,7 @@ function getAllData() {
     $message = array();
     $message['data'] = array();
     $message['op'] = "getAll";
-    $message['data']['pools'] = array()$zpool_global;
+    $message['data']['pools'] = $zpool_global;
     $message['data']['devices'] = $zpool_devices;
     $message['data']['datasets'] = $zpool_datasets;
 
@@ -55,7 +55,6 @@ function getLazyLoadData() {
     #$message = "pools";
     #$message = "devices";
     #$message = "datasets";
-    
 
     return $message;
 }
