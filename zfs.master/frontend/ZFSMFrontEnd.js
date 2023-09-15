@@ -1,3 +1,4 @@
+const { tomato } = require("color-name");
 
 function createFullBodyTable(data, document) {
 	var html_pools = "";
@@ -7,11 +8,10 @@ function createFullBodyTable(data, document) {
 
 		var tmp_tr = '<tr>';
 
-        Object.keys(zpool).forEach(key => {
-            tmp_tr += '<td id="zpool-attribute-'+key+'"></td>';
-        });
+        tmp_tr += '<td id="zpool-attribute-pool"><a class="info hand"><i id="zpool-'+zpool['Pool']+'" class="fa fa-circle orb $zcolor-orb"></i><span>nl2br($zpool_devices[$zdetail])</span></a>'+zpool['Pool'];
+		tmp_tr += '<a class="info hand"><i class="fa fa-heartbeat" style="color:$zcolor"></i><span>$zmsg</span></a>'+zpool['Health'];
 
-		tmp_tr += "</tr>";
+		tmp_tr += '</td></tr>';
 
 		html_pools += tmp_tr;
 
@@ -26,7 +26,7 @@ function createFullBodyTable(data, document) {
 		//zfs_table_body.appendChild(tr);
     });
 
-	zfs_table_body.innerHTML = html_pols;
+	zfs_table_body.innerHTML = html_pools;
 }
 
 /*
