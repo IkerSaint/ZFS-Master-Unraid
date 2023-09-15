@@ -74,7 +74,7 @@ while (true) {
     sleep(10);
     #usleep(50000)
     # if ($zfsm_cfg['refresh_interval'] == 0)
-    #   if ($zfsm_cfg['refresh'] == true):
+    #   if (file_exists('refresh') == true):
     #      getAllData();     
     #      unlink('reload');
     #   else:
