@@ -100,9 +100,10 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
   var zfs_sub = new NchanSubscriber('/sub/zfs_master',{subscriber:'websocket'});
 
   zfs_sub.on('message', function(data) {
-	if (data.op == "getAll") {
-      createFullBodyTable(data, document);
-	} else if (data.op == "") {
+	var msg = JSON.parse(data);
+	if (msg.op == "getAll") {
+      createFullBodyTable(msg, document);
+	} else if (msg.op == "") {
 
 	}
   });
