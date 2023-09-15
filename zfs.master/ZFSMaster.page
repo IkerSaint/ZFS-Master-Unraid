@@ -103,7 +103,7 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
   zfs_sub.on('message', function(data) {
     var msg = JSON.parse(data);
     if (msg.op == "getAll") {
-	  createFullBodyTable(msg.data, document);
+	  updateFullBodyTable(msg.data, document);
     } else if (msg.op == "") {
 	}
   });
