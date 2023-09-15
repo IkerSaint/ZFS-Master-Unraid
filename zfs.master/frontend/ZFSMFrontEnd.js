@@ -1,18 +1,32 @@
 
 function createFullBodyTable(data, document) {
-    data.pools.forEach((zpool) => {
+	var html_pools = "";
+	
+    Object.values(data.pools).forEach((zpool) => {
         zfs_table_body = document.getElementById('zfs_master_body');
 
-        tr = document.createElement(tr);
+		var tmp_tr = '<tr>';
 
         Object.keys(zpool).forEach(key => {
-            var td = document.createElement('td');
-            td.setAttribute('id', 'zpool-attribute-'+key);
-			tr.appendChild(td);
+            tmp_tr += '<td id="zpool-attribute-'+key+'"></td>';
         });
 
-		zfs_table_body.appendChild(tr);
+		tmp_tr += "</tr>";
+
+		html_pools += tmp_tr;
+
+		//var HTML = "<table border=1 width=100%><tr>";
+		//for(j=1;j<=10;j++)
+		//{
+		//	HTML += "<td align=center>"+String.fromCharCode(j+64)+"</td>";
+		//}
+		//HTML += "</tr></table>";
+		//document.getElementById("outputDiv").innerHTML = HTML;
+
+		//zfs_table_body.appendChild(tr);
     });
+
+	zfs_table_body.innerHTML = html_pols;
 }
 
 /*
