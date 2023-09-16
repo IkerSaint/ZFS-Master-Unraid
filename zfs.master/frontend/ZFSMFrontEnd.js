@@ -139,18 +139,24 @@ function getPoolStatusMsg(status) {
 	return 'Status Unknown'
 }
 
-function getPoolShowButtonStatus(show_status) {
+function getPoolShowButtonText(show_status) {
 	return show_status == true ? "Hide Datasets" : "Show Datasets";
 }
 
 function getPoolShowStatus(zpool) {
 	var cookie = document.cookie;
 
-	return cookie['zdataset-'+zpool] == true ? true : false;
+	if (cookie['zdataset-'+zpool] === undefined)
+		return false;
+
+	if (cookie['zdataset-'+zpool] == 'none')
+		return false;
+
+	return true;
 }
 
 function generatePoolTableRows(zpool, devices, show_status) {
-	const show_button_status = getPoolShowButtonStatus(show_status);
+	const show_button_text = getPoolShowButtonText(show_status);
 	const status_color = getPoolStatusColor(zpool['Health']);
 	const status_msg = getPoolStatusMsg(zpool['Health']);
 
@@ -161,7 +167,7 @@ function generatePoolTableRows(zpool, devices, show_status) {
 	tr += '<td id="zpool-attribute-health"><a class="info hand"><i class="fa fa-heartbeat" style="color:'+status_color+'"></i><span>'+status_msg+'</span></a> '+zpool['Health']+'</td>';
 
 	// Buttons
-	tr += '<td id="zpool-attribute-name"><button type="button" id="show-zpool-'+zpool['Pool']+'" onclick="togglePoolTable(\'show-zpool-'+zpool['Pool']+'\', \'zdataset-'+zpool['Pool']+'\');">'+show_button_status+'</button>'; 
+	tr += '<td id="zpool-attribute-name"><button type="button" id="show-zpool-'+zpool['Pool']+'" onclick="togglePoolTable(\'show-zpool-'+zpool['Pool']+'\', \'zdataset-'+zpool['Pool']+'\');">'+show_button_text+'</button>'; 
 	tr += '<button type="button" onclick="createDataset(\''+zpool['Pool']+'\')";">Create Dataset</button></td>';
 
 	// Size
@@ -318,7 +324,7 @@ function generateDatasetRow(zpool, zdataset, show_status, destructive_mode, snap
 }
 
 function generateDatasetArrayRows(zpool, datasets, show_status, destructive_mode, snap_max_days_alert) {
-	var tr = '<tr class="zdataset-'+zpool+' '+zpool+'" style="display: '+show_status+'">';
+	var tr = '<tr class="zdataset-'+zpool+' '+zpool+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
 
 	if (Object.keys(datasets.child).length == 0) {
 		return tr;
