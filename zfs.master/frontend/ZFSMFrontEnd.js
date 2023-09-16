@@ -193,7 +193,7 @@ function generatePoolTableRows(zpool, devices, show_status) {
 }
 
 function generateDatasetRow(zpool, zdataset, show_status, destructive_mode, snap_max_days_alert) {
-	var tr = '<tr class="zdataset-'+zpool+' '+zpool+'" style="display: '+show_status+'">';
+	var tr = '<tr class="zdataset-'+zpool+' '+zpool+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
 	tr += '<td></td><td></td><td>';
 
 	const creationDate = new Date(zdataset['creation'] * 1000);
