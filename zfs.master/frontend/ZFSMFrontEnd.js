@@ -148,7 +148,7 @@ function generatePoolTableRows(zpool, devices, show_status) {
 	return tr; 
 }
 
-function generateDatasetRow(zpool, zdataset, show_status) {
+function generateDatasetRow(zpool, zdataset, show_status, destructive_mode, snap_max_days_alert) {
 	var tr = '<tr class="zdataset-'+zpool+' '+zdataset+'" style="display: '+show_status+'">';
 	tr += '<td></td><td></td><td>';
 
@@ -179,7 +179,7 @@ function generateDatasetRow(zpool, zdataset, show_status) {
 
 		snapdate = new Date(snap['creation']);
 				
-		if (daysToNow(snap['creation']) > $zfsm_cfg['snap_max_days_alert']) {
+		if (daysToNow(snap['creation']) > snap_max_days_alert) {
 			icon_color = 'orange';
 		} else {
 			icon_color = '#486dba';
@@ -226,7 +226,7 @@ function generateDatasetRow(zpool, zdataset, show_status) {
 	} else {
 	}
 
-	tr += '<button type="button" id="'+id+'" onclick="addDatasetContext(\''+zpool+'\', \''+zdataset['name']+'\', '+snap_count+', \''+id+'\', .$zfsm_cfg[\'destructive_mode\']., \''+zdataset['keystatus']+'\'';
+	tr += '<button type="button" id="'+id+'" onclick="addDatasetContext(\''+zpool+'\', \''+zdataset['name']+'\', '+snap_count+', \''+id+'\', '+destructive_mode+', \''+zdataset['keystatus']+'\'';
 	
 	if (zdataset['origin'] !== undefined) {
 		tr += ',\''+zdataset['origin']+'\'';
@@ -276,7 +276,7 @@ function generateDatasetRow(zpool, zdataset, show_status) {
 	return tr;
 }
 
-function generateDatasetArrayRows(zpool, datasets, show_status) {
+function generateDatasetArrayRows(zpool, datasets, show_status, destructive_mode, snap_max_days_alert) {
 	var tr = '<tr class="zdataset-'+zpool+' '+zpool+'" style="display: '+show_status+'">';
 
 	if ( Object.keys(datasets.child).length == 0) {
@@ -284,17 +284,17 @@ function generateDatasetArrayRows(zpool, datasets, show_status) {
 	}
 
 	Object.values(datasets.child).forEach((zdataset) => {
-		tr += generateDatasetRow(zpool, zdataset, show_status);
+		tr += generateDatasetRow(zpool, zdataset, show_status, destructive_mode, snap_max_days_alert);
 
 		if (Object.keys(zdataset.child).length > 0) {
-			tr += generateDatasetArrayRows(zpool, zdataset, show_status);
+			tr += generateDatasetArrayRows(zpool, zdataset, show_status, destructive_mode, snap_max_days_alert);
 		}
 	});
 
 	return tr;
 }
 
-function updateFullBodyTable(data, document) {
+function updateFullBodyTable(data, destructive_mode, snap_max_days_alert) {
 	var html_pools = "";
 
 	Object.values(data.pools).forEach((zpool) => {
@@ -304,7 +304,7 @@ function updateFullBodyTable(data, document) {
 
 		html_pools += '<tr>';
 		html_pools += generatePoolTableRows( zpool, data['devices'][zpool['Pool']], show_status);
-		html_pools += generateDatasetArrayRows( zpool['Pool'], data['datasets'][zpool['Pool']], show_status);
+		html_pools += generateDatasetArrayRows( zpool['Pool'], data['datasets'][zpool['Pool']], show_status, destructive_mode, snap_max_days_alert);
 		html_pools += '</tr>';
 	});
 
