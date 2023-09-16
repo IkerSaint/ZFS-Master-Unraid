@@ -32,7 +32,7 @@ function getAllData() {
         $zpool_name = $zpool['Pool'];
 
         $zpool_devices[$zpool_name] = getZFSPoolDevices($zpool_name);
-        $zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclussion']);
+        $zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclusion']);
         $zpool_global[$zpool_name]['Snapshots'] = $zpool_datasets[$zpool_name]['total_snapshots'];
         $zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
     endforeach;
@@ -60,36 +60,22 @@ function getLazyLoadData() {
 }
 
 while (true) {
-    # if not lazy_load
-    # 
-    # if (!$zfsm_cfg['lazy_load']):
-    getAllData();    
-    # else:
-    # getLazyLoadData()
-    # endif;
-    # for every message
-    # publish('zfs_master', json_encode($message));
-
-    #sleeping time from config
-    sleep(30);
-    #usleep(50000)
-    # if ($zfsm_cfg['refresh_interval'] == 0)
-    #   if (file_exists('refresh') == true):
-    #      getAllData();     
-    #      unlink('reload');
-    #   else:
-    #      usleep(25000); 
-    #   endif;
-    #   continue;
-    # elseif ($zfsm_cfg['refresh_interval'] > 0):
-    #   if ($zfsm_cfg['lazy_load'] == false):
-    #       getAllData();
-    #   else:
-    #       getLazyLoadData()
-    #   endif;
-    #   sleep($zfsm_cfg['refresh_interval'])   
-    #   continue;
-    # endif;
-    #
+    if ($zfsm_cfg['refresh_interval'] == 0):
+        if (file_exists('/tmp/zfsm_reload') == true):
+            getAllData();
+            unlink('/tmp/zfsm_reload');
+        else:
+            usleep(25000); 
+        endif;
+        continue;
+    elseif ($zfsm_cfg['refresh_interval'] > 0):
+        if ($zfsm_cfg['lazy_load'] == false):
+            getAllData();
+        else:
+            getLazyLoadData()
+        endif;
+        sleep($zfsm_cfg['refresh_interval'])
+        continue;
+    endif;
 }
 ?>

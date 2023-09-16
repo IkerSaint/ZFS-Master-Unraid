@@ -27,7 +27,7 @@ foreach ($zpool_global as $zpool):
 	$zpool_name = $zpool['Pool'];
 
 	$zpool_devices[$zpool_name] = getZFSPoolDevices($zpool_name);
-	$zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclussion']);
+	$zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclusion']);
 	$zpool_global[$zpool_name]['Snapshots'] = $zpool_datasets[$zpool_name]['total_snapshots'];
 	$zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
 endforeach;
@@ -95,9 +95,6 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 <script type="text/javascript" src="<?autov('/plugins/zfs.master/frontend/ZFSMFrontEnd.js');?>"></script>
 
 <script>
-
-  <?if (exec("pgrep zfs_master")):?>
-
   var zfs_sub = new NchanSubscriber('/sub/zfs_master',{subscriber:'websocket'});
 
   zfs_sub.on('message', function(data) {
@@ -108,14 +105,9 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 	}
   });
 
-  <?else:?>
-
-  <?endif;?>
-
   $(function() {
 	  zfs_sub.start();
 	  addButtons();
-	  //setInterval(function () { refreshInfo() }, <?=$zfsm_cfg['refresh_interval']?>*1000);
 	  processHiddenDatasets();
   });
 
@@ -413,7 +405,7 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 		  input: 'password',
 		  inputPlaceholder: 'Enter your Passphrase',
 		  inputAttributes: {
-			maxlength: 64,
+			maxlength: 128,
 			autocapitalize: 'off',
 			autocorrect: 'off'
 		  },

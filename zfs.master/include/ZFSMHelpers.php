@@ -2,12 +2,18 @@
 
 function loadConfig($config) {	
 	$zfsm_ret['refresh_interval'] = isset($config['general']['refresh_interval']) ? intval($config['general']['refresh_interval']) : 30;
+	$zfsm_ret['lazy_load'] = isset($config['general']['lazy_load']) ? intval($config['general']['lazy_load']) : 0;
+
 	$zfsm_ret['destructive_mode'] = isset($config['general']['destructive_mode']) ? intval($config['general']['destructive_mode']) : 0;
 
-	if (!isset($config['general']['exclussion']) || $config['general']['exclussion'] == '' || $config['general']['exclussion'] == ' '):
-		$zfsm_ret['dataset_exclussion'] = '';
+	if ((!isset($config['general']['exclusion']) || $config['general']['exclusion'] == '') && (!isset($config['general']['exclussion']) || $config['general']['exclussion'] == '')):
+		$zfsm_ret['dataset_exclusion'] = ' ';
 	else:
-		$zfsm_ret['dataset_exclussion'] = $config['general']['exclussion'];
+		if (!isset($config['general']['exclussion']) || $config['general']['exclussion'] == ''):
+			$zfsm_ret['dataset_exclusion'] = $config['general']['exclussion'];
+		else:
+			$zfsm_ret['dataset_exclusion'] = $config['general']['exclussion'];
+		endif;
 	endif;
 		
 	$zfsm_ret['snap_max_days_alert'] = isset($config['general']['snap_max_days_alert']) ? intval($config['general']['snap_max_days_alert']) : 30;

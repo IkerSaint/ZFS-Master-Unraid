@@ -18,15 +18,23 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true), false);
 <div id="title" class="nocontrol">_(General Settings)_</div>
 _(Refresh Interval)_:
 : <select id="refresh_interval" name="refresh_interval" size="1">
+	<?=mk_option($zfsm_cfg['refresh_interval'], "0", _('No refresh'))?>
 	<?=mk_option($zfsm_cfg['refresh_interval'], "30", _('30 seconds'))?>
-	<?=mk_option($zfsm_cfg['refresh_interval'], "45", _('45 seconds'))?>
-	<?=mk_option($zfsm_cfg['refresh_interval'], "60", _('60 seconds'))?>
-	<?=mk_option($zfsm_cfg['refresh_interval'], "120", _('120 seconds'))?>
-	<?=mk_option($zfsm_cfg['refresh_interval'], "300", _('300 seconds'))?>
+	<?=mk_option($zfsm_cfg['refresh_interval'], "60", _('1 Minute'))?>
+	<?=mk_option($zfsm_cfg['refresh_interval'], "120", _('2 Minutes'))?>
+	<?=mk_option($zfsm_cfg['refresh_interval'], "300", _('5 Minutes'))?>
+	<?=mk_option($zfsm_cfg['refresh_interval'], "900", _('15 Minutes'))?>
+	<?=mk_option($zfsm_cfg['refresh_interval'], "1800", _('30 Minutes'))?>
   </select>
-  
+_(Lazy Load)_:
+: <select name="lazy_load">
+	<?=mk_option($zfsm_cfg['lazy_load'], "0", _('No'))?>
+	<?=mk_option($zfsm_cfg['lazy_load'], "1", _('Yes'))?>
+  </select>
+
 :zc_settings_refresh_interval_plug:
 > How often the information gets updated.
+> If you set Lazy Load to "yes" information gets updated one dataset at the time instead of all at once.
 :end
 
 _(Destructive Mode)_:
@@ -36,16 +44,16 @@ _(Destructive Mode)_:
   </select>
   
 :zc_settings_destructive_mode_plug:
-> + Set to **Yes** to enable additional options for Pools and Datasets.
-> + Set to **No** to disable additional options for Pools Datasets.
+> + Set to **Yes** to enable additional destructive options for Pools and Datasets.
+> + Set to **No** to disable additional destructive options for Pools Datasets.
 :end
 
 <div id="title" class="nocontrol">_(Datasets)_</div>
-_(Datasets Exclussion Patterns (Just One!))_:
-: <textarea name="exclussion" cols="40" rows="1" placeholder="/dockerfiles/.*"><?=$zfsm_cfg['dataset_exclussion']?></textarea>
+_(Datasets Exclusion Patterns (Just One!))_:
+: <textarea name="exclusion" cols="40" rows="1" placeholder="/dockerfiles/.*"><?=$zfsm_cfg['dataset_exclusion']?></textarea>
 
-:zc_settings_datasets_exclussion_plug:
-> Lua pattern to be used for datasets listing exclussion. Dataset descendants and snapshots also will be excluded.
+:zc_settings_datasets_exclusion_plug:
+> Lua pattern to be used for datasets listing exclusion. Dataset descendants and snapshots also will be excluded.
 > Check http://lua-users.org/wiki/PatternsTutorial for further information
 > This definitely speed up the Information refresh process!.
 :end
@@ -54,7 +62,7 @@ _(Datasets Exclussion Patterns (Just One!))_:
 _(Snapshots Icon Alert Max Days)_:
 : <input type="text" name="snap_max_days_alert" value="<?=$zfsm_cfg['snap_max_days_alert']?>">
 
-:zc_settings_datasets_exclussion_plug:
+:zc_settings_datasets_exclusion_plug:
 > Maximum days old for Snapshots before the icon color in the main UI changes to orange.
 :end
 

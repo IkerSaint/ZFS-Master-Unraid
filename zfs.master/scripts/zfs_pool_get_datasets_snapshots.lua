@@ -25,11 +25,7 @@ function list_snapshots(dataset)
 	return snapshot_list
 end
 
-local function isempty(s)
-	return s == nil or s == ''
-end
-
-function list_datasets(root, exclussion_pattern) 
+function list_datasets(root, exclusion_pattern) 
 	local dataset = {}
 	
 	dataset['name'] = root
@@ -41,10 +37,10 @@ function list_datasets(root, exclussion_pattern)
 	dataset['child'] = {}
 	
     for child in zfs.list.children(root) do
-		if (not isempty(exclussion_pattern) and string.match(child, exclussion_pattern)) then
+		if (not isempty(exclusion_pattern) and string.match(child, exclusion_pattern)) then
 			goto continue
 		end
-		dataset['child'][child] = list_datasets(child, exclussion_pattern);
+		dataset['child'][child] = list_datasets(child, exclusion_pattern);
 		::continue::
     end
 	
