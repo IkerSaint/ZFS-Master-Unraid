@@ -259,168 +259,22 @@ function generateDatasetRow(zpool, zdataset, show_status) {
 	tr += '<div class="usage-disk"><span style="width:'+(100-percent)+'%" class=""><span>'+fromBytesToString(zdataset['available'])+'</span></div>';
 	tr += '</td>';
 
-	/*snapshots
-	echo '<td>';
-		$icon_color = 'grey';
-		
-		if (count($zdataset['snapshots']) > 0):
-			$snap = getLastSnap($zdataset['snapshots']);
-			$days = daysToNow($snap['creation']);
-			
-			if ($days > $zfsm_cfg['snap_max_days_alert']):
-				$icon_color = 'orange';
-			else:
-				$icon_color = '#486dba';
-			endif;
-		endif;
+	// Snapshots
+
+	tr += '<td>';
 	
-		echo '<i class="fa fa-camera-retro icon" style="color:'.$icon_color.'"></i> ';
-		echo count($zdataset['snapshots']);
+	tr += '<i class="fa fa-camera-retro icon" style="color:'+icon_color+'"></i> ';
+	tr += zdataset['snapshots']  !== undefined ? 0 : zdataset['snapshots'];
 
-		if ($zdataset['mountpoint'] != "none"): 
-			echo ' <a href="/Main/Browse?dir='.$zdataset['mountpoint'].'"><i class="icon-u-tab zfs_bar_button" title="Browse '.$zdataset['mountpoint'].'"></i></a>';
-		endif;
-	echo '</td>';
-	echo '</tr>';*/
+	if (zdataset['mountpoint'] != "none") {
+		tr += ' <a href="/Main/Browse?dir='+zdataset['mountpoint']+'"><i class="icon-u-tab zfs_bar_button" title="Browse '+zdataset['mountpoint']+'"></i></a>';
+	}
 
+	tr += '</td>';
+	tr += '</tr>';
 
 	return tr;
 }
-
-
-/*
-	echo '<tr class="zdataset-'.$zpool.' '.$zclass.'" style="display: '.$display.'">';
-	echo '<td>';
-	echo '</td>';
-	echo '<td>';
-	echo '</td>';
-	echo '<td>';
-		$creationdate = new DateTime();
-		$creationdate->setTimestamp($zdataset['creation']);
-
-		$tmp_array = ["Creation Date" => $creationdate->format('Y-m-d H:i:s'),
-				"Compression" =>  $zdataset['compression'],
-				"Compress Ratio" => ($zdataset['compressratio']/100),
-				"Record Size" =>  fromBytesToString($zdataset['recordsize']),
-				"Access Time" =>  $zdataset['atime'],
-				"XAttr" =>  $zdataset['xattr'],
-				"Primary Cache" =>  $zdataset['primarycache'],
-				"Encryption" => $zdataset['encryption'],
-				'Key Status' => $zdataset['keystatus'],
-				"Quota" =>  fromBytesToString($zdataset['quota']),
-				"Read Only" =>  $zdataset['readonly'],
-				"Case Sensitive" =>  $zdataset['casesensitivity'],
-				"Sync" =>  $zdataset['sync'],
-				"Origin" =>  $zdataset['origin'] ?? "",
-				"Space used by Snaps" =>  fromBytesToString($zdataset['usedbysnapshots'])];
-
-		$icon_color = 'grey';
-			
-		if (count($zdataset['snapshots']) > 0):
-			$snap = getLastSnap($zdataset['snapshots']);
-									
-			$snapdate = new DateTime();
-			$snapdate->setTimestamp($snap['creation']);
-				
-			if (daysToNow($snap['creation']) > $zfsm_cfg['snap_max_days_alert']):
-				$icon_color = 'orange';
-			else:
-				$icon_color = '#486dba';
-			endif;
-				
-			$tmp_array['Last Snap Date'] = $snapdate->format('Y-m-d H:i:s');
-			$tmp_array['Last Snap'] = $snap['name'];
-		endif;
-
-		$depth = substr_count($zdataset['name'], '/');
-
-		for ( $i = 1; $i <= $depth; $i++) {
-			echo '&emsp;&emsp;';
-		}
-
-		echo '<a class="info hand">';
-		echo '<i class="fa fa-hdd-o icon" style="color:'.$icon_color.'" onclick="toggleDataset(\''.$zdataset['name'].'\');"></i>';
-		echo '<span>'.implodeWithKeys('<br>', $tmp_array).'</span>';
-		echo '</a>';
-
-		if (count($zdataset['child']) > 0):
-			echo '<i class="fa fa-minus-square fa-append" name="'.$zdataset['name'].'"></i>';
-		endif;
-
-		if (isset($zdataset['origin'])):
-			echo '<i class="fa fa-clone fa-append"></i>';
-		endif;
-
-		if ($zdataset['keystatus'] != 'none'):
-			if ($zdataset['keystatus'] == 'available'):
-				echo '<i class="fa fa-unlock fa-append"></i>';
-			else:
-				echo '<i class="fa fa-lock fa-append"></i>';
-			endif;
-		endif;
-
-		echo substr( $zdataset['name'], strrpos($zdataset['name'], "/")  + 1,  strlen($zdataset['name']) );
-	echo '</td>';
-
-	// Actions
-
-	echo '<td>';
-		$id = md5($zdataset['name']);
-		echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zpool.'\', \''.$zdataset['name'].'\', '.count($zdataset['snapshots']).', \''.$id.'\', '.$zfsm_cfg['destructive_mode'].', \''.$zdataset['keystatus'].'\'';
-		if (isset($zdataset['origin'])):
-			echo ',\''.$zdataset['origin'].'\'';
-		endif;
-		echo ');" class="zfs_compact">Actions</button></span>';
-	echo '</td>';
-
-	//mountpoint
-	echo '<td>';
-		if ($zdataset['mountpoint'] != "none"): 
-			echo $zdataset['mountpoint'];
-		endif;
-	echo '</td>';
-
-	// Referr
-	echo '<td>';
-		echo fromBytesToString($zdataset['referenced']);
-	echo '</td>';
-
-	// Used
-	echo '<td>';
-		$percent = 100-round(calculateFreePercent($zdataset['used'], $zdataset['available']));
-		echo '<div class="usage-disk"><span style="width:'.$percent.'%" class=""><span>'.fromBytesToString($zdataset['used']).'</span></div>';
-	echo '</td>';
-
-	// Free
-	echo '<td>';
-		$percent = round(calculateFreePercent($zdataset['used'], $zdataset['available']));
-		echo '<div class="usage-disk"><span style="width:'.$percent.'%" class=""><span>'.fromBytesToString($zdataset['available']).'</span></div>';
-	echo '</td>';
-
-	//snapshots
-	echo '<td>';
-		$icon_color = 'grey';
-		
-		if (count($zdataset['snapshots']) > 0):
-			$snap = getLastSnap($zdataset['snapshots']);
-			$days = daysToNow($snap['creation']);
-			
-			if ($days > $zfsm_cfg['snap_max_days_alert']):
-				$icon_color = 'orange';
-			else:
-				$icon_color = '#486dba';
-			endif;
-		endif;
-	
-		echo '<i class="fa fa-camera-retro icon" style="color:'.$icon_color.'"></i> ';
-		echo count($zdataset['snapshots']);
-
-		if ($zdataset['mountpoint'] != "none"): 
-			echo ' <a href="/Main/Browse?dir='.$zdataset['mountpoint'].'"><i class="icon-u-tab zfs_bar_button" title="Browse '.$zdataset['mountpoint'].'"></i></a>';
-		endif;
-	echo '</td>';
-	echo '</tr>';*/
-
 
 function generateDatasetArrayRows(zpool, datasets, show_status) {
 	var tr = '<tr class="zdataset-'+zpool+' '+zpool+'" style="display: '+show_status+'">';

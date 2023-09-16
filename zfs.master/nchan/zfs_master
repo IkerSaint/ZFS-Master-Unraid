@@ -71,7 +71,7 @@ while (true) {
     # publish('zfs_master', json_encode($message));
 
     #sleeping time from config
-    sleep(10);
+    sleep(30);
     #usleep(50000)
     # if ($zfsm_cfg['refresh_interval'] == 0)
     #   if (file_exists('refresh') == true):
