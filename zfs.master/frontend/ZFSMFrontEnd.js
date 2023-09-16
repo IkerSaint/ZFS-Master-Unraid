@@ -248,19 +248,17 @@ function generateDatasetRow(zpool, zdataset, show_status) {
 	tr += fromBytesToString(zdataset['referenced']);
 	tr += '</td>';
 
-	/* Used
-	echo '<td>';
-		$percent = 100-round(calculateFreePercent($zdataset['used'], $zdataset['available']));
-		echo '<div class="usage-disk"><span style="width:'.$percent.'%" class=""><span>'.fromBytesToString($zdataset['used']).'</span></div>';
-	echo '</td>';
+	
+	tr += '<td>';
+	var percent = 100-Math.round(calculateFreePercent(zdataset['used'], zdataset['available']));
+	tr += '<div class="usage-disk"><span style="width:'+percent+'%" class=""><span>'+fromBytesToString(zdataset['used'])+'</span></div>';
+	tr += '</td>';
 
-	// Free
-	echo '<td>';
-		$percent = round(calculateFreePercent($zdataset['used'], $zdataset['available']));
-		echo '<div class="usage-disk"><span style="width:'.$percent.'%" class=""><span>'.fromBytesToString($zdataset['available']).'</span></div>';
-	echo '</td>';
+	tr += '<td>';
+	tr += '<div class="usage-disk"><span style="width:'+(100-percent)+'%" class=""><span>'+fromBytesToString(zdataset['available'])+'</span></div>';
+	tr += '</td>';
 
-	//snapshots
+	/*snapshots
 	echo '<td>';
 		$icon_color = 'grey';
 		
