@@ -64,6 +64,7 @@ while (true) {
     if ($zfsm_cfg['refresh_interval'] == 0):
         if (file_exists('/tmp/zfsm_reload') == true):
             publish('zfs_master', '{op:"start_refresh"}');
+            
             getAllData();
             unlink('/tmp/zfsm_reload');
         else:
