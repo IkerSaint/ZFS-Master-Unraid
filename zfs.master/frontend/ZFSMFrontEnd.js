@@ -243,7 +243,7 @@ function generateDatasetRow(zpool, zdataset, show_status, destructive_mode, snap
 	tr += '<span>'+implodeWithKeys('<br>', properties)+'</span></a>';
 
 
-	if (zdataset['child'] > 0) {
+	if (zdataset['child'].lenght > 0) {
 		tr += '<i class="fa fa-minus-square fa-append" name="'+zdataset['name']+'"></i>';
 	}
 
