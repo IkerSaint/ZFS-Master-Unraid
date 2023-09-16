@@ -14,24 +14,8 @@ require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
 
-$refreshbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="refreshUI()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a></span>';
+$refreshbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="requestRefresh()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a></span>';
 $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a></span>';
-
-#$zpool_global = getZFSPools();
-$zpool_global = array();
-$zpool_devices = array();
-$zpool_datasets = array();
-
-foreach ($zpool_global as $zpool):
-	$zpool_name = $zpool['Pool'];
-
-	$zpool_devices[$zpool_name] = getZFSPoolDevices($zpool_name);
-	$zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclusion']);
-	$zpool_global[$zpool_name]['Snapshots'] = $zpool_datasets[$zpool_name]['total_snapshots'];
-	$zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
-endforeach;
-
-saveJSONToDisk($plugin_session_file, $zpool_datasets);
 
 ?>
 
@@ -118,13 +102,13 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
 	  removeContext();
   })
   
-  function refreshUI() {
-	  var $zfs_master = $('#zfs_master_div');
-	  
-	  $zfs_master.load('Main #zfs_master_div', function() {
-		  replaceElementClass('#zfsm-refresh', 'fa-spinner fa-spin', 'fa-refresh');
-		  processHiddenDatasets();
-	  });
+  function refreshUI() { 
+	replaceElementClass('#zfsm-refresh', 'fa-spinner fa-spin', 'fa-refresh');
+	processHiddenDatasets();
+  }
+
+  function requestRefresh() {
+	
   }
   
   function replaceElementClass(element, oldClass, newClass){

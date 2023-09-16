@@ -3,10 +3,10 @@
 $plugin = "zfs.master";
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 
-require_once "$docroot/webGui/include/Helpers.php";
-require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
-require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
-require_once "$docroot/plugins/$plugin/backend/ZFSMOperations.php"
+require_once $docroot."/webGui/include/Helpers.php";
+require_once $docroot."/plugins/".$plugin."/include/ZFSMBase.php";
+require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
+require_once $docroot."/plugins/".$plugin."/backend/ZFSMOperations.php";
 
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 
