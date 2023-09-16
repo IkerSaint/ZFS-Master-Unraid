@@ -52,6 +52,7 @@ function getAllData() {
 function getLazyLoadData() {
     
     $message = array();
+    $message['op'] = "getOne";
     #$message = "pools";
     #$message = "devices";
     #$message = "datasets";
@@ -62,20 +63,21 @@ function getLazyLoadData() {
 while (true) {
     if ($zfsm_cfg['refresh_interval'] == 0):
         if (file_exists('/tmp/zfsm_reload') == true):
+            publish('zfs_master', '{op:"start_refresh"}');
             getAllData();
             unlink('/tmp/zfsm_reload');
         else:
             usleep(25000); 
         endif;
-        continue;
     elseif ($zfsm_cfg['refresh_interval'] > 0):
+        publish('zfs_master', '{op:"start_refresh"}');
+        
         if ($zfsm_cfg['lazy_load'] == false):
             getAllData();
         else:
             getLazyLoadData()
         endif;
         sleep($zfsm_cfg['refresh_interval'])
-        continue;
     endif;
 }
 ?>
