@@ -44,14 +44,14 @@ function getPoolStatusMsg(status) {
 	return 'Status Unknown'
 }
 
-function getPoolShowButtonStatus(zpool) {
+function getPoolShowButtonStatus(show_status) {
+	return show_status == true ? "Hide Datasets" : "Show Datasets";
+}
+
+function getPoolShowStatus(zpool) {
 	var cookie = document.cookie;
 
-	if (cookie['zdataset-'+zpool] == true) {
-		return $showTableButtonText = "Hide Datasets";
-	} 
-
-	return "Show Datasets";
+	return cookie['zdataset-'+zpool] == true ? true : false;
 }
 
 function fromStringToBytes(spacestr) {
@@ -81,8 +81,8 @@ function calculateFreePercent(used, free) {
 	return result * 100;
 }
 
-function generatePoolTableRow(zpool, devices) {
-	const show_button_status = getPoolShowButtonStatus(zpool['Pool']);
+function generatePoolTableRow(zpool, devices, show_status) {
+	const show_button_status = getPoolShowButtonStatus(show_status);
 	const status_color = getPoolStatusColor(zpool['Health']);
 	const status_msg = getPoolStatusMsg(zpool['Health']);
 
@@ -108,15 +108,14 @@ function generatePoolTableRow(zpool, devices) {
 	tr += '<td id="zpool-attribute-refer">'+zpool['Refer']+'</td>'; 
 
 	// Used
-	const percent = 100-Math.round(calculateFreePercent(zpool['Used'], zpool['Free']));
+	var percent = 100-Math.round(calculateFreePercent(zpool['Used'], zpool['Free']));
 	tr += '<td id="zpool-attribute-used"><div class="usage-disk"><span style="position:absolute; width:'+percent+'%" class=""><span>'+zpool['Used']+'B</span></div></td>';
 
 	// Free
-	percent += 100;
-	tr += '<td id="zpool-attribute-free"><div class="usage-disk"><span style="position:absolute; width:'+percent+'%" class=""><span>'+zpool['Free']+'B</span></div></td>';
+	tr += '<td id="zpool-attribute-free"><div class="usage-disk"><span style="position:absolute; width:'+(100-percent)+'%" class=""><span>'+zpool['Free']+'B</span></div></td>';
 
 	// Snapshots
-	tr += '<td id="zpool-attribute-snapshots"><i class="fa fa-camera-retro icon"></i>'+zpool['Snapshots'] ?? 0 +'</td>';
+	tr += '<td id="zpool-attribute-snapshots"><i class="fa fa-camera-retro icon"></i>'+zpool['Snapshots'] == 'null' ? 0 : zpool['Snapshots'] +'</td>';
 
 	tr += '</tr>';
 
@@ -127,9 +126,13 @@ function updateFullBodyTable(data, document) {
 	var html_pools = "";
 	
 	Object.values(data.pools).forEach((zpool) => {
+		const show_status = getPoolShowStatus(zpool['Pool']);
+
 		zfs_table_body = document.getElementById('zfs_master_body');
 
-		html_pools += generatePoolTableRow(zpool, data['devices'][zpool['Pool']]);
+		html_pools += generatePoolTableRow(zpool, data['devices'][zpool['Pool']], show_status);
+
+		//html_pools += generateDatasetArrayRows(zpool['Pool'], data['datasets'][zpool['Pool']], show_status);
     });
 	
 	zfs_table_body.innerHTML = html_pools;
@@ -138,49 +141,6 @@ function updateFullBodyTable(data, document) {
 /*
 	<?foreach ($zpool_global as $zpool):?>
     <tr>
-		<?foreach ($zpool as $key => $zdetail):?>
-		 <td id=<?echo '"zpool-attribute-'.$key.'"'?>>
-	        <?
-			if ($key == "Pool"):
-				$zcolor = $statusColor[$zpool['Health']];
-				
-				echo '<a class="info hand">';
-				echo '<i id="zpool-'.$zdetail.'" class="fa fa-circle orb '.$zcolor.'-orb"></i>';
-				echo '<span>'.nl2br($zpool_devices[$zdetail]).'</span>';
-				echo '</a>';
-				echo $zdetail;
-			elseif ($key == 'Health'):
-				$zcolor = $statusColor[$zdetail];
-				$zmsg = $statusMsg[$zdetail];
-				
-				echo '<a class="info hand">';
-				echo '<i class="fa fa-heartbeat" style="color:'.$zcolor.'"></i>';
-				echo '<span>'.$zmsg.'</span>';
-				echo '</a> ';
-				echo $zdetail;
-			elseif ($key == "Name"):
-				$showTableButtonText = "Show Datasets";
-				if (isset($_COOKIE['zdataset-'.$zpool['Pool']]) == true && $_COOKIE['zdataset-'.$zpool['Pool']] != "none"):
-					$showTableButtonText = "Hide Datasets";
-				endif;
-
-				echo '<button type="button" id="show-zpool-'.$zpool['Pool'].'" onclick="togglePoolTable(\'show-zpool-'.$zpool['Pool'].'\', \'zdataset-'.$zpool['Pool'].'\');">'.$showTableButtonText.'</button>';
-				echo '<button type="button" onclick="createDataset(\''.$zpool['Pool'].'\')";">Create Dataset</button>';
-			elseif ($key == "Used"):
-				$percent = 100-round(calculateFreePercent($zpool['Used'], $zpool['Free']));
-				echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.$zdetail.'B</span></div>';
-			elseif ($key == "Free"):
-				$percent = round(calculateFreePercent($zpool['Used'], $zpool['Free']));
-				echo '<div class="usage-disk"><span style="position:absolute; width:'.$percent.'%" class=""><span>'.$zdetail.'B</span></div>';
-			elseif ($key == 'Snapshots'):
-				echo '<i class="fa fa-camera-retro icon"></i> ';
-				echo $zdetail;
-			else:
-				echo $zdetail;
-			endif;
-			?>
-	     </td>
-		<?endforeach;?>
 	</tr>
 		<?
 			generateDatasetArrayRows($zpool['Pool'], $zpool_datasets[$zpool['Pool']], $_COOKIE['zdataset-'.$zpool['Pool']] ?? 'none', $zfsm_cfg, $zpool['Pool']);
