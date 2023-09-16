@@ -26,16 +26,23 @@ _(Refresh Interval)_:
 	<?=mk_option($zfsm_cfg['refresh_interval'], "900", _('15 Minutes'))?>
 	<?=mk_option($zfsm_cfg['refresh_interval'], "1800", _('30 Minutes'))?>
   </select>
+
+:zc_settings_refresh_interval_plug:
+> How often the information gets updated. "No refresh" means that you have yo press the refresh button.
+:end
+
+
 _(Lazy Load)_:
 : <select name="lazy_load">
 	<?=mk_option($zfsm_cfg['lazy_load'], "0", _('No'))?>
 	<?=mk_option($zfsm_cfg['lazy_load'], "1", _('Yes'))?>
   </select>
 
-:zc_settings_refresh_interval_plug:
-> How often the information gets updated.
+:zc_settings_lazy_load_plug:
+> How often the information gets updated. "No refresh" means that you have yo press the refresh button.
 > If you set Lazy Load to "yes" information gets updated one dataset at the time instead of all at once.
 :end
+
 
 _(Destructive Mode)_:
 : <select name="destructive_mode">
