@@ -114,7 +114,7 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
   $(function() {
 	  zfs_sub.start();
 	  addButtons();
-	  setInterval(function () { refreshInfo() }, <?=$zfsm_cfg['refresh_interval']?>*1000);
+	  //setInterval(function () { refreshInfo() }, <?=$zfsm_cfg['refresh_interval']?>*1000);
 	  processHiddenDatasets();
   });
 
