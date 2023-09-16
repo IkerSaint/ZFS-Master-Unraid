@@ -203,7 +203,7 @@ function generateDatasetRow(zpool, zdataset, show_status) {
 		tr += '<i class="fa fa-minus-square fa-append" name="'+zdataset['name']+'"></i>';
 	}
 
-	if (zdataset.hasAttribute('origin')) {
+	if (zdataset['origin'] !== undefined) {
 		tr += '<i class="fa fa-clone fa-append"></i>';
 	}
 
@@ -220,9 +220,15 @@ function generateDatasetRow(zpool, zdataset, show_status) {
 
 	tr += '<td>';
 	var id = '12345'; //md5(zdataset['name']);
-	tr += '<button type="button" id="'+id+'" onclick="addDatasetContext(\''+zpool+'\', \''+zdataset['name']+'\', '+zdataset['snapshots'].length+', \''+id+'\', .$zfsm_cfg[\'destructive_mode\']., \''+zdataset['keystatus']+'\'';
+	var snap_count = 0;
+	if (zdataset.hasOwnProperty('snapshots')) {
+		snap_count = zdataset.snapshots.length;
+	} else {
+	}
+
+	tr += '<button type="button" id="'+id+'" onclick="addDatasetContext(\''+zpool+'\', \''+zdataset['name']+'\', '+snap_count+', \''+id+'\', .$zfsm_cfg[\'destructive_mode\']., \''+zdataset['keystatus']+'\'';
 	
-	if (zdataset.hasAttribute('origin')) {
+	if (zdataset['origin'] !== undefined) {
 		tr += ',\''+zdataset['origin']+'\'';
 	}
 
