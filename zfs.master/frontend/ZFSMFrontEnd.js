@@ -144,12 +144,12 @@ function getPoolShowButtonText(show_status) {
 }
 
 function getPoolShowStatus(zpool) {
-	var cookie = document.cookie;
+	var cookie = getCookie('zdataset-'+zpool);
 
-	if (cookie['zdataset-'+zpool] === undefined)
+	if (cookie === undefined)
 		return false;
 
-	if (cookie['zdataset-'+zpool] == 'none')
+	if (cookie == 'none')
 		return false;
 
 	return true;
