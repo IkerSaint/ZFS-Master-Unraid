@@ -45,8 +45,6 @@ function getAllData() {
     $message['data']['datasets'] = $zpool_datasets;
 
     publish('zfs_master', json_encode($message));
-
-    return $message;
 }
 
 function getLazyLoadData() {
@@ -56,29 +54,29 @@ function getLazyLoadData() {
     #$message = "pools";
     #$message = "devices";
     #$message = "datasets";
-
-    return $message;
 }
 
 while (true) {
     if ($zfsm_cfg['refresh_interval'] == 0):
         if (file_exists('/tmp/zfsm_reload') == true):
-            publish('zfs_master', '{op:"start_refresh"}');
-            
+            publish('zfs_master', '{"op":"start_refresh"}');
+
             getAllData();
             unlink('/tmp/zfsm_reload');
         else:
             usleep(25000); 
         endif;
+
     elseif ($zfsm_cfg['refresh_interval'] > 0):
-        publish('zfs_master', '{op:"start_refresh"}');
+        publish('zfs_master', '{"op":"start_refresh"}');
         
         if ($zfsm_cfg['lazy_load'] == false):
             getAllData();
         else:
-            getLazyLoadData()
+            getLazyLoadData();
         endif;
-        sleep($zfsm_cfg['refresh_interval'])
+
+        sleep($zfsm_cfg['refresh_interval']);
     endif;
 }
 ?>
