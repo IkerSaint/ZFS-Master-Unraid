@@ -1,4 +1,4 @@
-// Utils
+//region utils
 
 function crc16(str) {
 	const crcTable = [];
@@ -85,6 +85,8 @@ function daysToNow(timestamp) {
 
     return daysDifference;
 }
+
+//endregion utils
 
 
 function getLastSnap(zsnapshots) {
