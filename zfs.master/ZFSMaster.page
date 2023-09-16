@@ -98,30 +98,33 @@ saveJSONToDisk($plugin_session_file, $zpool_datasets);
   var zfs_sub = new NchanSubscriber('/sub/zfs_master',{subscriber:'websocket'});
 
   zfs_sub.on('message', function(data) {
-    var msg = JSON.parse(data);
+	var msg = JSON.parse(data);
     if (msg.op == "getAll") {
-	  updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
-    } else if (msg.op == "") {
+		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
+		refreshUI();
+    } else if (msg.op == "getOne") {
+		
+	} else if (msg.op == "start_refresh") {
+		replaceElementClass("#zfsm-refresh", "fa-refresh", "fa-spinner fa-spin");
 	}
+
   });
 
   $(function() {
+	  $('#zfs_master_div').html(zfs_logo);
 	  zfs_sub.start();
 	  addButtons();
-	  processHiddenDatasets();
   });
 
   $(document).click(function() {
 	  removeContext();
   })
   
-  function refreshInfo() {
-	  replaceElementClass("#zfsm-refresh", "fa-refresh", "fa-spinner fa-spin");
+  function refreshUI() {
+	  var $zfs_master = $('#zfs_master_div');
 	  
-	  var $zfs_master = $("#zfs_master_div");
-	  
-	  $zfs_master.load("Main #zfs_master_div", function() {
-		  replaceElementClass("#zfsm-refresh", "fa-spinner fa-spin", "fa-refresh");
+	  $zfs_master.load('Main #zfs_master_div', function() {
+		  replaceElementClass('#zfsm-refresh', 'fa-spinner fa-spin', 'fa-refresh');
 		  processHiddenDatasets();
 	  });
   }
