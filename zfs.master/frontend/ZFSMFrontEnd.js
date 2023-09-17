@@ -277,12 +277,12 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	// Used
 	tr += '<td>';
 	var percent = 100-Math.round(calculateFreePercent(zdataset['used'], zdataset['available']));
-	tr += '<div class="usage-disk"><span style="width:'+percent+'%" class=""><span>'+fromBytesToString(zdataset['used'])+'</span></div>';
+	tr += '<div class="usage-disk"><span style="position:absolute; width:'+percent+'%" class=""><span>'+fromBytesToString(zdataset['used'])+'</span></div>';
 	tr += '</td>';
 
 	// Free
 	tr += '<td>';
-	tr += '<div class="usage-disk"><span style="width:'+(100-percent)+'%" class=""><span>'+fromBytesToString(zdataset['available'])+'</span></div>';
+	tr += '<div class="usage-disk"><span style="position:absolute; width:'+(100-percent)+'%" class=""><span>'+fromBytesToString(zdataset['available'])+'</span></div>';
 	tr += '</td>';
 
 	// Snapshots
@@ -306,6 +306,8 @@ function generateDatasetArrayRows(zpool, dataset, parent, show_status, destructi
 	if (Object.keys(dataset.child).length == 0) {
 		return generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert);
 	}
+
+	var tr = '';
 
 	Object.values(dataset.child).forEach((zdataset) => {
 		tr += generateDatasetRow(zpool, zdataset, dataset['name'], show_status, destructive_mode, snap_max_days_alert);
@@ -365,7 +367,7 @@ function updateFullBodyTable(data, destructive_mode, snap_max_days_alert) {
 
 		html_pools += '<tr>';
 		html_pools += generatePoolTableRows( zpool, data['devices'][zpool['Pool']], show_status);
-		html_pools += generateDatasetArrayRows( zpool['Pool'], data['datasets'][zpool['Pool']].child, zpool['Pool'], show_status, destructive_mode, snap_max_days_alert);
+		html_pools += generateDatasetArrayRows( zpool['Pool'], data['datasets'][zpool['Pool']], zpool['Pool'], show_status, destructive_mode, snap_max_days_alert);
 		html_pools += '</tr>';
 	});
 
