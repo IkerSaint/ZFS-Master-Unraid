@@ -85,8 +85,10 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
     if (msg.op == "getAll") {
 		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
 		refreshUI();
-    } else if (msg.op == "getOne") {
-		
+    } else if (msg.op == "getDatasets") {
+		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
+	} else if (msg.op == "getSnapshot") {
+		console.warn(msg);
 	} else if (msg.op == "start_refresh") {
 		replaceElementClass("#zfsm-refresh", "fa-refresh", "fa-spinner fa-spin");
 	}
