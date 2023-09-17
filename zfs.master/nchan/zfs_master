@@ -32,7 +32,7 @@ function getAllData() {
         $zpool_name = $zpool['Pool'];
 
         $zpool_devices[$zpool_name] = getZFSPoolDevices($zpool_name);
-        $zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclusion']);
+        $zpool_datasets[$zpool_name] = getZFSPoolDatasetsAndSnapshots($zpool_name, $zfsm_cfg['dataset_exclusion']);
         $zpool_global[$zpool_name]['Snapshots'] = $zpool_datasets[$zpool_name]['total_snapshots'];
         $zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
     endforeach;
