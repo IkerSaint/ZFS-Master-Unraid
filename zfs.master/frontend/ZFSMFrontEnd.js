@@ -86,6 +86,22 @@ function daysToNow(timestamp) {
     return daysDifference;
 }
 
+function setCookie(key, value, daysToLive=365) {
+	var expires = new Date();
+	expires.setTime(expires.getTime() + (daysToLive * 24 * 60 * 60));
+	document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+}
+
+function getCookie(key) {
+	var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
+	return keyValue ? keyValue[2] : null;
+}
+
+function eraseCookie(key) {
+	var keyValue = getCookie(key);
+    setCookie(key, keyValue, '-1');
+}
+
 //endregion utils
 
 
