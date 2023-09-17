@@ -171,43 +171,6 @@ function getPoolShowStatus(zpool) {
 	return true;
 }
 
-function generatePoolTableRows(zpool, devices, show_status) {
-	const show_button_text = getPoolShowButtonText(show_status);
-	const status_color = getPoolStatusColor(zpool['Health']);
-	const status_msg = getPoolStatusMsg(zpool['Health']);
-
-	// Name and devices
-	var tr = '<td id="zpool-attribute-pool"><a class="info hand"><i id="zpool-'+zpool['Pool']+'" class="fa fa-circle orb '+status_color+'-orb"></i><span>'+nl2br(devices)+'</span></a> '+zpool['Pool']+'</td>';
-
-	// Health
-	tr += '<td id="zpool-attribute-health"><a class="info hand"><i class="fa fa-heartbeat" style="color:'+status_color+'"></i><span>'+status_msg+'</span></a> '+zpool['Health']+'</td>';
-
-	// Buttons
-	tr += '<td id="zpool-attribute-name"><button type="button" id="show-zpool-'+zpool['Pool']+'" onclick="togglePoolTable(\'show-zpool-'+zpool['Pool']+'\', \'zdataset-'+zpool['Pool']+'\');">'+show_button_text+'</button>'; 
-	tr += '<button type="button" onclick="createDataset(\''+zpool['Pool']+'\')";">Create Dataset</button></td>';
-
-	// Size
-	tr += '<td id="zpool-attribute-size">'+zpool['Size']+'</td>'; 
-
-	// Mountpoint
-	tr += '<td id="zpool-attribute-mountpoint">'+zpool['MountPoint']+'</td>'; 
-
-	// Refer
-	tr += '<td id="zpool-attribute-refer">'+zpool['Refer']+'</td>'; 
-
-	// Used
-	var percent = 100-Math.round(calculateFreePercent(zpool['Used'], zpool['Free']));
-	tr += '<td id="zpool-attribute-used"><div class="usage-disk"><span style="position:absolute; width:'+percent+'%" class=""><span>'+zpool['Used']+'B</span></div></td>';
-
-	// Free
-	tr += '<td id="zpool-attribute-free"><div class="usage-disk"><span style="position:absolute; width:'+(100-percent)+'%" class=""><span>'+zpool['Free']+'B</span></div></td>';
-
-	// Snapshots
-	tr += '<td id="zpool-attribute-snapshots"><i class="fa fa-camera-retro icon"></i>'+(zpool['Snapshots'] == null ? 0 : zpool['Snapshots'])+'</td>';
-
-	return tr; 
-}
-
 function generateDatasetRow(zpool, zdataset, class_name, show_status, destructive_mode, snap_max_days_alert) {
 	var tr = '<tr class="zdataset-'+zpool+' '+class_name+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
 	tr += '<td></td><td></td><td>';
@@ -355,6 +318,43 @@ function generateDatasetArrayRows(zpool, datasets, class_name, show_status, dest
 	});
 
 	return tr;
+}
+
+function generatePoolTableRows(zpool, devices, show_status) {
+	const show_button_text = getPoolShowButtonText(show_status);
+	const status_color = getPoolStatusColor(zpool['Health']);
+	const status_msg = getPoolStatusMsg(zpool['Health']);
+
+	// Name and devices
+	var tr = '<td id="zpool-attribute-pool"><a class="info hand"><i id="zpool-'+zpool['Pool']+'" class="fa fa-circle orb '+status_color+'-orb"></i><span>'+nl2br(devices)+'</span></a> '+zpool['Pool']+'</td>';
+
+	// Health
+	tr += '<td id="zpool-attribute-health"><a class="info hand"><i class="fa fa-heartbeat" style="color:'+status_color+'"></i><span>'+status_msg+'</span></a> '+zpool['Health']+'</td>';
+
+	// Buttons
+	tr += '<td id="zpool-attribute-name"><button type="button" id="show-zpool-'+zpool['Pool']+'" onclick="togglePoolTable(\'show-zpool-'+zpool['Pool']+'\', \'zdataset-'+zpool['Pool']+'\');">'+show_button_text+'</button>'; 
+	tr += '<button type="button" onclick="createDataset(\''+zpool['Pool']+'\')";">Create Dataset</button></td>';
+
+	// Size
+	tr += '<td id="zpool-attribute-size">'+zpool['Size']+'</td>'; 
+
+	// Mountpoint
+	tr += '<td id="zpool-attribute-mountpoint">'+zpool['MountPoint']+'</td>'; 
+
+	// Refer
+	tr += '<td id="zpool-attribute-refer">'+zpool['Refer']+'</td>'; 
+
+	// Used
+	var percent = 100-Math.round(calculateFreePercent(zpool['Used'], zpool['Free']));
+	tr += '<td id="zpool-attribute-used"><div class="usage-disk"><span style="position:absolute; width:'+percent+'%" class=""><span>'+zpool['Used']+'B</span></div></td>';
+
+	// Free
+	tr += '<td id="zpool-attribute-free"><div class="usage-disk"><span style="position:absolute; width:'+(100-percent)+'%" class=""><span>'+zpool['Free']+'B</span></div></td>';
+
+	// Snapshots
+	tr += '<td id="zpool-attribute-snapshots"><i class="fa fa-camera-retro icon"></i>'+(zpool['Snapshots'] == null ? 0 : zpool['Snapshots'])+'</td>';
+
+	return tr; 
 }
 
 function updateFullBodyTable(data, destructive_mode, snap_max_days_alert) {
