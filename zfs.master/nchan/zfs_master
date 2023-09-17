@@ -91,7 +91,9 @@ while (true) {
             publish('zfs_master', '{"op":"start_refresh"}');
 
             getAllData();
+            
             unlink('/tmp/zfsm_reload');
+            publish('zfs_master', '{"op":"stop_refresh"}');
         else:
             usleep(25000); 
         endif;
@@ -104,6 +106,8 @@ while (true) {
         else:
             getLazyLoadData();
         endif;
+
+        publish('zfs_master', '{"op":"stop_refresh"}');
 
         sleep($zfsm_cfg['refresh_interval']);
     endif;
