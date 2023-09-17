@@ -196,8 +196,9 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	};
 
 	const icon_color = 'grey';
+	var snap_count = 0;
 			
-	if (zdataset['snapshots'] > 0) {
+	if (zdataset['snapshots'].length > 0) {
 		const snap = getLastSnap(zdataset['snapshots']);
 
 		snapdate = new Date(snap['creation']);
@@ -210,6 +211,8 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 				
 		properties['Last Snap Date'] = snapdate.toISOString();
 		properties['Last Snap'] = snap['name'];
+
+		snap_count = zdataset['snapshots'].length;
 	}
 
 	const depth = zdataset['name'].split('/').length - 1;
@@ -245,12 +248,6 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 
 	tr += '<td>';
 	var id = crc16(zdataset['name']);
-	var snap_count = 0;
-
-	if (zdataset['snapshots'] !== undefined ) {
-		snap_count = zdataset.snapshots.length;
-	} else {
-	}
 
 	tr += '<button type="button" id="'+id+'" onclick="addDatasetContext(\''+zpool+'\', \''+zdataset['name']+'\', '+snap_count+', \''+id+'\', '+destructive_mode+', \''+zdataset['keystatus']+'\'';
 	
@@ -288,9 +285,9 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	// Snapshots
 
 	tr += '<td>';
-	
-	tr += '<i class="fa fa-camera-retro icon" style="color:'+icon_color+'"></i> ';
-	tr += zdataset['snapshots'] !== undefined ? zdataset['snapshots'] : 0 ;
+	tr += '<i class="fa fa-camera-retro icon" style="color:'+icon_color+'"></i> '+snap_count;
+
+	// Mountpoint
 
 	if (zdataset['mountpoint'] != "none") {
 		tr += ' <a href="/Main/Browse?dir='+zdataset['mountpoint']+'"><i class="icon-u-tab zfs_bar_button" title="Browse '+zdataset['mountpoint']+'"></i></a>';
