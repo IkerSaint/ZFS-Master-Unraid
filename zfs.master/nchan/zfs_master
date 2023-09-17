@@ -48,12 +48,41 @@ function getAllData() {
 }
 
 function getLazyLoadData() {
-    
+    $zpool_global = getZFSPools();
+    $zpool_devices = array();
+    $zpool_datasets = array();
+
+    foreach ($zpool_global as $zpool):
+        $zpool_name = $zpool['Pool'];
+
+        $zpool_devices[$zpool_name] = getZFSPoolDevices($zpool_name);
+        $zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclusion']);
+        $zpool_global[$zpool_name]['Snapshots'] = $zpool_datasets[$zpool_name]['total_snapshots'];
+        $zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
+    endforeach;
+
     $message = array();
-    $message['op'] = "getOne";
-    #$message = "pools";
-    #$message = "devices";
-    #$message = "datasets";
+    $message['data'] = array();
+    $message['op'] = "getDatasets";
+    $message['data']['pools'] = $zpool_global;
+    $message['data']['devices'] = $zpool_devices;
+    $message['data']['datasets'] = $zpool_datasets;
+
+    publish('zfs_master', json_encode($message));
+
+    foreach ($zpool_datasets as $zpool):
+        $message = array();
+        $message['data'] = array();
+        $message['op'] = "getSnapshot";
+        $message['data']['pool'] = $zpool['name'];
+
+        foreach ($zpool['child'] as $zdataset):
+            $message['data']['dataset'] = $zdataset['name'];
+            $message['data']['snapshots'] = getDatasetSnapshots($zpool['name'], $zdataset['name']);
+
+            publish('zfs_master', json_encode($message));
+        endforeach;
+    endforeach;
 }
 
 while (true) {
