@@ -14,6 +14,7 @@ require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
 
+$lastrefreshtext = '<span class="zfs_last_refresh"><a style="cursor:pointer" class="tooltip" title="Last refresh date"><i id="zfsm-last-refresh"></i></a></span>';
 $refreshbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="requestRefresh()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a></span>';
 $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a></span>';
 
@@ -84,14 +85,20 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	var msg = JSON.parse(data);
     if (msg.op == "getAll") {
 		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
-		refreshUI();
     } else if (msg.op == "getDatasets") {
 		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
 	} else if (msg.op == "getSnapshot") {
 		console.warn(msg);
 	} else if (msg.op == "start_refresh") {
 		replaceElementClass("#zfsm-refresh", "fa-refresh", "fa-spinner fa-spin");
+	} else if (msg.op == "stop_refresh") {
+		const curDate = new Date();
+
+		replaceElementClass('#zfsm-refresh', 'fa-spinner fa-spin', 'fa-refresh');
+		$("#zfsm-last-refresh").text('Last refresh at '+curDate.toLocaleTimeString('en-US'));
+		processHiddenDatasets();
 	}
+	
 
   });
 
@@ -103,11 +110,6 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   $(document).click(function() {
 	  removeContext();
   })
-  
-  function refreshUI() { 
-	replaceElementClass('#zfsm-refresh', 'fa-spinner fa-spin', 'fa-refresh');
-	processHiddenDatasets();
-  }
 
   function requestRefresh() {
 
@@ -128,6 +130,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   function addButtons() {
 	  var parent = getUnraidParentElement();
 	  
+	  parent.append('<?=$lastrefreshtext?>')
 	  parent.append('<?=$settingsbutton?>');
 	  parent.append('<?=$refreshbutton?>');
   }
