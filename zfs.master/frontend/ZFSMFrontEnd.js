@@ -108,7 +108,7 @@ function eraseCookie(key) {
 function getLastSnap(zsnapshots) {
 	var lastsnap = zsnapshots[0];
 
-	for (snap in zsnapshots) {
+	for (const snap of zsnapshots) {
 		if (snap['creation'] > lastsnap['creation']) {
 			lastsnap = snap;
 		}
@@ -195,20 +195,20 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 		'Space used by Snaps' : fromBytesToString(zdataset['usedbysnapshots'])
 	};
 
-	const icon_color = 'grey';
+	var icon_color = 'grey';
 	var snap_count = 0;
-			
+
 	if (zdataset['snapshots'].length > 0) {
 		const snap = getLastSnap(zdataset['snapshots']);
 
-		snapdate = new Date(snap['creation']);
-				
+		snapdate = new Date(snap['creation'] * 1000);
+
 		if (daysToNow(snap['creation']) > snap_max_days_alert) {
 			icon_color = 'orange';
 		} else {
 			icon_color = '#486dba';
 		}
-				
+
 		properties['Last Snap Date'] = snapdate.toISOString();
 		properties['Last Snap'] = snap['name'];
 
