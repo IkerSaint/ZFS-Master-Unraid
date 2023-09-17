@@ -108,7 +108,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   function requestRefresh() {
-	
+
   }
   
   function replaceElementClass(element, oldClass, newClass){
@@ -128,22 +128,6 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	  
 	  parent.append('<?=$settingsbutton?>');
 	  parent.append('<?=$refreshbutton?>');
-  }
-    
-  function setCookie(key, value, daysToLive=365) {
-	var expires = new Date();
-	expires.setTime(expires.getTime() + (daysToLive * 24 * 60 * 60));
-	document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
-  }
-
-  function getCookie(key) {
-	var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-	return keyValue ? keyValue[2] : null;
-  }
-
-  function eraseCookie(key) {
-    var keyValue = getCookie(key);
-    setCookie(key, keyValue, '-1');
   }
 
   function processHiddenDatasets() {
