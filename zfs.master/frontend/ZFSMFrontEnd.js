@@ -192,8 +192,8 @@ function generatePoolTableRows(zpool, devices, show_status) {
 	return tr; 
 }
 
-function generateDatasetRow(zpool, zdataset, show_status, destructive_mode, snap_max_days_alert) {
-	var tr = '<tr class="zdataset-'+zpool+' '+zpool+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
+function generateDatasetRow(zpool, zdataset, class_name, show_status, destructive_mode, snap_max_days_alert) {
+	var tr = '<tr class="zdataset-'+zpool+' '+class_name+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
 	tr += '<td></td><td></td><td>';
 
 	const creationDate = new Date(zdataset['creation'] * 1000);
@@ -243,7 +243,7 @@ function generateDatasetRow(zpool, zdataset, show_status, destructive_mode, snap
 	tr += '<span>'+implodeWithKeys('<br>', properties)+'</span></a>';
 
 
-	if (zdataset['child'].lenght > 0) {
+	if (Object.keys(zdataset.child).length > 0) {
 		tr += '<i class="fa fa-minus-square fa-append" name="'+zdataset['name']+'"></i>';
 	}
 
@@ -323,18 +323,18 @@ function generateDatasetRow(zpool, zdataset, show_status, destructive_mode, snap
 	return tr;
 }
 
-function generateDatasetArrayRows(zpool, datasets, show_status, destructive_mode, snap_max_days_alert) {
-	var tr = '<tr class="zdataset-'+zpool+' '+zpool+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
+function generateDatasetArrayRows(zpool, datasets, class_name, show_status, destructive_mode, snap_max_days_alert) {
+	var tr = '<tr class="zdataset-'+zpool+' '+class_name+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
 
 	if (Object.keys(datasets.child).length == 0) {
 		return tr;
 	}
 
 	Object.values(datasets.child).forEach((zdataset) => {
-		tr += generateDatasetRow(zpool, zdataset, show_status, destructive_mode, snap_max_days_alert);
+		tr += generateDatasetRow(zpool, zdataset, zdataset['name'], show_status, destructive_mode, snap_max_days_alert);
 
 		if (Object.keys(zdataset.child).length > 0) {
-			tr += generateDatasetArrayRows(zpool, zdataset, show_status, destructive_mode, snap_max_days_alert);
+			tr += generateDatasetArrayRows(zpool, zdataset, zdataset['name'], show_status, destructive_mode, snap_max_days_alert);
 		}
 	});
 
@@ -351,7 +351,7 @@ function updateFullBodyTable(data, destructive_mode, snap_max_days_alert) {
 
 		html_pools += '<tr>';
 		html_pools += generatePoolTableRows( zpool, data['devices'][zpool['Pool']], show_status);
-		html_pools += generateDatasetArrayRows( zpool['Pool'], data['datasets'][zpool['Pool']], show_status, destructive_mode, snap_max_days_alert);
+		html_pools += generateDatasetArrayRows( zpool['Pool'], data['datasets'][zpool['Pool']], zpool['Pool'], show_status, destructive_mode, snap_max_days_alert);
 		html_pools += '</tr>';
 	});
 
