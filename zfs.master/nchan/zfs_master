@@ -50,7 +50,7 @@ function getData(include_snapshots) {
 
     publish('zfs_master', json_encode($message));
 
-    return $message
+    return $message;
 }
 
 function getAllData() {
