@@ -94,7 +94,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
     } else if (msg.op == "getDatasets") {
 		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
 	} else if (msg.op == "getSnapshot") {
-		console.warn(msg);
+		updateSnapshotInfo(msg.data, <?=$zfsm_cfg['snap_max_days_alert']?>);
 	} else if (msg.op == "start_refresh") {
 		replaceElementClass("#zfsm-refresh", "fa-refresh", "fa-spinner fa-spin");
 	} else if (msg.op == "stop_refresh") {

@@ -198,7 +198,7 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	var icon_color = 'grey';
 	var snap_count = 0;
 
-	if (zdataset['snapshots'].length > 0) {
+	if (zdataset['snapshots'] !== undefined && zdataset['snapshots'].length > 0) {
 		const snap = getLastSnap(zdataset['snapshots']);
 
 		snapdate = new Date(snap['creation'] * 1000);
@@ -369,4 +369,8 @@ function updateFullBodyTable(data, destructive_mode, snap_max_days_alert) {
 	});
 
 	zfs_table_body.innerHTML = html_pools;
+}
+
+function updateSnapshotInfo(data, snap_max_days_alert) {
+	
 }
