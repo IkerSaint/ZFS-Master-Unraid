@@ -200,8 +200,7 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 
 	if (zdataset['snapshots'] !== undefined && zdataset['snapshots'].length > 0) {
 		const snap = getLastSnap(zdataset['snapshots']);
-
-		snapdate = new Date(snap['creation'] * 1000);
+		var snapdate = new Date(snap['creation'] * 1000);
 
 		if (daysToNow(snap['creation']) > snap_max_days_alert) {
 			icon_color = 'orange';
@@ -373,49 +372,106 @@ function updateFullBodyTable(data, destructive_mode, snap_max_days_alert) {
 
 function updateSnapshotInfo(data, snap_max_days_alert) {
 	var td_pool_snaps = document.getElementById(data['pool']+'-attribute-snapshots');
-	var row = document.getElementById('tr-'+data['dataset']);
+	var row = document.getElementById('tr-'+data.dataset['name']);
+
+	tds = row.getElementsByTagName('td');
+
+	td_dataset = tds[2];
+	td_button = tds[3];
+	td_snaps = tds[8];
+
+	const creationDate = new Date(data.dataset['creation'] * 1000);
+
+	const properties = {
+		'Creation Date' : creationDate.toISOString(),
+		'Compression' : data.dataset['compression'],
+		'Compress Ratio' : data.dataset['compressratio']/100,
+		'Record Size' : fromBytesToString(data.dataset['recordsize']),
+		'Access Time' : data.dataset['atime'],
+		'XAttr' : data.dataset['xattr'],
+		'Primary Cache' : data.dataset['primarycache'],
+		'Encryption' : data.dataset['encryption'],
+		'Key Status' : data.dataset['keystatus'],
+		'Quota' : fromBytesToString(data.dataset['quota']),
+		'Read Only' : data.dataset['readonly'],
+		'Case Sensitive' : data.dataset['casesensitivity'],
+		'Sync' : data.dataset['sync'],
+		'Origin' : data.dataset['origin'] ?? '',
+		'Space used by Snaps' : fromBytesToString(data.dataset['usedbysnapshots'])
+	};
 
 	var icon_color = 'grey';
 	var snap_count = 0;
-	var snap = null;
 
-	if (data['snapshots'].length > 0) {
-		snap = getLastSnap(data['snapshots']);
-		snapdate = new Date(snap['creation'] * 1000);
+	if (data['snapshots'] !== undefined && data['snapshots'].length > 0) {
+		const snap = getLastSnap(data['snapshots']);
+		var snapdate = new Date(snap['creation'] * 1000);
 
 		if (daysToNow(snap['creation']) > snap_max_days_alert) {
 			icon_color = 'orange';
 		} else {
 			icon_color = '#486dba';
 		}
-		
+
+		properties['Last Snap Date'] = snapdate.toISOString();
+		properties['Last Snap'] = snap['name'];
+
 		snap_count = data['snapshots'].length;
 	}
 
-	tds = row.getElementsByTagName('td');
+	const depth = data.dataset['name'].split('/').length - 1;
 
-	td_properties = tds[2].getElementsByTagName("span")[0];
-	td_dataset = tds[2];
-	td_button = tds[3];
-	td_snaps = tds[8];
+	var tmp = '';
 
-	td_dataset.innerHTML = td_dataset.innerHTML.replace(/color:(\w+)/, 'color:'+icon_color);
-	td_button.innerHTML = td_button.innerHTML.replace(/addDatasetContext\(([^,]+),([^,]+),([^,]+)/, 'addDatasetContext($1,$2, '+snap_count);
-	td_snaps.innerHTML = td_snaps.innerHTML.replace(/color:(\w+)/, 'color:'+icon_color);
-	td_snaps.innerHTML = td_snaps.innerHTML.replace(/span>(\d+)</, 'span>'+snap_count+'<');
+	for (let i = 1; i <= depth; i++) {
+    	tmp += '&emsp;&emsp;';
+	}
 
-    if (td_properties.innerHTML.includes("Last Snap Date:")) {
-		if (snap != null) {
-			td_properties.innerHTML = td_properties.innerHTML.replace(/Last Snap Date: .*?<br>/, '<br>Last Snap Date: '+snapdate.toISOString()+'<br>');
-			td_properties.innerHTML = td_properties.innerHTML.replace(/Last Snap: .*?<br>/, '<br>Last Snap: '+snap['name']);
+	tmp += '<a class="info hand"><i class="fa fa-hdd-o icon" style="color:'+icon_color+'" onclick="toggleDataset(\''+data.dataset['name']+'\');"></i>';
+	tmp += '<span>'+implodeWithKeys('<br>', properties)+'</span></a>';
+
+
+	if (Object.keys(data.dataset['child']).length > 0) {
+		tmp += '<i class="fa fa-minus-square fa-append" name="'+data.dataset['name']+'"></i>';
+	}
+
+	if (data.dataset['origin'] !== undefined) {
+		tmp += '<i class="fa fa-clone fa-append"></i>';
+	}
+
+	if (data.dataset['keystatus'] != 'none') {
+		if (data.dataset['keystatus'] == 'available') {
+			tmp += '<i class="fa fa-unlock fa-append"></i>';
 		} else {
-			td_properties.innerHTML = td_properties.innerHTML.replace(/Last Snap Date: .*?<br>/, '');
-			td_properties.innerHTML = td_properties.innerHTML.replace(/Last Snap: .*?<br>/, '');
+			tmp += '<i class="fa fa-lock fa-append"></i>';
 		}
-    } else {
-		if (snap != null) {
-			td_properties.innerHTML = td_properties.innerHTML + '<br>Last Snap Date: '+snapdate.toISOString()+'<br>';
-			td_properties.innerHTML = td_properties.innerHTML + '<br>Last Snap: '+snap['name'];
-		}
-    }
+	}
+
+	tmp += data.dataset['name'].substring(data.dataset['name'].lastIndexOf("/") + 1);
+	tmp += '</td>';
+
+	td_dataset.innerHTML = tmp;
+
+	// Actions
+
+	tmp = '<td>';
+	var id = crc16(data.dataset['name']);
+
+	tmp += '<button type="button" id="'+id+'" onclick="addDatasetContext(\''+data.pool+'\', \''+data.dataset['name']+'\', '+snap_count+', \''+id+'\', '+destructive_mode+', \''+data.dataset['keystatus']+'\'';
+	
+	if (data.dataset['origin'] !== undefined) {
+		tmp += ',\''+data.dataset['origin']+'\'';
+	}
+
+	tmp += ');" class="zfs_compact">Actions</button></span>';
+	tmp += '</td>';
+
+	td_button.innerHTML = tmp;
+
+	// Snapshots
+
+	tmp = '<td>';
+	tmp += '<i class="fa fa-camera-retro icon" style="color:'+icon_color+'"></i><span>'+snap_count+'</span>';
+
+	td_snaps.innerHTML = tmp;
 }
