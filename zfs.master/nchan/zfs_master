@@ -68,7 +68,7 @@ function getDatasetsSnapshots($zpool, $zdatasets) {
     $message['data']['pool'] = $zpool;
 
     foreach ($zdatasets as $zdataset):
-        $message['data']['dataset'] = $zdataset['name'];
+        $message['data']['dataset'] = $zdataset;
         $message['data']['snapshots'] = getDatasetSnapshots($zpool, $zdataset['name']);
 
         publish('zfs_master', json_encode($message));
