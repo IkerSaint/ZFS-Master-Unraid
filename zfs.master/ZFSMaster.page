@@ -102,10 +102,9 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		
 		replaceElementClass('#zfsm-refresh', 'fa-spinner fa-spin', 'fa-refresh');
 		$("#zfsm-last-refresh").text('Last refresh at '+curDate.toLocaleTimeString('en-US'));
-		processHiddenDatasets();
 	}
-	
 
+	processHiddenDatasets();
   });
 
   $(function() {
