@@ -33,7 +33,7 @@ function getData(include_snapshots) {
 
         $zpool_devices[$zpool_name] = getZFSPoolDevices($zpool_name);
         if (include_snapshots):
-            $zpool_datasets[$zpool_name] = getZFSPoolDatasetsAndSnapshots($zpool_name, $zfsm_cfg['dataset_exclusion']);
+            $zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclusion']);
         else:
             $zpool_datasets[$zpool_name] = getZFSPoolDatasetsAndSnapshots($zpool_name, $zfsm_cfg['dataset_exclusion']);
         endif;
