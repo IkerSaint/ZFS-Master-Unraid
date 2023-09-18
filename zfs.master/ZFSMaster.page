@@ -14,7 +14,7 @@ require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
 
-$lastrefreshtext = '<span class="zfs_last_refresh"><a style="cursor:pointer" class="tooltip" title="Last refresh date"><i id="zfsm-last-refresh"></i></a></span>';
+$lastrefreshtext = '<span class="zfs_bar_text"><a style="cursor:pointer" class="tooltip" title="Last refresh date"><i id="zfsm-last-refresh"></i></a></span>';
 $refreshbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="requestRefresh()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a></span>';
 $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a></span>';
 
@@ -32,6 +32,12 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   .zfs_bar_button {
 	  padding-right: 8px;
 	  float: right;
+  }
+
+  .zfs_bar_text {
+	  padding-right: 8px;
+	  float: right;
+	  font-size: 1.0rem
   }
   
   .zfs_compact {
@@ -93,7 +99,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		replaceElementClass("#zfsm-refresh", "fa-refresh", "fa-spinner fa-spin");
 	} else if (msg.op == "stop_refresh") {
 		const curDate = new Date();
-
+		
 		replaceElementClass('#zfsm-refresh', 'fa-spinner fa-spin', 'fa-refresh');
 		$("#zfsm-last-refresh").text('Last refresh at '+curDate.toLocaleTimeString('en-US'));
 		processHiddenDatasets();
@@ -114,6 +120,14 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   function requestRefresh() {
 
   }
+
+  function addButtons() {
+	  var parent = getUnraidParentElement();
+	  
+	  parent.append('<?=$lastrefreshtext?>')
+	  parent.append('<?=$settingsbutton?>');
+	  parent.append('<?=$refreshbutton?>');
+  }
   
   function replaceElementClass(element, oldClass, newClass){
 	  $(element).removeClass(oldClass);
@@ -125,14 +139,6 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		return $(".title .left").filter(function(){return $(this).text() === 'ZFS Master';}).parent();
 	  }
 	  return $("div#title > span.left").filter(function(){return $(this).text() === 'ZFS Master';}).parent();
-  }
-  
-  function addButtons() {
-	  var parent = getUnraidParentElement();
-	  
-	  parent.append('<?=$lastrefreshtext?>')
-	  parent.append('<?=$settingsbutton?>');
-	  parent.append('<?=$refreshbutton?>');
   }
 
   function processHiddenDatasets() {
