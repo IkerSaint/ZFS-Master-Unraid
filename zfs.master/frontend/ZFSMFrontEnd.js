@@ -376,6 +376,8 @@ function updateSnapshotInfo(data, snap_max_days_alert) {
 		return;
 	}
 
+	var $row = $('#tr-'+data['dataset']+' > td:nth-child(9)');
+
 	var icon_color = 'grey';
 	var snap_count = 0;
 	const snap = getLastSnap(data['snapshots']);
@@ -387,6 +389,11 @@ function updateSnapshotInfo(data, snap_max_days_alert) {
 	} else {
 		icon_color = '#486dba';
 	}
+
+	$td_properties = $row.find("td:nth-child(3) > a > span");
+	$td_button = $row.find("td:nth-child(4) > button");
+	$td_camera = $row.find("td:nth-child(9) > i");
+	$td_snaps = $row.find("td:nth-child(9) > span");
 
 	//properties['Last Snap Date'] = snapdate.toISOString();
 	//properties['Last Snap'] = snap['name'];
