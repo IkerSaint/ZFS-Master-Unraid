@@ -372,31 +372,33 @@ function updateFullBodyTable(data, destructive_mode, snap_max_days_alert) {
 }
 
 function updateSnapshotInfo(data, snap_max_days_alert) {
-	if (data['snapshots'].length <= 0) {
-		return;
-	}
-
-	var $row = $('#tr-'+data['dataset']+' > td:nth-child(9)');
+	var row = document.getElementById('tr-'+data['dataset']);
 
 	var icon_color = 'grey';
 	var snap_count = 0;
 	const snap = getLastSnap(data['snapshots']);
 
-	snapdate = new Date(snap['creation'] * 1000);
+	if (data['snapshots'].length >= 0) {
+		snapdate = new Date(snap['creation'] * 1000);
 
-	if (daysToNow(snap['creation']) > snap_max_days_alert) {
-		icon_color = 'orange';
-	} else {
-		icon_color = '#486dba';
+		if (daysToNow(snap['creation']) > snap_max_days_alert) {
+			icon_color = 'orange';
+		} else {
+			icon_color = '#486dba';
+		}
+		
+		snap_count = data['snapshots'].length;
 	}
 
-	$td_properties = $row.find("td:nth-child(3) > a > span");
-	$td_button = $row.find("td:nth-child(4) > button");
-	$td_camera = $row.find("td:nth-child(9) > i");
-	$td_snaps = $row.find("td:nth-child(9) > span");
+	tds = row.getElementsByTagName('td');
+
+	td_properties = tds[2].getElementsByTagName("span")[0];
+	td_button = tds[3].getElementsByTagName("button")[0];
+	td_snaps = tds[8];
+
+	td_button.innerHTML = td_button.innerHTML.replace(/addDatasetContext\(([^,]+),([^,]+),\s*([^,]+)/, 'addDatasetContext($1,$2,'+snap_count);
+	td_snaps.innerHTML = '<i class="fa fa-camera-retro icon" style="color:'+icon_color+'"></i><span>'+snap_count+'</span>';
 
 	//properties['Last Snap Date'] = snapdate.toISOString();
 	//properties['Last Snap'] = snap['name'];
-
-	snap_count = data['snapshots'].length;	
 }
