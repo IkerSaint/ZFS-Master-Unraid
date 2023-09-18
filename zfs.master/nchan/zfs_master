@@ -23,7 +23,7 @@ require_once $docroot."/plugins/".$plugin."/backend/ZFSMOperations.php";
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
 
-function getData(include_snapshots) {
+function getData($include_snapshots) {
     $zpool_global = getZFSPools();
     $zpool_devices = array();
     $zpool_datasets = array();
@@ -32,7 +32,7 @@ function getData(include_snapshots) {
         $zpool_name = $zpool['Pool'];
 
         $zpool_devices[$zpool_name] = getZFSPoolDevices($zpool_name);
-        if (include_snapshots):
+        if ($include_snapshots):
             $zpool_datasets[$zpool_name] = getZFSPoolDatasetsAndSnapshots($zpool_name, $zfsm_cfg['dataset_exclusion']);
         else:
             $zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclusion']);
@@ -43,7 +43,7 @@ function getData(include_snapshots) {
 
     $message = array();
     $message['data'] = array();
-    $message['op'] = include_snapshots ? "getAll" : "getDatasets";
+    $message['op'] = $include_snapshots ? "getAll" : "getDatasets";
     $message['data']['pools'] = $zpool_global;
     $message['data']['devices'] = $zpool_devices;
     $message['data']['datasets'] = $zpool_datasets;
