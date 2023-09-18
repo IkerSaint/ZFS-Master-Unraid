@@ -406,16 +406,16 @@ function updateSnapshotInfo(data, snap_max_days_alert) {
 
     if (td_properties.innerHTML.includes("Last Snap Date:")) {
 		if (snap != null) {
-			td_properties.innerHTML = td_properties.innerHTML.replace(/Last Snap Date: .*?<br>/, 'Last Snap Date: '+snapdate.toISOString()+'<br>');
-			td_properties.innerHTML = td_properties.innerHTML.replace(/Last Snap: .*?<br>/, 'Last Snap: '+snap['name']+'<br>');
+			td_properties.innerHTML = td_properties.innerHTML.replace(/Last Snap Date: .*?<br>/, '<br>Last Snap Date: '+snapdate.toISOString()+'<br>');
+			td_properties.innerHTML = td_properties.innerHTML.replace(/Last Snap: .*?<br>/, '<br>Last Snap: '+snap['name']);
 		} else {
 			td_properties.innerHTML = td_properties.innerHTML.replace(/Last Snap Date: .*?<br>/, '');
 			td_properties.innerHTML = td_properties.innerHTML.replace(/Last Snap: .*?<br>/, '');
 		}
     } else {
 		if (snap != null) {
-			td_properties.innerHTML = td_properties.innerHTML + 'Last Snap Date: '+snapdate.toISOString()+'<br>';
-			td_properties.innerHTML = td_properties.innerHTML + 'Last Snap: '+snap['name']+'<br>';
+			td_properties.innerHTML = td_properties.innerHTML + '<br>Last Snap Date: '+snapdate.toISOString()+'<br>';
+			td_properties.innerHTML = td_properties.innerHTML + '<br>Last Snap: '+snap['name'];
 		}
     }
 }
