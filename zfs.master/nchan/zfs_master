@@ -23,7 +23,7 @@ require_once $docroot."/plugins/".$plugin."/backend/ZFSMOperations.php";
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
 
-function getAllData() {
+function getData(include_snapshots) {
     $zpool_global = getZFSPools();
     $zpool_devices = array();
     $zpool_datasets = array();
@@ -32,45 +32,35 @@ function getAllData() {
         $zpool_name = $zpool['Pool'];
 
         $zpool_devices[$zpool_name] = getZFSPoolDevices($zpool_name);
-        $zpool_datasets[$zpool_name] = getZFSPoolDatasetsAndSnapshots($zpool_name, $zfsm_cfg['dataset_exclusion']);
+        if (include_snapshots):
+            $zpool_datasets[$zpool_name] = getZFSPoolDatasetsAndSnapshots($zpool_name, $zfsm_cfg['dataset_exclusion']);
+        else:
+            $zpool_datasets[$zpool_name] = getZFSPoolDatasetsAndSnapshots($zpool_name, $zfsm_cfg['dataset_exclusion']);
+        endif;
         $zpool_global[$zpool_name]['Snapshots'] = $zpool_datasets[$zpool_name]['total_snapshots'];
         $zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
     endforeach;
 
     $message = array();
     $message['data'] = array();
-    $message['op'] = "getAll";
+    $message['op'] = include_snapshots ? "getAll" : "getDatasets";
     $message['data']['pools'] = $zpool_global;
     $message['data']['devices'] = $zpool_devices;
     $message['data']['datasets'] = $zpool_datasets;
 
     publish('zfs_master', json_encode($message));
+
+    return $message
+}
+
+function getAllData() {
+    getData(true);
 }
 
 function getLazyLoadData() {
-    $zpool_global = getZFSPools();
-    $zpool_devices = array();
-    $zpool_datasets = array();
+    $message = getData(false);
 
-    foreach ($zpool_global as $zpool):
-        $zpool_name = $zpool['Pool'];
-
-        $zpool_devices[$zpool_name] = getZFSPoolDevices($zpool_name);
-        $zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $zfsm_cfg['dataset_exclusion']);
-        $zpool_global[$zpool_name]['Snapshots'] = $zpool_datasets[$zpool_name]['total_snapshots'];
-        $zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
-    endforeach;
-
-    $message = array();
-    $message['data'] = array();
-    $message['op'] = "getDatasets";
-    $message['data']['pools'] = $zpool_global;
-    $message['data']['devices'] = $zpool_devices;
-    $message['data']['datasets'] = $zpool_datasets;
-
-    publish('zfs_master', json_encode($message));
-
-    foreach ($zpool_datasets as $zpool):
+    foreach ($message['data']['datasets'] as $zpool):
         $message = array();
         $message['data'] = array();
         $message['op'] = "getSnapshot";
@@ -91,7 +81,7 @@ while (true) {
             publish('zfs_master', '{"op":"start_refresh"}');
 
             getAllData();
-            
+
             unlink('/tmp/zfsm_reload');
             publish('zfs_master', '{"op":"stop_refresh"}');
         else:
