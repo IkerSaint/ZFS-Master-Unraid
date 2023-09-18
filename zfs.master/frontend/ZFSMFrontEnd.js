@@ -172,7 +172,7 @@ function getPoolShowStatus(zpool) {
 }
 
 function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert) {
-	var tr = '<tr class="zdataset-'+zpool+' '+parent+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
+	var tr = '<tr id="tr-'+zdataset['name']+'" class="zdataset-'+zpool+' '+parent+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
 	tr += '<td></td><td></td><td>';
 
 	const creationDate = new Date(zdataset['creation'] * 1000);
@@ -285,7 +285,7 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	// Snapshots
 
 	tr += '<td>';
-	tr += '<i class="fa fa-camera-retro icon" style="color:'+icon_color+'"></i> '+snap_count;
+	tr += '<i class="fa fa-camera-retro icon" style="color:'+icon_color+'"></i><span>'+snap_count+'</span>';
 
 	// Mountpoint
 
@@ -323,33 +323,33 @@ function generatePoolTableRows(zpool, devices, show_status) {
 	const status_msg = getPoolStatusMsg(zpool['Health']);
 
 	// Name and devices
-	var tr = '<td id="zpool-attribute-pool"><a class="info hand"><i id="zpool-'+zpool['Pool']+'" class="fa fa-circle orb '+status_color+'-orb"></i><span>'+nl2br(devices)+'</span></a> '+zpool['Pool']+'</td>';
+	var tr = '<td id="'+zpool['Pool']+'-attribute-pool"><a class="info hand"><i id="zpool-'+zpool['Pool']+'" class="fa fa-circle orb '+status_color+'-orb"></i><span>'+nl2br(devices)+'</span></a> '+zpool['Pool']+'</td>';
 
 	// Health
-	tr += '<td id="zpool-attribute-health"><a class="info hand"><i class="fa fa-heartbeat" style="color:'+status_color+'"></i><span>'+status_msg+'</span></a> '+zpool['Health']+'</td>';
+	tr += '<td id="'+zpool['Pool']+'-attribute-health"><a class="info hand"><i class="fa fa-heartbeat" style="color:'+status_color+'"></i><span>'+status_msg+'</span></a> '+zpool['Health']+'</td>';
 
 	// Buttons
-	tr += '<td id="zpool-attribute-name"><button type="button" id="show-zpool-'+zpool['Pool']+'" onclick="togglePoolTable(\'show-zpool-'+zpool['Pool']+'\', \'zdataset-'+zpool['Pool']+'\');">'+show_button_text+'</button>'; 
+	tr += '<td id="'+zpool['Pool']+'-attribute-name"><button type="button" id="show-zpool-'+zpool['Pool']+'" onclick="togglePoolTable(\'show-zpool-'+zpool['Pool']+'\', \'zdataset-'+zpool['Pool']+'\');">'+show_button_text+'</button>'; 
 	tr += '<button type="button" onclick="createDataset(\''+zpool['Pool']+'\')";">Create Dataset</button></td>';
 
 	// Size
-	tr += '<td id="zpool-attribute-size">'+zpool['Size']+'</td>'; 
+	tr += '<td id="'+zpool['Pool']+'-attribute-size">'+zpool['Size']+'</td>'; 
 
 	// Mountpoint
-	tr += '<td id="zpool-attribute-mountpoint">'+zpool['MountPoint']+'</td>'; 
+	tr += '<td id="'+zpool['Pool']+'-attribute-mountpoint">'+zpool['MountPoint']+'</td>'; 
 
 	// Refer
-	tr += '<td id="zpool-attribute-refer">'+zpool['Refer']+'</td>'; 
+	tr += '<td id="'+zpool['Pool']+'-attribute-refer">'+zpool['Refer']+'</td>'; 
 
 	// Used
 	var percent = 100-Math.round(calculateFreePercent(zpool['Used'], zpool['Free']));
-	tr += '<td id="zpool-attribute-used"><div class="usage-disk"><span style="position:absolute; width:'+percent+'%" class=""><span>'+zpool['Used']+'B</span></div></td>';
+	tr += '<td id="'+zpool['Pool']+'-attribute-used"><div class="usage-disk"><span style="position:absolute; width:'+percent+'%" class=""><span>'+zpool['Used']+'B</span></div></td>';
 
 	// Free
-	tr += '<td id="zpool-attribute-free"><div class="usage-disk"><span style="position:absolute; width:'+(100-percent)+'%" class=""><span>'+zpool['Free']+'B</span></div></td>';
+	tr += '<td id="'+zpool['Pool']+'-attribute-free"><div class="usage-disk"><span style="position:absolute; width:'+(100-percent)+'%" class=""><span>'+zpool['Free']+'B</span></div></td>';
 
 	// Snapshots
-	tr += '<td id="zpool-attribute-snapshots"><i class="fa fa-camera-retro icon"></i>'+(zpool['Snapshots'] == null ? 0 : zpool['Snapshots'])+'</td>';
+	tr += '<td id="'+zpool['Pool']+'-attribute-snapshots"><i class="fa fa-camera-retro icon"></i><snap>'+(zpool['Snapshots'] == null ? 0 : zpool['Snapshots'])+'</snap></td>';
 
 	return tr; 
 }
@@ -372,5 +372,24 @@ function updateFullBodyTable(data, destructive_mode, snap_max_days_alert) {
 }
 
 function updateSnapshotInfo(data, snap_max_days_alert) {
-	
+	if (data['snapshots'].length <= 0) {
+		return;
+	}
+
+	var icon_color = 'grey';
+	var snap_count = 0;
+	const snap = getLastSnap(data['snapshots']);
+
+	snapdate = new Date(snap['creation'] * 1000);
+
+	if (daysToNow(snap['creation']) > snap_max_days_alert) {
+		icon_color = 'orange';
+	} else {
+		icon_color = '#486dba';
+	}
+
+	//properties['Last Snap Date'] = snapdate.toISOString();
+	//properties['Last Snap'] = snap['name'];
+
+	snap_count = data['snapshots'].length;	
 }
