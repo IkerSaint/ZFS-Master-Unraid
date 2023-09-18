@@ -54,10 +54,16 @@ function getData($include_snapshots) {
 }
 
 function getAllData() {
+    publish('zfs_master', '{"op":"start_refresh"}');
+
     getData(true);
+
+    publish('zfs_master', '{"op":"stop_refresh"}');
 }
 
 function getLazyLoadData() {
+    publish('zfs_master', '{"op":"start_refresh"}');
+
     $message = getData(false);
 
     foreach ($message['data']['datasets'] as $zpool):
@@ -73,33 +79,34 @@ function getLazyLoadData() {
             publish('zfs_master', json_encode($message));
         endforeach;
     endforeach;
+
+    publish('zfs_master', '{"op":"stop_refresh"}');
 }
+
+$sleep_time = 0.0;
 
 while (true) {
     if ($zfsm_cfg['refresh_interval'] == 0):
         if (file_exists('/tmp/zfsm_reload') == true):
-            publish('zfs_master', '{"op":"start_refresh"}');
-
-            getAllData();
+            if ($zfsm_cfg['lazy_load'] == false):
+                getAllData();
+            else:
+                getLazyLoadData();
+            endif;
 
             unlink('/tmp/zfsm_reload');
-            publish('zfs_master', '{"op":"stop_refresh"}');
-        else:
-            usleep(25000); 
         endif;
-
-    elseif ($zfsm_cfg['refresh_interval'] > 0):
-        publish('zfs_master', '{"op":"start_refresh"}');
-        
+    elseif ($zfsm_cfg['refresh_interval'] < sleep_time):       
         if ($zfsm_cfg['lazy_load'] == false):
             getAllData();
         else:
             getLazyLoadData();
         endif;
 
-        publish('zfs_master', '{"op":"stop_refresh"}');
-
-        sleep($zfsm_cfg['refresh_interval']);
+        sleep_time = 0.0;
     endif;
+
+    usleep(50000); 
+    sleep_time += 0.05;
 }
 ?>
