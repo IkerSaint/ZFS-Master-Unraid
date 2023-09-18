@@ -372,13 +372,14 @@ function updateFullBodyTable(data, destructive_mode, snap_max_days_alert) {
 }
 
 function updateSnapshotInfo(data, snap_max_days_alert) {
+	var pool_row = document.getElementById(data['poool']+'-attribute-snapshots');
 	var row = document.getElementById('tr-'+data['dataset']);
 
 	var icon_color = 'grey';
 	var snap_count = 0;
 	const snap = getLastSnap(data['snapshots']);
 
-	if (data['snapshots'].length >= 0) {
+	if (data['snapshots'].length > 0) {
 		snapdate = new Date(snap['creation'] * 1000);
 
 		if (daysToNow(snap['creation']) > snap_max_days_alert) {
@@ -390,14 +391,21 @@ function updateSnapshotInfo(data, snap_max_days_alert) {
 		snap_count = data['snapshots'].length;
 	}
 
+	
+
 	tds = row.getElementsByTagName('td');
 
 	td_properties = tds[2].getElementsByTagName("span")[0];
-	td_button = tds[3].getElementsByTagName("button")[0];
+	td_dataset = tds[2];
+	td_button = tds[3];
 	td_snaps = tds[8];
+	total_snaps = pool_row.getElementsByTagName("span")[0];
 
-	td_button.innerHTML = td_button.innerHTML.replace(/addDatasetContext\(([^,]+),([^,]+),\s*([^,]+)/, 'addDatasetContext($1,$2,'+snap_count);
-	td_snaps.innerHTML = '<i class="fa fa-camera-retro icon" style="color:'+icon_color+'"></i><span>'+snap_count+'</span>';
+	td_dataset.innerHTML = td_dataset.innerHTML.replace(/color:(\w+)/, 'color:'+icon_color);
+	td_button.innerHTML = td_button.innerHTML.replace(/addDatasetContext\(([^,]+),([^,]+),([^,]+)/, 'addDatasetContext($1,$2, '+snap_count);
+	td_snaps.innerHTML = td_snaps.innerHTML.replace(/color:(\w+)/, 'color:'+icon_color);
+	td_snaps.innerHTML = td_snaps.innerHTML.replace(/span>(\d+)</, 'span>'+snap_count+'<');
+	total_snaps.textContent = parseInt(total_snaps.textContent)+snap_count;
 
 	//properties['Last Snap Date'] = snapdate.toISOString();
 	//properties['Last Snap'] = snap['name'];
