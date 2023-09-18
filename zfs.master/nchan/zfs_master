@@ -61,23 +61,29 @@ function getAllData() {
     publish('zfs_master', '{"op":"stop_refresh"}');
 }
 
+function getDatasetsSnapshots($zpool, $zdatasets) {
+    $message = array();
+    $message['data'] = array();
+    $message['op'] = "getSnapshot";
+    $message['data']['pool'] = $zpool;
+
+    foreach ($zdatasets as $zdataset):
+        $message['data']['dataset'] = $zdataset['name'];
+        $message['data']['snapshots'] = getDatasetSnapshots($zpool, $zdataset['name']);
+
+        publish('zfs_master', json_encode($message));
+
+        getDatasetsSnapshots($zpool, $zdataset['child']);
+    endforeach;
+}
+
 function getLazyLoadData() {
     publish('zfs_master', '{"op":"start_refresh"}');
 
     $message = getData(false);
 
     foreach ($message['data']['datasets'] as $zpool):
-        $message = array();
-        $message['data'] = array();
-        $message['op'] = "getSnapshot";
-        $message['data']['pool'] = $zpool['name'];
-
-        foreach ($zpool['child'] as $zdataset):
-            $message['data']['dataset'] = $zdataset['name'];
-            $message['data']['snapshots'] = getDatasetSnapshots($zpool['name'], $zdataset['name']);
-
-            publish('zfs_master', json_encode($message));
-        endforeach;
+        getDatasetsSnapshots($zpool['name'], $zpool['child']);
     endforeach;
 
     publish('zfs_master', '{"op":"stop_refresh"}');
@@ -96,17 +102,18 @@ while (true) {
 
             unlink('/tmp/zfsm_reload');
         endif;
-    elseif ($zfsm_cfg['refresh_interval'] < sleep_time):       
+    elseif ($zfsm_cfg['refresh_interval'] < $sleep_time || file_exists('/tmp/zfsm_reload') == true):
         if ($zfsm_cfg['lazy_load'] == false):
             getAllData();
         else:
             getLazyLoadData();
         endif;
 
-        sleep_time = 0.0;
+        $sleep_time = 0.0;
+        unlink('/tmp/zfsm_reload');
     endif;
 
     usleep(50000); 
-    sleep_time += 0.05;
+    $sleep_time += 0.05;
 }
 ?>
