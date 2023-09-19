@@ -214,7 +214,7 @@ switch ($_POST['cmd']) {
 		endif;
 		break;
 	case 'snapshotdataset':
-		$snapshot = '@'.$zfsm_cfg['snap_prefix'].date($zfsm_cfg['snap_pattern']);
+		$snapshot = $zfsm_cfg['snap_prefix'].date($zfsm_cfg['snap_pattern']);
 
 		$ret = createDatasetSnapshot( $_POST['zdataset'], $snapshot, $_POST['recursive']);
 

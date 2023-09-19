@@ -402,7 +402,7 @@ function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
 	var icon_color = 'grey';
 	var snap_count = 0;
 
-	if (data['snapshots'] !== undefined && data['snapshots'].length > 0) {
+	if (data['snapshots'] !== undefined && data['snapshots'] != null && data['snapshots'].length > 0) {
 		const snap = getLastSnap(data['snapshots']);
 		var snapdate = new Date(snap['creation'] * 1000);
 
