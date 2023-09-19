@@ -13,6 +13,9 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 switch ($_POST['cmd']) {
+	case 'refreshdata':
+		file_put_contents("/tmp/zfsm_reload", "");
+		break;
 	case 'createdataset':
 		$zfs_cparams = cleanZFSCreateDatasetParams($_POST['data']);
 
