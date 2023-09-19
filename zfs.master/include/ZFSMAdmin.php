@@ -211,7 +211,24 @@ switch ($_POST['cmd']) {
 		endif;
 		break;
 	case 'snapshotdataset':
-		$recursively = ($_POST['recursively'] == '1') ? '-r ' : '';
+		$format = '@'.$zfsm_cfg['snap_prefix'].date($zfsm_cfg['snap_pattern']);
+
+		$ret = createDatasetSnapshot( $_POST['zdataset'], $format, $_POST['recursive']);
+
+		if (count($ret['succeeded']) > 0):
+			foreach ($ret['succeeded'] as $zdataset => $err): 
+				zfsnotify( "ZFS Snapshot", "Snapshot created successfully for: ".$zdataset.$format, $err,"normal");
+			endforeach;
+		endif;
+
+		if (count($ret['failed']) > 0):
+			foreach ($ret['failed'] as $zdataset => $err): 
+				zfsnotify( "ZFS Snapshot", "Unable to create snapshot for: ".$zdataset.$format, $err,"normal");
+			endforeach;
+		endif;
+		
+
+		/*$recursively = ($_POST['recursively'] == '1') ? '-r ' : '';
 		$format = '@'.$zfsm_cfg['snap_prefix'].date($zfsm_cfg['snap_pattern']);
 		$cmd_line = 'zfs snapshot '.$recursively.escapeshellarg($_POST['data'].$format).$boutput_str;
 	
@@ -223,7 +240,7 @@ switch ($_POST['cmd']) {
 		else:
 			zfsnotify( "ZFS Snapshot", "Unable to create snapshot ".$_POST['data'].$format.", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
-		endif;
+		endif;*/
 		break;
 	default:
 		echo 'unknown command';
