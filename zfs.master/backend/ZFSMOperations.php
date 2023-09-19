@@ -168,7 +168,7 @@ function destroyDataset($zpool, $zdataset, $zforce) {
 function createDatasetSnapshot($zdataset, $znapshot, $zrecursive) {
 	$zpool = explode("/", $zdataset)[0];
 
-	$array_ret = executeZFSProgram($GLOBALS["script_dataset_create_snapshot"], $zpool, array($zdataset, $znapshot, $zrecursive));
+	$array_ret = executeSyncZFSProgram($GLOBALS["script_dataset_create_snapshot"], $zpool, array($zdataset, $znapshot, $zrecursive));
 	
 	return $array_ret;
 }
