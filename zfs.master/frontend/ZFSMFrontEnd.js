@@ -371,7 +371,6 @@ function updateFullBodyTable(data, destructive_mode, snap_max_days_alert) {
 }
 
 function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
-	var td_pool_snaps = document.getElementById(data['pool']+'-attribute-snapshots');
 	var row = document.getElementById('tr-'+data.dataset['name']);
 
 	tds = row.getElementsByTagName('td');
@@ -474,7 +473,4 @@ function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
 	tmp += '<i class="fa fa-camera-retro icon" style="color:'+icon_color+'"></i><span>'+snap_count+'</span>';
 
 	td_snaps.innerHTML = tmp;
-
-	span_snaps = td_pool_snaps.getElementsByTagName("span")[0];
-	span_snaps = parseInt(span_snaps.innerHTML) += snap_count;
 }
