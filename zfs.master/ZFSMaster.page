@@ -103,7 +103,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
 	} else if (msg.op == "start_refresh") {
 		replaceElementClass("#zfsm-refresh", "fa-refresh", "fa-spinner fa-spin");
-		
+
 	} else if (msg.op == "stop_refresh") {
 		const curDate = new Date();
 		
@@ -355,7 +355,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  showCancelButton: true
 	  }).then((result) => {
 		  if (result.isConfirmed) {
-			  $.post('<?=$urlzmadmin?>',{cmd: 'snapshotdataset', data: zdataset, recursively: result.value}, function(data) {
+			  $.post('<?=$urlzmadmin?>',{cmd: 'snapshotdataset', zdataset: zdataset, recursive: result.value}, function(data) {
 				  if (data == 'Ok') {
 					Swal2.fire({
 						title: 'Success!',

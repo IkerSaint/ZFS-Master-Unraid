@@ -165,7 +165,9 @@ function destroyDataset($zpool, $zdataset, $zforce) {
 
 #region snapshots
 
-function createDatasetSnapshot($zpool, $zdataset, $znapshot, $zrecursive) {
+function createDatasetSnapshot($zdataset, $znapshot, $zrecursive) {
+	$zpool = explode("/", $zdataset)[0];
+
 	$array_ret = executeZFSProgram($GLOBALS["script_dataset_create_snapshot"], $zpool, array($zdataset, $znapshot, $zrecursive));
 	
 	return $array_ret;
@@ -238,7 +240,9 @@ function cloneDatasetSnapshot($znapshot, $zclone) {
 	return false;
 }
 
-function deleteDatasetSnapshot($zpool, $zdataset, $znapshot, $destroy_all) {
+function deleteDatasetSnapshot($zdataset, $znapshot, $destroy_all) {
+	$zpool = explode("/", $zdataset)[0];
+
 	$array_ret = executeZFSProgram($GLOBALS["script_dataset_destroy_snapshot"], $zpool, array($zdataset, $zsnapshot, $destroy_all));
 
 	return $array_ret;
