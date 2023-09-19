@@ -14,7 +14,7 @@ require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
 
-$lastrefreshtext = '<span class="zfs_bar_text"><a style="cursor:pointer" class="tooltip" title="Information refresh time"><i id="zfsm-last-refresh"></i></a></span>';
+$lastrefreshtext = '<span class="zfs_bar_text"><a class="tooltip" title="Information refresh time"><i id="zfsm-last-refresh"></i></a></span>';
 $refreshbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="requestRefresh()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a></span>';
 $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a></span>';
 
@@ -124,7 +124,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   })
 
   function requestRefresh() {
-
+	  $.post('<?=$urlzmadmin?>', {cmd: 'refreshdata'} );
   }
 
   function addButtons() {
