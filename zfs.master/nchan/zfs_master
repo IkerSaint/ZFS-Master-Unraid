@@ -113,7 +113,7 @@ while (true) {
         unlink('/tmp/zfsm_reload');
     endif;
 
-    usleep(50000); 
-    $sleep_time += 0.05;
+    usleep(250000); 
+    $sleep_time += 0.25;
 }
 ?>

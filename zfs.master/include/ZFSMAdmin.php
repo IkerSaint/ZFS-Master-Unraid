@@ -214,9 +214,9 @@ switch ($_POST['cmd']) {
 		endif;
 		break;
 	case 'snapshotdataset':
-		$format = '@'.$zfsm_cfg['snap_prefix'].date($zfsm_cfg['snap_pattern']);
+		$snapshot = '@'.$zfsm_cfg['snap_prefix'].date($zfsm_cfg['snap_pattern']);
 
-		$ret = createDatasetSnapshot( $_POST['zdataset'], $format, $_POST['recursive']);
+		$ret = createDatasetSnapshot( $_POST['zdataset'], $snapshot, $_POST['recursive']);
 
 		if (count($ret['succeeded']) > 0):
 			foreach ($ret['succeeded'] as $zdataset => $err): 
@@ -230,6 +230,7 @@ switch ($_POST['cmd']) {
 			endforeach;
 		endif;
 		
+		echo 'Ok';
 
 		/*$recursively = ($_POST['recursively'] == '1') ? '-r ' : '';
 		$format = '@'.$zfsm_cfg['snap_prefix'].date($zfsm_cfg['snap_pattern']);
