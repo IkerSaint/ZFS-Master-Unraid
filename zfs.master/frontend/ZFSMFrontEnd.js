@@ -348,7 +348,7 @@ function generatePoolTableRows(zpool, devices, show_status) {
 	tr += '<td id="'+zpool['Pool']+'-attribute-free"><div class="usage-disk"><span style="position:absolute; width:'+(100-percent)+'%" class=""><span>'+zpool['Free']+'B</span></div></td>';
 
 	// Snapshots
-	tr += '<td id="'+zpool['Pool']+'-attribute-snapshots"><i class="fa fa-camera-retro icon"></i><snap>'+(zpool['Snapshots'] == null ? 0 : zpool['Snapshots'])+'</snap></td>';
+	tr += '<td id="'+zpool['Pool']+'-attribute-snapshots"><i class="fa fa-camera-retro icon"></i><span>'+(zpool['Snapshots'] == null ? 0 : zpool['Snapshots'])+'</span></td>';
 
 	return tr; 
 }
@@ -370,7 +370,7 @@ function updateFullBodyTable(data, destructive_mode, snap_max_days_alert) {
 	zfs_table_body.innerHTML = html_pools;
 }
 
-function updateSnapshotInfo(data, snap_max_days_alert) {
+function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
 	var td_pool_snaps = document.getElementById(data['pool']+'-attribute-snapshots');
 	var row = document.getElementById('tr-'+data.dataset['name']);
 
@@ -474,4 +474,7 @@ function updateSnapshotInfo(data, snap_max_days_alert) {
 	tmp += '<i class="fa fa-camera-retro icon" style="color:'+icon_color+'"></i><span>'+snap_count+'</span>';
 
 	td_snaps.innerHTML = tmp;
+
+	span_snaps = td_pool_snaps.getElementsByTagName("span")[0];
+	span_snaps = parseInt(span_snaps.innerHTML) += snap_count;
 }

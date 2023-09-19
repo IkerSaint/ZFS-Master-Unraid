@@ -92,9 +92,12 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
     if (msg.op == "getAll") {
 		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
     } else if (msg.op == "getDatasets") {
+		var td_pool_snaps = document.getElementById(data['pool']+'-attribute-snapshots');
+		td_pool_snaps.getElementsByTagName("span")[0].innerHTML = '0';
+		
 		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
 	} else if (msg.op == "getSnapshot") {
-		updateSnapshotInfo(msg.data, <?=$zfsm_cfg['snap_max_days_alert']?>);
+		updateSnapshotInfo(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
 	} else if (msg.op == "start_refresh") {
 		replaceElementClass("#zfsm-refresh", "fa-refresh", "fa-spinner fa-spin");
 	} else if (msg.op == "stop_refresh") {
