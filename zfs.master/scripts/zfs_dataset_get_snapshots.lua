@@ -5,6 +5,7 @@ function list_snapshots(dataset)
     
     for snap in zfs.list.snapshots(dataset) do
         local snapshot = {}
+        snapshot['name'] = snap
 
         for idx, property in ipairs(snap_properties) do
             snapshot[property] = zfs.get_prop(snap, property)
