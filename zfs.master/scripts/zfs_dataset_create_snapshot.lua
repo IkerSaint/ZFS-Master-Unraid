@@ -27,10 +27,10 @@ end
 args = ...
 argv = args["argv"]
 
-local dataset_name = string.match(argv[1], "@(.*)")
-local snap_name = string.match(argv[1], "(.*)@")
+local dataset_name = argv[1]
+local snap_name = argv[2]
 
-snapshot(dataset_name, snap_name, argv[2])
+snapshot(dataset_name, snap_name, argv[3])
 
 results = {}
 results["succeeded"] = succeeded
