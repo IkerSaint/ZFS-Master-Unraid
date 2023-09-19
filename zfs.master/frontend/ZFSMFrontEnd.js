@@ -471,6 +471,7 @@ function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
 
 	tmp = '<td>';
 	tmp += '<i class="fa fa-camera-retro icon" style="color:'+icon_color+'"></i><span>'+snap_count+'</span>';
+	
 	if (data.dataset['mountpoint'] != "none") {
 		tmp += ' <a href="/Main/Browse?dir='+data.dataset['mountpoint']+'"><i class="icon-u-tab zfs_bar_button" title="Browse '+data.dataset['mountpoint']+'"></i></a>';
 	}
