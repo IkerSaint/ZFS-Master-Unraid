@@ -519,7 +519,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 				  Swal2.fire({
 						title: 'Operation Result!',
 						icon: 'information',
-						text: 'result:'+ formatAnswer(data)
+						html: 'result: <br>'+ formatAnswer(data)
 				  });
 			  });
 		  }

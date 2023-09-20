@@ -219,11 +219,11 @@ switch ($_POST['cmd']) {
 		$ret = createDatasetSnapshot( $_POST['zdataset'], $snapshot, $_POST['recursive']);
 
 		if (count($ret['succeeded']) > 0):
-			zfsnotify( "ZFS Snapshot", "Snapshot created successfully for: ".implodeWithKeys("<br>", $ret['succeeded']), $err,"normal");
+			zfsnotify( "ZFS Snapshot", "Snapshot created successfully for:<br>".implodeWithKeys("<br>", $ret['succeeded']), $err,"normal");
 		endif;
 
 		if (count($ret['failed']) > 0):
-			zfsnotify( "ZFS Snapshot", "Unable to create snapshot for: ".implodeWithKeys("<br>", $ret['failed']), $err,"normal");
+			zfsnotify( "ZFS Snapshot", "Unable to create snapshot for:<br>".implodeWithKeys("<br>", $ret['failed']), $err,"normal");
 		endif;
 
 		return $ret
