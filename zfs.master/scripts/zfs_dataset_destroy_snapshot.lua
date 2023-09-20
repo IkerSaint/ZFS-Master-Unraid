@@ -12,7 +12,7 @@ function destroy_all(dataset)
     end
 end
 
-function destroy_one(dataset, snap)
+function destroy_one(snap)
     err = zfs.sync.destroy(snap)
     if (err ~= 0) then
         failed[snap] = err
@@ -24,10 +24,10 @@ end
 args = ...
 argv = args["argv"]
 
-if (argv[3] == "true")
+if (argv[2] == "1")
     destroy_all(argv[1])
 else
-    destroy_one(argv[2])
+    destroy_one(argv[1])
 end
 
 results = {}

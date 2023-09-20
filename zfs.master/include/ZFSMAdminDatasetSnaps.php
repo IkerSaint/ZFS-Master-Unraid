@@ -3,9 +3,10 @@ $plugin = "zfs.master";
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 $urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
 
-require_once "$docroot/webGui/include/Helpers.php";
-require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
-require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
+require_once $docroot."/webGui/include/Helpers.php";
+require_once $docroot."/plugins/".$plugin/."include/ZFSMBase.php";
+require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
+require_once $docroot."/plugins/".$plugin."/backend/ZFSMOperations.php";
 
 $csrf_token = $_GET['csrf_token'];
 
@@ -202,17 +203,13 @@ window.onload = function() {
 		return this.id;
 	}).get();
 
-	var i = 0;
-
-	$.ajaxSetup({async: false});
+	//$.ajaxSetup({async: false});
 	for (const snapshot of checkedVals) {
-		i += 1;
-		$.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
-			updateStatusOnDeletion(data, snapshot, i, checkedVals.length);
+		$.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'zdataset': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
+			updateStatusOnDeletion(JSON.parse(data), snapshot);
 		});
 	}
-	$.ajaxSetup({async: true});
-	window.location.reload();
+	//$.ajaxSetup({async: true});
   });
 
   var checkBoxes = $('.snapl-check');
@@ -222,11 +219,11 @@ window.onload = function() {
 
   $('.snapl-check').change();
 
-  function updateStatusOnDeletion(data, snapshot, index, total) {
-	if (data == 'Ok') {
-		updateStatus('Destroy of Snapshot '+snapshot+' Successful;' + ' '+index+' of '+total+' completed');
+  function updateStatusOnDeletion(data, snapshot) {
+	if (data['failed'].lenght > 0) {
+		updateStatus('Destroy of Snapshot '+snapshot+' Failed - '+formatAnswer(data['failed']));
 	} else {
-		updateStatus('Destroy of Snapshot '+snapshot+' Failed; <br>Output: '+data + '; '+index+' of '+total+' completed');
+		updateStatus('Destroy of Snapshot '+snapshot+' Successful);
 	}
   }
 
@@ -320,6 +317,22 @@ window.onload = function() {
 
   function updateStatus(text) {
 	$("#zfs_status").text(text);
+	window.location.reload();
+  }
+
+  function formatAnswer(answer, indentLevel = 0) {
+    const indent = '&emsp;&emsp;'.repeat(indentLevel); // Four spaces for each level of indentation
+    let result = '';
+
+    for (const key in answer) {
+        if (typeof answer[key] === 'object') {
+            result += `${formatAnswer(answer[key], indentLevel + 1)}`;
+        } else {
+            result += `${indent}${key}: ${answer[key]}<br>`;
+        }
+    }
+
+    return result;
   }
 
 </script>
