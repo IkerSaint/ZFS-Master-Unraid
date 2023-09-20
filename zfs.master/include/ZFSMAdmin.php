@@ -32,7 +32,7 @@ function returnAnswer($ret, $title, $success_text, $failed_text, $refresh) {
 
 	$answer = resolveAnswerCodes($ret);
 
-	if (count($answer['succeeded']) > 0):
+	if (count($answer['I']) > 0):
 		zfsnotify( $title, $success_text." for:<br>".implodeWithKeys("<br>", $answer['succeeded']), $err,"normal");
 	endif;
 
