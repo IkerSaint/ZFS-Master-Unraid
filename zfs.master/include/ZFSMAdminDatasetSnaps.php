@@ -4,7 +4,7 @@ $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 $urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
 
 require_once $docroot."/webGui/include/Helpers.php";
-require_once $docroot."/plugins/".$plugin/."include/ZFSMBase.php";
+require_once $docroot."/plugins/".$plugin."/include/ZFSMBase.php";
 require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
 require_once $docroot."/plugins/".$plugin."/backend/ZFSMOperations.php";
 
@@ -142,7 +142,7 @@ window.onload = function() {
 	<table id="zfs_master" class="zfs_snap_table disk_status wide">
 	<thead>
 		<tr>
-		<td>Select</td>
+		<td><input class="snapl-check" type="checkbox" id="checkAll"></td>
 		<td>Name</td>
 		<td>Used</td>
 		<td>Refer</td>
@@ -203,13 +203,18 @@ window.onload = function() {
 		return this.id;
 	}).get();
 
-	//$.ajaxSetup({async: false});
+	$.ajaxSetup({async: false});
 	for (const snapshot of checkedVals) {
 		$.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'zdataset': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
 			updateStatusOnDeletion(JSON.parse(data), snapshot);
 		});
 	}
-	//$.ajaxSetup({async: true});
+	$.ajaxSetup({async: true});
+	window.location.reload();
+  });
+
+  $("#checkAll").click(function(){
+    $('input:checkbox').not(this).prop('checked', this.checked);
   });
 
   var checkBoxes = $('.snapl-check');
@@ -223,7 +228,7 @@ window.onload = function() {
 	if (data['failed'].lenght > 0) {
 		updateStatus('Destroy of Snapshot '+snapshot+' Failed - '+formatAnswer(data['failed']));
 	} else {
-		updateStatus('Destroy of Snapshot '+snapshot+' Successful);
+		updateStatus('Destroy of Snapshot '+snapshot+' Successful');
 	}
   }
 
@@ -317,7 +322,6 @@ window.onload = function() {
 
   function updateStatus(text) {
 	$("#zfs_status").text(text);
-	window.location.reload();
   }
 
   function formatAnswer(answer, indentLevel = 0) {
