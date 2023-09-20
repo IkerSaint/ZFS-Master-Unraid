@@ -21,8 +21,10 @@ end
 args = ...
 argv = args["argv"]
 
+rollback(argv[1])
+
 results = {}
 results["succeeded"] = succeeded
 results["failed"] = failed
 
-return rollback(argv[1])
+return results

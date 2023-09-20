@@ -361,7 +361,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 						title: 'Snapshot Result',
 						icon: 'info',
 						html: formatAnswer(JSON.parse(data))
-				  });
+				  	});
 			  });
 		  }
 	  });

@@ -180,7 +180,9 @@ function createDatasetSnapshot($zdataset, $znapshot, $zrecursive) {
 }
 
 function rollbackDatasetSnapshot($zpool, $znapshot_name) {
-	$array_ret = executeZFSProgram($GLOBALS["script_dataset_rollback_snapshot"], $zpool, array($zdataset, $znapshot_name));
+	$zpool = explode("/", $znapshot_name)[0];
+
+	$array_ret = executeSyncZFSProgram($GLOBALS["script_dataset_rollback_snapshot"], $zpool, array($znapshot_name));
 	
 	return $array_ret;
 }
