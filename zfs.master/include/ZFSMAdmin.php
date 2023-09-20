@@ -226,7 +226,8 @@ switch ($_POST['cmd']) {
 			zfsnotify( "ZFS Snapshot", "Unable to create snapshot for:<br>".implodeWithKeys("<br>", $ret['failed']), $err,"normal");
 		endif;
 
-		return $ret
+		echo json_encode($ret);
+		break;
 	default:
 		echo 'unknown command';
 		break;

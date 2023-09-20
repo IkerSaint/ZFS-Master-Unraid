@@ -356,20 +356,11 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	  }).then((result) => {
 		  if (result.isConfirmed) {
 			  $.post('<?=$urlzmadmin?>',{cmd: 'snapshotdataset', zdataset: zdataset, recursive: result.value}, function(data) {
-				var text='Operation result:'
-				  if (data == 'Ok') {
-					Swal2.fire({
-						title: 'Success!',
-						icon: 'success',
-						text: 'Snapshot of '+zdataset+' created'
-					});
-				  } else {
-					Swal2.fire({
-						title: 'Error!',
-						icon: 'error',
-						html: 'Unable to take a snapshot of dataset '+zdataset+'<br>Output: '+data
-					}); 
-				  }
+					wal2.fire({
+						title: 'Operation Result!',
+						icon: 'information',
+						html: formatAnswer(JSON.parse(data))
+				  });
 			  });
 		  }
 	  });
@@ -528,16 +519,14 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   function formatAnswer(answer, indentLevel = 0) {
-    const indent = '\t'.repeat(indentLevel); // Four spaces for each level of indentation
+    const indent = '&emsp;&emsp;'.repeat(indentLevel); // Four spaces for each level of indentation
     let result = '';
 
-    for (const key in obj) {
-        if (typeof obj[key] === 'object') {
-            // If the value is an object, recursively format it with increased indentation
-            result += `${indent}${key}:\n${formatText(obj[key], indentLevel + 1)}`;
+    for (const key in answer) {
+        if (typeof answer[key] === 'object') {
+            result += `${indent}${key}:<br>${formatText(answer[key], indentLevel + 1)}`;
         } else {
-            // If the value is not an object, simply add it to the result
-            result += `${indent}${key}: ${obj[key]}\n`;
+            result += `${indent}${key}: ${answer[key]}<br>`;
         }
     }
 
