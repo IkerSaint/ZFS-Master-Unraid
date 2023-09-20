@@ -157,7 +157,9 @@ function promoteDataset($zpool, $zdataset, $zforce) {
 	return $array_ret;
 }
 
-function destroyDataset($zpool, $zdataset, $zforce) {
+function destroyDataset($zdataset, $zforce) {
+	$zpool = explode("/", $zdataset)[0];
+
 	$array_ret = executeSyncZFSProgram($GLOBALS["script_dataset_destroy"], $zpool, array($zdataset, $zforce));
 	
 	return $array_ret;
@@ -240,10 +242,10 @@ function cloneDatasetSnapshot($znapshot, $zclone) {
 	return false;
 }
 
-function deleteDatasetSnapshot($zdataset, $znapshot, $destroy_all) {
+function deleteDatasetSnapshot($zdataset, $destroy_all) {
 	$zpool = explode("/", $zdataset)[0];
 
-	$array_ret = executeZFSProgram($GLOBALS["script_dataset_destroy_snapshot"], $zpool, array($zdataset, $zsnapshot, $destroy_all));
+	$array_ret = executeSyncZFSProgram($GLOBALS["script_dataset_destroy_snapshot"], $zpool, array($zdataset, $destroy_all));
 
 	return $array_ret;
 }

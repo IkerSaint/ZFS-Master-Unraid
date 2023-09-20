@@ -214,17 +214,19 @@ switch ($_POST['cmd']) {
 		endif;
 		break;
 	case 'destroysnapshot':
-		$cmd_line = "zfs destroy -r ".escapeshellarg($_POST['data']).$boutput_str;
+		$ret = destroyDataset($_POST['zdataset'], 0);
 
-		$ret = execCommand($cmd_line, $exec_result);
-
-		if ($ret == 0):
-			zfsnotify( "ZFS Destroy", "Snapshot ".$_POST['data']." destroyed successfully", $cmdoutput_str.$exec_result."","normal");
-			echo 'Ok';
-		else:
-			zfsnotify( "ZFS Destroy", "Unable to destroy snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-			echo $exec_result;
+		if (count($ret['succeeded']) > 0):
+			zfsnotify( "ZFS Snapshot Destroy", "Snapshot destroyed successfully for:<br>".implodeWithKeys("<br>", $ret['succeeded']), $err,"normal");
 		endif;
+
+		if (count($ret['failed']) > 0):
+			zfsnotify( "ZFS Snapshot Destroy", "Unable to destroy snapshot for:<br>".implodeWithKeys("<br>", $ret['failed']), $err,"warning");
+		endif;
+
+		$ret = resolveAnswerCodes($ret);
+
+		echo json_encode($ret);
 		break;
 	case 'snapshotdataset':
 		$snapshot = $zfsm_cfg['snap_prefix'].date($zfsm_cfg['snap_pattern']);
