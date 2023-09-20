@@ -299,8 +299,8 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 }
 
 function generateDatasetArrayRows(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert) {
-	if (Object.keys(dataset.child).length == 0) {
-		return generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert);
+	if (Object.keys(dataset.child).length == 0 && dataset['name'] != parent) {
+		return generateDatasetRow(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert);
 	}
 
 	var tr = '';

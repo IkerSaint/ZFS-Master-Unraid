@@ -17,7 +17,7 @@ function snapshot(dataset, snap, recursive)
         end
     end
 
-    if recursive then 
+    if recursive == "1" then 
         for child in zfs.list.children(dataset) do
             snapshot(child, snap, recursive)
         end
