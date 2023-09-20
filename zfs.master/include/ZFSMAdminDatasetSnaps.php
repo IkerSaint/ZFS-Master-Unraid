@@ -242,21 +242,12 @@ window.onload = function() {
 		  showCancelButton: true
 	  }).then((result) => {
 		  if (result.isConfirmed) {
-			$.post('<?=$urlzmadmin?>',{cmd: 'rollbacksnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
-				if (data == 'Ok') {
-					Swal2.fire({
-						title: 'Success!',
-						icon: 'success',
-						text: 'Snapshot '+snapshot+' rolled back'
-					});
-					window.location.reload();
-				} else {
-					Swal2.fire({
-						title: 'Error!',
-						icon: 'error',
-						html: 'Unable to rollback to snapshot '+snapshot+'<br>Output: '+data
-					}); 
-				}
+			$.post('<?=$urlzmadmin?>',{cmd: 'rollbacksnapshot', 'snapshot': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
+				Swal2.fire({
+					title: 'Rollback Result',
+					icon: 'info',
+					html: formatAnswer(JSON.parse(data))
+				});
 			});
 		  }
 	  });
