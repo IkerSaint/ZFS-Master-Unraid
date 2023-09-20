@@ -5,11 +5,19 @@ define('__ROOT__', dirname(dirname(__FILE__)));
 require_once __ROOT__."/include/ZFSMBase.php";
 require_once __ROOT__."/include/ZFSMHelpers.php";
 
-#region zpools
-
 function refreshData() {
 	file_put_contents("/tmp/zfsm_reload", "");
 }
+
+function buildArrayRet() {
+	$array_ret = array();
+	$array_ret['succeeded'] = array();
+	$array_ret['failed'] = array();
+
+	return $array_ret;
+}
+
+#region zpools
 
 function getZFSPools() {
 	$regex = "/^(?'pool'[\w-]+)\s+(?'size'\d+.?\d+.)\s+(?'used'\d+.?\d+.)\s+(?'free'\d+.?\d+.)\s+(?'checkpoint'(\d+.?\d+.)|-)\s+(?'expandz'(\d+.?\d+.)|-)\s+(?'fragmentation'\d+.)\s+(?'usedpercent'\d+.)\s+(?'dedup'\d+.?\d+x)\s+(?'health'\w+)/";
@@ -179,10 +187,20 @@ function createDatasetSnapshot($zdataset, $znapshot, $zrecursive) {
 	return $array_ret;
 }
 
-function rollbackDatasetSnapshot($zpool, $znapshot_name) {
-	$zpool = explode("/", $znapshot_name)[0];
+function rollbackDatasetSnapshot($znapshot_name) {
+	$array_ret = buildArrayRet();
 
-	$array_ret = executeSyncZFSProgram($GLOBALS["script_dataset_rollback_snapshot"], $zpool, array($znapshot_name));
+	$cmd_line = "zfs rollback -rf ".$znapshot_name.$boutput_str;
+	
+	$ret = execCommand($cmd_line, $exec_result);
+
+	if ($ret == 0):
+		$array_ret['succeeded'][$znapshot_name] = 0;
+	else:
+		$array_ret['failed'][$znapshot_name] = $ret;
+	endif;
+
+	//$array_ret = executeSyncZFSProgram($GLOBALS["script_dataset_rollback_snapshot"], $zpool, array($znapshot_name));
 	
 	return $array_ret;
 }
