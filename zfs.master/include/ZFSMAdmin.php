@@ -220,14 +220,13 @@ switch ($_POST['cmd']) {
 
 		if (count($ret['succeeded']) > 0):
 			zfsnotify( "ZFS Snapshot", "Snapshot created successfully for: ".implodeWithKeys("<br>", $ret['succeeded']), $err,"normal");
-			echo 'Ok';
 		endif;
 
 		if (count($ret['failed']) > 0):
 			zfsnotify( "ZFS Snapshot", "Unable to create snapshot for: ".implodeWithKeys("<br>", $ret['failed']), $err,"normal");
-			echo $err;
 		endif;
-		break;
+
+		return $ret
 	default:
 		echo 'unknown command';
 		break;
