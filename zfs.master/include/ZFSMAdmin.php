@@ -12,6 +12,18 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 
 $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
+function resolveAnswerCodes($answer) {
+	foreach($answer['succeeded'] as $suc):
+		$suc = resolve_error($answer);
+	endforeach;
+
+	foreach($answer['failed'] as $fail):
+		$fail = resolve_error($fail);
+	endforeach;
+
+	return $answer;
+}
+
 switch ($_POST['cmd']) {
 	case 'refreshdata':
 		file_put_contents("/tmp/zfsm_reload", "");
@@ -225,6 +237,8 @@ switch ($_POST['cmd']) {
 		if (count($ret['failed']) > 0):
 			zfsnotify( "ZFS Snapshot", "Unable to create snapshot for:<br>".implodeWithKeys("<br>", $ret['failed']), $err,"normal");
 		endif;
+
+		$ret = resolveAnswerCodes($ret);
 
 		echo json_encode($ret);
 		break;

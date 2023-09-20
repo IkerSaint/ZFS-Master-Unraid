@@ -357,7 +357,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	  }).then((result) => {
 		  if (result.isConfirmed) {
 			  $.post('<?=$urlzmadmin?>',{cmd: 'snapshotdataset', zdataset: zdataset, recursive: result.value}, function(data) {
-					wal2.fire({
+					Swal2.fire({
 						title: 'Operation Result!',
 						icon: 'information',
 						html: formatAnswer(JSON.parse(data))
