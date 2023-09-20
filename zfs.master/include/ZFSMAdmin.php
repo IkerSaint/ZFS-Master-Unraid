@@ -25,22 +25,22 @@ function resolveAnswerCodes($answer) {
 	return $answer;
 }
 
-function returnAnswer($title, $success_text, $failed_text, $refresh) {
+function returnAnswer($ret, $title, $success_text, $failed_text, $refresh) {
 	if ($refresh):
 		refreshData();
 	endif;
 
-	$ret = resolveAnswerCodes($ret);
+	$answer = resolveAnswerCodes($ret);
 
-	if (count($ret['succeeded']) > 0):
-		zfsnotify( $title, $text." for:<br>".implodeWithKeys("<br>", $ret['succeeded']), $err,"normal");
+	if (count($answer['succeeded']) > 0):
+		zfsnotify( $title, $text." for:<br>".implodeWithKeys("<br>", $answer['succeeded']), $err,"normal");
 	endif;
 
-	if (count($ret['failed']) > 0):
-		zfsnotify( $title, $failed_text." for:<br>".implodeWithKeys("<br>", $ret['failed']), $err,"warning");
+	if (count($answer['failed']) > 0):
+		zfsnotify( $title, $failed_text." for:<br>".implodeWithKeys("<br>", $answer['failed']), $err,"warning");
 	endif;
 
-	echo json_encode($ret);
+	echo json_encode($answer);
 
 	return;
 }
@@ -184,7 +184,7 @@ switch ($_POST['cmd']) {
 	case 'rollbacksnapshot':
 		$ret = rollbackDatasetSnapshot($_POST['snapshot']);
 
-		returnAnswer("ZFS Snapshot", "Snapshot rolled back successfully ", "Unable to rollback snapshot", true);
+		returnAnswer($ret, "ZFS Snapshot", "Snapshot rolled back successfully ", "Unable to rollback snapshot", true);
 
 		/*refreshData();
 		$ret = resolveAnswerCodes($ret);
@@ -241,7 +241,7 @@ switch ($_POST['cmd']) {
 	case 'destroysnapshot':
 		$ret = destroyDataset($_POST['zdataset'], 0);
 
-		returnAnswer("ZFS Snapshot", "Snapshot destroyed successfully ", "Unable to destroy snapshot", true);
+		returnAnswer($ret, "ZFS Snapshot", "Snapshot destroyed successfully ", "Unable to destroy snapshot", true);
 
 		/*refreshData();
 		$ret = resolveAnswerCodes($ret);
@@ -261,7 +261,7 @@ switch ($_POST['cmd']) {
 
 		$ret = createDatasetSnapshot( $_POST['zdataset'], $snapshot, $_POST['recursive']);
 
-		returnAnswer("ZFS Snapshot", "Snapshot created successfully", "Unable to create snapshot", true);
+		returnAnswer($ret, "ZFS Snapshot", "Snapshot created successfully", "Unable to create snapshot", true);
 
 		/*refreshData();
 		$ret = resolveAnswerCodes($ret);
