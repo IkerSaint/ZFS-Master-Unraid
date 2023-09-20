@@ -33,7 +33,7 @@ function returnAnswer($ret, $title, $success_text, $failed_text, $refresh) {
 	$answer = resolveAnswerCodes($ret);
 
 	if (count($answer['succeeded']) > 0):
-		zfsnotify( $title, $text." for:<br>".implodeWithKeys("<br>", $answer['succeeded']), $err,"normal");
+		zfsnotify( $title, $success_text." for:<br>".implodeWithKeys("<br>", $answer['succeeded']), $err,"normal");
 	endif;
 
 	if (count($answer['failed']) > 0):
@@ -184,20 +184,8 @@ switch ($_POST['cmd']) {
 	case 'rollbacksnapshot':
 		$ret = rollbackDatasetSnapshot($_POST['snapshot']);
 
-		returnAnswer($ret, "ZFS Snapshot", "Snapshot rolled back successfully ", "Unable to rollback snapshot", true);
+		returnAnswer($ret, "ZFS Snapshot", "Snapshot rolled back successfully", "Unable to rollback snapshot", true);
 
-		/*refreshData();
-		$ret = resolveAnswerCodes($ret);
-
-		if (count($ret['succeeded']) > 0):
-			zfsnotify( "ZFS Rollback", "Snapshot rolled back successfully for:<br>".implodeWithKeys("<br>", $ret['succeeded']), $err,"normal");
-		endif;
-
-		if (count($ret['failed']) > 0):
-			zfsnotify( "ZFS Rollback", "Unable to rollback snapshot for:<br>".implodeWithKeys("<br>", $ret['failed']), $err,"warning");
-		endif;
-
-		echo json_encode($ret);*/
 		break;
 	case 'holdsnapshot':
 		$cmd_line = "zfs hold zfsmaster ".escapeshellarg($_POST['data']).$boutput_str;
@@ -241,20 +229,8 @@ switch ($_POST['cmd']) {
 	case 'destroysnapshot':
 		$ret = destroyDataset($_POST['zdataset'], 0);
 
-		returnAnswer($ret, "ZFS Snapshot", "Snapshot destroyed successfully ", "Unable to destroy snapshot", true);
+		returnAnswer($ret, "ZFS Snapshot", "Snapshot destroyed successfully", "Unable to destroy snapshot", true);
 
-		/*refreshData();
-		$ret = resolveAnswerCodes($ret);
-
-		if (count($ret['succeeded']) > 0):
-			zfsnotify( "ZFS Snapshot Destroy", "Snapshot destroyed successfully for:<br>".implodeWithKeys("<br>", $ret['succeeded']), $err,"normal");
-		endif;
-
-		if (count($ret['failed']) > 0):
-			zfsnotify( "ZFS Snapshot Destroy", "Unable to destroy snapshot for:<br>".implodeWithKeys("<br>", $ret['failed']), $err,"warning");
-		endif;
-
-		echo json_encode($ret);*/
 		break;
 	case 'snapshotdataset':
 		$snapshot = $zfsm_cfg['snap_prefix'].date($zfsm_cfg['snap_pattern']);
@@ -262,19 +238,6 @@ switch ($_POST['cmd']) {
 		$ret = createDatasetSnapshot( $_POST['zdataset'], $snapshot, $_POST['recursive']);
 
 		returnAnswer($ret, "ZFS Snapshot", "Snapshot created successfully", "Unable to create snapshot", true);
-
-		/*refreshData();
-		$ret = resolveAnswerCodes($ret);
-
-		if (count($ret['succeeded']) > 0):
-			zfsnotify( "ZFS Snapshot", "Snapshot created successfully for:<br>".implodeWithKeys("<br>", $ret['succeeded']), $err,"normal");
-		endif;
-
-		if (count($ret['failed']) > 0):
-			zfsnotify( "ZFS Snapshot", "Unable to create snapshot for:<br>".implodeWithKeys("<br>", $ret['failed']), $err,"normal");
-		endif;
-
-		echo json_encode($ret);*/
 
 		break;
 	default:
