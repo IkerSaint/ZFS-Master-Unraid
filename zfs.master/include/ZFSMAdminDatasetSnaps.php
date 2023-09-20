@@ -142,7 +142,7 @@ window.onload = function() {
 	<table id="zfs_master" class="zfs_snap_table disk_status wide">
 	<thead>
 		<tr>
-		<td><input class="snapl-check" type="checkbox" id="checkAll"></td>
+		<td><input type="checkbox" id="checkAll"></td>
 		<td>Name</td>
 		<td>Used</td>
 		<td>Refer</td>

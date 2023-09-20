@@ -27,7 +27,7 @@ function resolveAnswerCodes($answer) {
 
 switch ($_POST['cmd']) {
 	case 'refreshdata':
-		file_put_contents("/tmp/zfsm_reload", "");
+		refreshData();
 		break;
 	case 'createdataset':
 		$zfs_cparams = cleanZFSCreateDatasetParams($_POST['data']);
@@ -216,6 +216,8 @@ switch ($_POST['cmd']) {
 	case 'destroysnapshot':
 		$ret = destroyDataset($_POST['zdataset'], 0);
 
+		refreshData();
+
 		if (count($ret['succeeded']) > 0):
 			zfsnotify( "ZFS Snapshot Destroy", "Snapshot destroyed successfully for:<br>".implodeWithKeys("<br>", $ret['succeeded']), $err,"normal");
 		endif;
@@ -232,6 +234,8 @@ switch ($_POST['cmd']) {
 		$snapshot = $zfsm_cfg['snap_prefix'].date($zfsm_cfg['snap_pattern']);
 
 		$ret = createDatasetSnapshot( $_POST['zdataset'], $snapshot, $_POST['recursive']);
+
+		refreshData();
 
 		if (count($ret['succeeded']) > 0):
 			zfsnotify( "ZFS Snapshot", "Snapshot created successfully for:<br>".implodeWithKeys("<br>", $ret['succeeded']), $err,"normal");

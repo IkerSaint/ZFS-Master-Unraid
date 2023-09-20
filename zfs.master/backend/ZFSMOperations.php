@@ -7,6 +7,10 @@ require_once __ROOT__."/include/ZFSMHelpers.php";
 
 #region zpools
 
+function refreshData() {
+	file_put_contents("/tmp/zfsm_reload", "");
+}
+
 function getZFSPools() {
 	$regex = "/^(?'pool'[\w-]+)\s+(?'size'\d+.?\d+.)\s+(?'used'\d+.?\d+.)\s+(?'free'\d+.?\d+.)\s+(?'checkpoint'(\d+.?\d+.)|-)\s+(?'expandz'(\d+.?\d+.)|-)\s+(?'fragmentation'\d+.)\s+(?'usedpercent'\d+.)\s+(?'dedup'\d+.?\d+x)\s+(?'health'\w+)/";
 	  
