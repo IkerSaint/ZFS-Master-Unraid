@@ -358,8 +358,8 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  if (result.isConfirmed) {
 			  $.post('<?=$urlzmadmin?>',{cmd: 'snapshotdataset', zdataset: zdataset, recursive: result.value}, function(data) {
 					Swal2.fire({
-						title: 'Operation Result!',
-						icon: 'information',
+						title: 'Snapshot Result',
+						icon: 'info',
 						html: formatAnswer(JSON.parse(data))
 				  });
 			  });
@@ -510,7 +510,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 			  $.post('<?=$urlzmadmin?>',{cmd: 'destroydataset', data: zdataset, force: result.value}, function(data) {
 				  Swal2.fire({
 						title: 'Operation Result!',
-						icon: 'information',
+						icon: 'info',
 						html: 'result: <br>'+ formatAnswer(data)
 				  });
 			  });
@@ -525,7 +525,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
     for (const key in answer) {
         if (typeof answer[key] === 'object') {
-            result += `${indent}${key}:<br>${formatText(answer[key], indentLevel + 1)}`;
+            result += `${formatAnswer(answer[key], indentLevel + 1)}`;
         } else {
             result += `${indent}${key}: ${answer[key]}<br>`;
         }

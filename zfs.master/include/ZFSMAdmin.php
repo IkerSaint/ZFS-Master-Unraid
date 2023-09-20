@@ -5,6 +5,7 @@ $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 
 require_once $docroot."/webGui/include/Helpers.php";
 require_once $docroot."/plugins/".$plugin."/include/ZFSMBase.php";
+require_once $docroot."/plugins/".$plugin."/include/ZFSMError.php";
 require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
 require_once $docroot."/plugins/".$plugin."/backend/ZFSMOperations.php";
 
@@ -13,12 +14,12 @@ $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 function resolveAnswerCodes($answer) {
-	foreach($answer['succeeded'] as $suc):
-		$suc = resolve_error($answer);
+	foreach($answer['succeeded'] as $key => $value):
+		$answer['succeeded'][$key] = resolve_error($value);
 	endforeach;
 
-	foreach($answer['failed'] as $fail):
-		$fail = resolve_error($fail);
+	foreach($answer['failed'] as $key => $value):
+		$answer['failed'][$key] = resolve_error($value);
 	endforeach;
 
 	return $answer;
