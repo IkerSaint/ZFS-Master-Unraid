@@ -12,7 +12,7 @@
 	$script_dataset_get_properties = $plugin_scripts."zfs_dataset_get_properties.lua";
 	$script_dataset_get_snapshots = $plugin_scripts."zfs_dataset_get_snapshots.lua";
 
-	$script_dataset_rollback_snapshot = $plugin_scripts."zfs_dataset_rollback_snapshot.lua";
+	//$script_dataset_rollback_snapshot = $plugin_scripts."zfs_dataset_rollback_snapshot.lua";
 	$script_dataset_rename_snapshot = $plugin_scripts."zfs_dataset_rename_snapshot.lua";
 	$script_dataset_promote = $plugin_scripts."zfs_dataset_promote.lua";
 	
