@@ -247,9 +247,8 @@ window.onload = function() {
 					title: 'Rollback Result',
 					icon: 'info',
 					html: formatAnswer(JSON.parse(data))
-				});
+				}).then((result) => window.location.reload());
 			});
-			window.location.reload();
 		  }
 	  });
 	  //$(".swal2-input").attr("type", "mytext");
@@ -261,8 +260,7 @@ window.onload = function() {
 			title: 'Hold Result',
 			icon: 'info',
 			html: formatAnswer(JSON.parse(data))
-		});
-		window.location.reload();
+		}).then((result) => window.location.reload());
 	});
   }
 
@@ -272,8 +270,7 @@ window.onload = function() {
 			title: 'Release Result',
 			icon: 'info',
 			html: formatAnswer(JSON.parse(data))
-		});
-		window.location.reload();
+		}).then((result) => window.location.reload());
 	});
   }
 
@@ -295,8 +292,7 @@ window.onload = function() {
 					title: 'Release Result',
 					icon: 'info',
 					html: formatAnswer(JSON.parse(data))
-				});
-				window.location.reload();
+				}).then((result) => window.location.reload());
 			  });
 		  }
 	  });
