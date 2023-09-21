@@ -432,20 +432,12 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   function promoteDataset(zdataset) {
-	  $.post('<?=$urlzmadmin?>',{cmd: 'promotedataset', data: zdataset},function(data) {
-		if (data == 'Ok') {
-			Swal2.fire({
-				title: 'Success!',
-				icon:'success',
-				html: zdataset+' Promoted!'
-			});
-		} else {
-			Swal2.fire({
-				title: 'Error!',
-				icon:'error',
-				html: 'Promotion of '+zdataset+' failed! <br>Output: '+data
-			}); 
-		}
+	  $.post('<?=$urlzmadmin?>',{cmd: 'promotedataset', zdataset: zdataset},function(data) {
+		Swal2.fire({
+			title: 'Operation Result!',
+			icon: 'info',
+			html: 'result: <br>'+ formatAnswer(data)
+		});
 	  });
   }
 
