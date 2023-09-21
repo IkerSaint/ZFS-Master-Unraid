@@ -1,49 +1,49 @@
 succeeded = {}
 failed = {}
 
-function force_promote(ds)
-    errno, details = zfs.check.promote(ds)
+function force_promote(dataset)
+    errno, details = zfs.check.promote(dataset)
 
     if (errno == EEXIST) then
         assert(details ~= Nil)
         for i, snap in ipairs(details) do
-            zfs.sync.destroy(ds .. "@" .. snap)
+            zfs.sync.destroy(dataset .. "@" .. snap)
         end
     elseif (errno ~= 0) then
-        failed[ds] = errno
+        failed[dataset] = errno
         return
     end
 
-    errno = zfs.sync.promote(ds)
+    errno = zfs.sync.promote(dataset)
 
     if (errno ~= 0) then
-        failed[ds] = errno
+        failed[dataset] = errno
     else
-        succeeded[ds] = errno
+        succeeded[dataset] = errno
     end
  end
 
-function promote(ds)
-    errno, details = zfs.check.promote(ds)
+function promote(dataset)
+    errno, details = zfs.check.promote(dataset)
 
     if (errno ~= 0) then
-        failed[ds] = errno
+        failed[dataset] = errno
         return
     end
 
-    errno = zfs.sync.promote(ds)
+    errno = zfs.sync.promote(dataset)
 
     if (errno ~= 0) then
-        failed[ds] = errno
+        failed[dataset] = errno
     else
-        succeeded[ds] = errno
+        succeeded[dataset] = errno
     end
 end
 
 args = ...
 argv = args["argv"]
 
-if (argv[2] == 'true') then
+if (argv[2] == '1') then
     force_promote(argv[1])
 else
     promote(argv[1])

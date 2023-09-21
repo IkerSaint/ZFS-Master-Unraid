@@ -251,7 +251,6 @@ window.onload = function() {
 			});
 		  }
 	  });
-	  //$(".swal2-input").attr("type", "mytext");
   }
 
   function holdSnapshot(snapshot) {
@@ -289,15 +288,13 @@ window.onload = function() {
 		  if (result.isConfirmed) {
 			  $.post('<?=$urlzmadmin?>',{cmd: 'clonesnapshot', 'snapshot': snapshot, 'clone': result.value, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
 				Swal2.fire({
-					title: 'Release Result',
+					title: 'Clone Result',
 					icon: 'info',
 					html: formatAnswer(JSON.parse(data))
 				}).then((result) => window.location.reload());
 			  });
 		  }
 	  });
-	  
-	  $(".swal2-input").attr("type", "mytext");
   }
 
   function updateStatus(text) {

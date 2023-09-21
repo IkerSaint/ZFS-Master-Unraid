@@ -163,8 +163,10 @@ function unlockDataset($zpool, $zdataset, $zpass) {
 	return false;
 }
 
-function promoteDataset($zpool, $zdataset, $zforce) {
-	$array_ret = executeZFSProgram($GLOBALS["script_promote_dataset"], $zpool, array($zdataset, $zforce));
+function promoteDataset($zdataset, $zforce) {
+	$zpool = explode("/", $zdataset)[0];
+
+	$array_ret = executeSyncZFSProgram($GLOBALS["script_promote_dataset"], $zpool, array($zdataset, $zforce));
 	
 	return $array_ret;
 }
