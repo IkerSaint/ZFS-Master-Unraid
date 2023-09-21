@@ -188,46 +188,25 @@ switch ($_POST['cmd']) {
 
 		break;
 	case 'holdsnapshot':
-		$cmd_line = "zfs hold zfsmaster ".escapeshellarg($_POST['data']).$boutput_str;
+		$ret = holdDatasetSnapshot($_POST['snapshot']);
 
-		$ret = execCommand($cmd_line, $exec_result);
+		returnAnswer($ret, "ZFS Snapshot", "Snapshot reference added successfully", "Unable to add reference", false);
 
-		if ($ret == 0):
-			zfsnotify( "ZFS Hold", "Snapshot ".$_POST['data']." reference added successfully", $cmdoutput_str.$exec_result."","normal");
-			echo 'Ok';
-		else:
-			zfsnotify( "ZFS Hold", "Unable to add reference to snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-			echo $exec_result;
-		endif;
 		break;
 	case 'releasesnapshot':
-		$cmd_line = "zfs release zfsmaster ".escapeshellarg($_POST['data']).$boutput_str;
+		$ret = releaseDatasetSnapshot($_POST['snapshot']);
 
-		$ret = execCommand($cmd_line, $exec_result);
+		returnAnswer($ret, "ZFS Snapshot", "Snapshot reference removed successfully", "Unable to remove reference", false);
 
-		if ($ret == 0):
-			zfsnotify( "ZFS Release", "Snapshot ".$_POST['data']." reference removed successfully", $cmdoutput_str.$exec_result."","normal");
-			echo 'Ok';
-		else:
-			zfsnotify( "ZFS Release", "Unable to remove reference from snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-			echo $exec_result;
-		endif;
 		break;
 	case 'clonesnapshot':
-		$cmd_line = "zfs clone ".escapeshellarg($_POST['data'])." ".escapeshellarg($_POST['destination']).$boutput_str;
+		$ret = cloneDatasetSnapshot($_POST['snapshot'], $_POST['clone']);
 
-		$ret = execCommand($cmd_line, $exec_result);
+		returnAnswer($ret, "ZFS Snapshot", "Snapshot cloned successfully", "Unable to clone snapshot", false);
 
-		if ($ret == 0):
-			zfsnotify( "ZFS Clone", "Snapshot ".$_POST['data']." cloned successfully", $cmdoutput_str.$exec_result."","normal");
-			echo 'Ok';
-		else:
-			zfsnotify( "ZFS Clone", "Unable to clone snapshot ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-			echo $exec_result;
-		endif;
 		break;
 	case 'destroysnapshot':
-		$ret = destroyDataset($_POST['zdataset'], 0);
+		$ret = destroyDataset($_POST['snapshot'], 0);
 
 		returnAnswer($ret, "ZFS Snapshot", "Snapshot destroyed successfully", "Unable to destroy snapshot", true);
 

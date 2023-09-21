@@ -118,6 +118,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   $(function() {
 	  zfs_sub.start();
 	  addButtons();
+	  requestRefresh();
   });
 
   $(document).click(function() {

@@ -187,20 +187,18 @@ function createDatasetSnapshot($zdataset, $znapshot, $zrecursive) {
 	return $array_ret;
 }
 
-function rollbackDatasetSnapshot($znapshot_name) {
+function rollbackDatasetSnapshot($znapshot) {
 	$array_ret = buildArrayRet();
 
-	$cmd_line = "zfs rollback -rf ".$znapshot_name.$boutput_str;
+	$cmd_line = "zfs rollback -rf ".$znapshot.$boutput_str;
 	
 	$ret = execCommand($cmd_line, $exec_result);
 
 	if ($ret == 0):
-		$array_ret['succeeded'][$znapshot_name] = 0;
+		$array_ret['succeeded'][$znapshot] = 0;
 	else:
-		$array_ret['failed'][$znapshot_name] = $ret;
+		$array_ret['failed'][$znapshot] = $ret;
 	endif;
-
-	//$array_ret = executeSyncZFSProgram($GLOBALS["script_dataset_rollback_snapshot"], $zpool, array($znapshot_name));
 	
 	return $array_ret;
 }
@@ -211,65 +209,68 @@ function renameDatasetSnapshot($zpool, $zsnapshot, $znapshot_new_name) {
 	return $array_ret;
 }
 
-function sendDatasetSnapshot($zpool, $znapshot_name, $zoptions) {
+function sendDatasetSnapshot($zpool, $znapshot, $zoptions) {
 	// TODO
 	return $array_ret;
 }
 
-function receiveDatasetSnapshot($zpool, $znapshot_name, $zoptions) {
+function receiveDatasetSnapshot($zpool, $znapshot, $zoptions) {
 	// TODO
 	return $array_ret;
 }
 
 function holdDatasetSnapshot($znapshot) {
+	$array_ret = buildArrayRet();
+	
 	$cmd_line = "zfs hold zfsmaster ".$znapshot.$boutput_str;
 
 	$ret = execCommand($cmd_line, $exec_result);
 
 	if ($ret == 0):
-		zfsnotify( "ZFS Hold", "Snapshot ".$znapshot." reference added successfully", $cmdoutput_str.$exec_result."","normal");
-		return true;
+		$array_ret['succeeded'][$znapshot] = 0;
+	else:
+		$array_ret['failed'][$znapshot] = $ret;
 	endif;
 	
-	zfsnotify( "ZFS Hold", "Unable to add reference to snapshot ".$znapshot.", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-	
-	return false;
+	return $array_ret;
 }
 
 function releaseDatasetSnapshot($znapshot) {
+	$array_ret = buildArrayRet();
+
 	$cmd_line = "zfs release zfsmaster ".escapeshellarg($znapshot).$boutput_str;
 
 	$ret = execCommand($cmd_line, $exec_result);
 
 	if ($ret == 0):
-		zfsnotify( "ZFS Release", "Snapshot ".$znapshot." reference removed successfully", $cmdoutput_str.$exec_result."","normal");
-		return true;
+		$array_ret['succeeded'][$znapshot] = 0;
+	else:
+		$array_ret['failed'][$znapshot] = $ret;
 	endif;
 	
-	zfsnotify( "ZFS Release", "Unable to remove reference from snapshot ".$znapshot.", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-	
-	return false;
+	return $array_ret;
 }
 
 function cloneDatasetSnapshot($znapshot, $zclone) {
+	$array_ret = buildArrayRet();
+
 	$cmd_line = "zfs clone ".escapeshellarg($znapshot)." ".escapeshellarg($zclone).$boutput_str;
 
 	$ret = execCommand($cmd_line, $exec_result);
 
 	if ($ret == 0):
-		zfsnotify( "ZFS Clone", "Snapshot ".$znapshot." cloned successfully", $cmdoutput_str.$exec_result."","normal");
-		return true;
+		$array_ret['succeeded'][$znapshot] = 0;
+	else:
+		$array_ret['failed'][$znapshot] = $ret;
 	endif;
 	
-	zfsnotify( "ZFS Clone", "Unable to clone snapshot ".$znapshot.", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-	
-	return false;
+	return $array_ret;
 }
 
-function deleteDatasetSnapshot($zdataset, $destroy_all) {
-	$zpool = explode("/", $zdataset)[0];
+function deleteDatasetSnapshot($znapshot, $destroy_all) {
+	$zpool = explode("/", $znapshot)[0];
 
-	$array_ret = executeSyncZFSProgram($GLOBALS["script_dataset_destroy_snapshot"], $zpool, array($zdataset, $destroy_all));
+	$array_ret = executeSyncZFSProgram($GLOBALS["script_dataset_destroy_snapshot"], $zpool, array($znapshot, $destroy_all));
 
 	return $array_ret;
 }

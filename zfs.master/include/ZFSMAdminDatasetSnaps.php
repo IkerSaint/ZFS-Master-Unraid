@@ -205,7 +205,7 @@ window.onload = function() {
 
 	$.ajaxSetup({async: false});
 	for (const snapshot of checkedVals) {
-		$.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'zdataset': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
+		$.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'snapshot': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
 			updateStatusOnDeletion(JSON.parse(data), snapshot);
 		});
 	}
@@ -249,30 +249,31 @@ window.onload = function() {
 					html: formatAnswer(JSON.parse(data))
 				});
 			});
+			window.location.reload();
 		  }
 	  });
-	  $(".swal2-input").attr("type", "mytext");
+	  //$(".swal2-input").attr("type", "mytext");
   }
 
   function holdSnapshot(snapshot) {
-	$.post('<?=$urlzmadmin?>',{cmd: 'holdsnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
-		if (data == 'Ok') {
-			updateStatus('Hold of Snapshot '+snapshot+' Successful');
-			window.location.reload();
-		} else {
-			updateStatus('Unable to add reference to snapshot '+snapshot+'<br>Output: '+data);
-		}
+	$.post('<?=$urlzmadmin?>',{cmd: 'holdsnapshot', 'snapshot': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
+		Swal2.fire({
+			title: 'Hold Result',
+			icon: 'info',
+			html: formatAnswer(JSON.parse(data))
+		});
+		window.location.reload();
 	});
   }
 
   function releaseSnapshot(snapshot) {
-	$.post('<?=$urlzmadmin?>',{cmd: 'releasesnapshot', 'data': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
-		if (data == 'Ok') {
-			updateStatus('Release of Snapshot '+snapshot+' Successful');
-			window.location.reload();
-		} else {
-			updateStatus('Unable to remove reference from snapshot '+snapshot+'<br>Output: '+data);
-		}
+	$.post('<?=$urlzmadmin?>',{cmd: 'releasesnapshot', 'snapshot': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data){
+		Swal2.fire({
+			title: 'Release Result',
+			icon: 'info',
+			html: formatAnswer(JSON.parse(data))
+		});
+		window.location.reload();
 	});
   }
 
@@ -280,7 +281,7 @@ window.onload = function() {
 	Swal2.fire({
 		  title: '<strong>Destination Dataset for '+snapshot+'</strong>',
 		  input: 'text',
-		  inputPlaceholder: 'Dataset path',
+		  inputPlaceholder: 'Dataset',
 		  inputAttributes: {
 			autocapitalize: 'off',
 			autocorrect: 'off'
@@ -289,21 +290,13 @@ window.onload = function() {
 		  showCancelButton: true
 	  }).then((result) => {
 		  if (result.isConfirmed) {
-			  $.post('<?=$urlzmadmin?>',{cmd: 'clonesnapshot', data: snapshot, destination: result.value, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
-				  if (data == 'Ok') {
-					Swal2.fire({
-						title: 'Success!',
-						icon: 'success',
-						text: 'Snapshot '+snapshot+' Cloned'
-					});
-					window.location.reload();
-				  } else {
-					Swal2.fire({
-						title: 'Error!',
-						icon: 'error',
-						html: 'Unable to clone snapshot '+snapshot+'<br>Output: '+data
-					}); 
-				  }
+			  $.post('<?=$urlzmadmin?>',{cmd: 'clonesnapshot', 'snapshot': snapshot, 'clone': result.value, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
+				Swal2.fire({
+					title: 'Release Result',
+					icon: 'info',
+					html: formatAnswer(JSON.parse(data))
+				});
+				window.location.reload();
 			  });
 		  }
 	  });
