@@ -169,7 +169,7 @@ switch ($_POST['cmd']) {
 		
 		break;
 	case 'promotedataset':
-		$ret = promoteDataset($_POST['zdataset'], 0)
+		$ret = promoteDataset($_POST['zdataset'], 0);
 
 		returnAnswer($ret, "ZFS Dataset", "Dataset promoted successfully", "Unable to promote dataset", true);
 		

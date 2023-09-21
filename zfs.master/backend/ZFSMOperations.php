@@ -6,7 +6,7 @@ require_once __ROOT__."/include/ZFSMBase.php";
 require_once __ROOT__."/include/ZFSMHelpers.php";
 
 function refreshData() {
-	file_put_contents("/tmp/zfsm_reload", "");
+	touch("/tmp/zfsm_reload");
 }
 
 function buildArrayRet() {
