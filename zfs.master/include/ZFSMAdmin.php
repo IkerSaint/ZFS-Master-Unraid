@@ -118,18 +118,10 @@ switch ($_POST['cmd']) {
 
 		break;
 	case 'destroydataset':
-		$force = ($_POST['force'] == '1') ? '-fRr ' : '';
-		$cmd_line = 'zfs destroy -vp '.$force.escapeshellarg($_POST['data']).$boutput_str;
-		
-		$ret = execCommand($cmd_line, $exec_result);
-		
-		if ($ret == 0):
-			zfsnotify( "ZFS Destroy", "Dataset ".$_POST['data']." destroyed successfully", $cmdoutput_str.$exec_result."","normal");
-			echo 'Ok';
-		else:
-			zfsnotify( "ZFS Destroy", "Unable to destoy dataset ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-			echo $exec_result;
-		endif;
+		$ret = destroyDataset($_POST['zdataset'], $_POST['force']);
+
+		returnAnswer($ret, "ZFS Dataset", "Dataset destroyed successfully", "Unable to destroy dataset", true);
+
 		break;
 	case 'lockdataset':
 		$ret = lockDataset($_POST['zdataset']);
