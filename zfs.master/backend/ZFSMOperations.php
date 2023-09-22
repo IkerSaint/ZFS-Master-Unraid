@@ -131,7 +131,7 @@ function lockDataset($zdataset) {
 
 	$cmd_line = "zfs umount -f ".$zdataset.$boutput_str;
 
-	$ret = execCommand($cmd_line, $exec_result);]
+	$ret = execCommand($cmd_line, $exec_result);
 
 	if ($ret != 0):
 		$array_ret['failed'][$znapshot] = $ret;

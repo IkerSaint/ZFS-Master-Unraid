@@ -37,7 +37,7 @@ end
 args = ...
 argv = args["argv"]
 
-if (argv[2] == "true") then
+if (argv[2] == "1") then
     destroy_recursive(argv[1], argv[2])
 else
     destroy(argv[1])

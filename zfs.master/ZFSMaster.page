@@ -484,7 +484,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  showCancelButton: true
 	  }).then((result) => {
 		  if (result.isConfirmed) {
-			  $.post('<?=$urlzmadmin?>',{cmd: 'destroydataset', data: zdataset, force: result.value}, function(data) {
+			  $.post('<?=$urlzmadmin?>',{cmd: 'destroydataset', zdataset: zdataset, force: result.value}, function(data) {
 				  Swal2.fire({
 						title: 'Operation Result!',
 						icon: 'info',
