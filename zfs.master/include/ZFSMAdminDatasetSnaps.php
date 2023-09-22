@@ -302,7 +302,7 @@ window.onload = function() {
   }
 
   function formatAnswer(answer, indentLevel = 0) {
-    const indent = '&emsp;&emsp;'.repeat(indentLevel); // Four spaces for each level of indentation
+    const indent = '&emsp;&emsp;'.repeat(indentLevel); 
     let result = '';
 
     for (const key in answer) {

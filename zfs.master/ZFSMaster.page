@@ -358,11 +358,11 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	  }).then((result) => {
 		  if (result.isConfirmed) {
 			  $.post('<?=$urlzmadmin?>',{cmd: 'snapshotdataset', zdataset: zdataset, recursive: result.value}, function(data) {
-					Swal2.fire({
-						title: 'Snapshot Result',
-						icon: 'info',
-						html: formatAnswer(JSON.parse(data))
-				  	});
+				Swal2.fire({
+					title: 'Snapshot Result',
+					icon: 'info',
+					html: formatAnswer(JSON.parse(data))
+				});
 			  });
 		  }
 	  });
@@ -393,20 +393,12 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  showCancelButton: true
 	  }).then((result) => {
 		  if (result.isConfirmed) {
-			  $.post('<?=$urlzmadmin?>',{cmd: 'unlockdataset', data: zdataset, passphrase: result.value}, function(data) {
-				  if (data == 'Ok') {
-					Swal2.fire({
-						title: 'Success!',
-						icon: 'success',
-						text: 'Dataset '+zdataset+' Unlocked'
-					});
-				  } else {
-					Swal2.fire({
-						title: 'Error!',
-						icon: 'error',
-						html: 'Unable to unlock dataset '+zdataset+'<br>Output: '+data
-					}); 
-				  }
+			  $.post('<?=$urlzmadmin?>',{cmd: 'unlockdataset', zdatazet: zdataset, passphrase: result.value}, function(data) {
+				Swal2.fire({
+					title: 'Operation Result!',
+					icon: 'info',
+					html: 'result: <br>'+ formatAnswer(data)
+				});
 			  });
 		  }
 	  });
@@ -414,20 +406,12 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   function lockDataset(zdataset) {
-	  $.post('<?=$urlzmadmin?>',{cmd: 'lockdataset', data: zdataset},function(data) {
-		if (data == 'Ok') {
-			Swal2.fire({
-				title: 'Success!',
-				icon:'success',
-				html: zdataset+' Locked!'
-			});
-		} else {
-			Swal2.fire({
-				title: 'Error!',
-				icon:'error',
-				html: 'Lock of '+zdataset+' failed! <br>Output: '+data
-			}); 
-		}
+	  $.post('<?=$urlzmadmin?>',{cmd: 'lockdataset', zdatazet: zdataset},function(data) {
+		Swal2.fire({
+			title: 'Operation Result!',
+			icon: 'info',
+			html: 'result: <br>'+ formatAnswer(data)
+		});
 	  });
   }
 
@@ -444,7 +428,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   function renameDataset(zdataset) {
 	  Swal2.fire({
 		  title: '<strong>New name for '+zdataset+'</strong>',
-		  html: '<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Dataset new name (Entire name)" value="'+zdataset+'" type="mytext" style="display: flex;">'+
+		  html: '<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Dataset new name (Full name)" value="'+zdataset+'" type="mytext" style="display: flex;">'+
 				'<label for="swal2-checkbox" class="swal2-checkbox" style="display: flex;">'+
 				'<input type="checkbox" id="swal2-checkbox">'+
 				'<span class="swal2-label">Force unmount any file systems that need to be unmounted in the process</span>'+
