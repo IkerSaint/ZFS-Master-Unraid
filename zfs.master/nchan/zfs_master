@@ -99,7 +99,6 @@ while (true) {
             getLazyLoadData();
         endif;
 
-        unlink('/tmp/zfsm_reload');
     elseif ($zfsm_cfg['refresh_interval'] <= $sleep_time || file_exists('/tmp/zfsm_reload') == true):
         if ($zfsm_cfg['lazy_load'] == "0"):
             getAllData();
@@ -108,7 +107,11 @@ while (true) {
         endif;
 
         $sleep_time = 0.0;
-        unlink('/tmp/zfsm_reload');
+        
+        if (file_exists('/tmp/zfsm_reload'))
+            unlink('/tmp/zfsm_reload');
+        endif;
+        
     endif;
 
     usleep(250000); 
