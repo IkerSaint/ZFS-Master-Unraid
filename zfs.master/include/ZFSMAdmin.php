@@ -124,7 +124,7 @@ switch ($_POST['cmd']) {
 		$ret = execCommand($cmd_line, $exec_result);
 		
 		if ($ret == 0):
-			zfsnotify( "ZFS Destroy ", "Dataset ".$_POST['data']." destroyed successfully", $cmdoutput_str.$exec_result."","normal");
+			zfsnotify( "ZFS Destroy", "Dataset ".$_POST['data']." destroyed successfully", $cmdoutput_str.$exec_result."","normal");
 			echo 'Ok';
 		else:
 			zfsnotify( "ZFS Destroy", "Unable to destoy dataset ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
@@ -132,40 +132,15 @@ switch ($_POST['cmd']) {
 		endif;
 		break;
 	case 'lockdataset':
-		$cmd_line = "zfs umount -f ".escapeshellarg($_POST['data']).$boutput_str;
-
-		$ret = execCommand($cmd_line, $exec_result);
-
-		if ($ret != 0):
-			zfsnotify( "ZFS Umount", "Unable to unmount dataset, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-			echo $exec_result;
-			break;
-		endif;
-
-		$cmd_line = "zfs unload-key -r ".escapeshellarg($_POST['data']).$boutput_str;
-		$ret = execCommand($cmd_line, $exec_result);
-
-		if ($ret == 0):
-			zfsnotify( "ZFS Dataset Lock", "Dataset ".$_POST['data']." Locked successfully", $cmdoutput_str.$exec_result."","normal");
-			echo 'Ok';
-		else:
-			zfsnotify( "ZFS Dataset Lock", "Unable to unload the encryption key ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-			echo $exec_result;
-		endif;
+		$ret = lockDataset($_POST['zdataset']);
+		
+		returnAnswer($ret, "ZFS Dataset", "Dataset Locked successfully", "Unable to Lock dataset", true);
 
 		break;
 	case 'unlockdataset':
-		$cmd_line = "echo ".escapeshellarg($_POST['passphrase'])."| zfs mount -l ".escapeshellarg($_POST['data']).$boutput_str;
-
-		$ret = execCommand($cmd_line, $exec_result);
+		$ret = unlockDataset($_POST['zdataset'], $_POST['passphrase']);
 		
-		if ($ret == 0):
-			zfsnotify( "ZFS Dataset Unlock", "Dataset ".$_POST['data']." Unlocked successfully", $cmdoutput_str.$exec_result."","normal");
-			echo 'Ok';
-		else:
-			zfsnotify( "ZFS Dataset Unlock", "Unable to Unlock dataset ".$_POST['data'].", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-			echo $exec_result;
-		endif;
+		returnAnswer($ret, "ZFS Dataset", "Dataset Unlocked successfully", "Unable to Unlock dataset", true);
 		
 		break;
 	case 'promotedataset':

@@ -126,41 +126,45 @@ function setDatasetProperties($zpool, $zdataset, $zproperties) {
 	return $array_ret;
 }
 
-function lockDataset($zpool, $zdataset) {
-	$cmd_line = "zfs umount -f ".escapeshellarg($zpool."/".$zdataset).$boutput_str;
+function lockDataset($zdataset) {
+	$array_ret = buildArrayRet();
 
-	$ret = execCommand($cmd_line, $exec_result);
+	$cmd_line = "zfs umount -f ".$zdataset.$boutput_str;
+
+	$ret = execCommand($cmd_line, $exec_result);]
 
 	if ($ret != 0):
-		zfsnotify( "ZFS Umount", "Unable to unmount dataset, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-		return false;
+		$array_ret['failed'][$znapshot] = $ret;
+		return $array_ret;
 	endif;
 
-	$cmd_line = "zfs unload-key -r ".escapeshellarg($zpool."/".$zdataset).$boutput_str;
+	$cmd_line = "zfs unload-key -r ".$zdataset.$boutput_str;
+
 	$ret = execCommand($cmd_line, $exec_result);
 
 	if ($ret == 0):
-		zfsnotify( "ZFS Dataset Lock", "Dataset ".$zdataset." Locked successfully", $cmdoutput_str.$exec_result."","normal");
-		return true;
+		$array_ret['succeeded'][$zdataset] = 0;
+	else:
+		$array_ret['failed'][$zdataset] = $ret;
 	endif;
 	
-	zfsnotify( "ZFS Dataset Lock", "Unable to unload the encryption key ".$zdataset.", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-	return false;
+	return $array_ret;
 }
 
-function unlockDataset($zpool, $zdataset, $zpass) {
-	$cmd_line = "echo ".escapeshellarg($zpass)."| zfs mount -l ".$zpool.$zdataset.$boutput_str;
+function unlockDataset($zdataset, $zpass) {
+	$array_ret = buildArrayRet();
+
+	$cmd_line = "echo ".escapeshellarg($zpass)."| zfs mount -l ".$zdataset.$boutput_str;
 
 	$ret = execCommand($cmd_line, $exec_result);
-	
-	if ($ret == 0):
-		zfsnotify( "ZFS Dataset Unlock", "Dataset ".$zdataset." Unlocked successfully", $cmdoutput_str.$exec_result."","normal");
-		return true;
-	endif;
 
-	zfsnotify( "ZFS Dataset Unlock", "Unable to Unlock dataset ".$zdataset.", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
+	if ($ret == 0):
+		$array_ret['succeeded'][$zdataset] = 0;
+	else:
+		$array_ret['failed'][$zdataset] = $ret;
+	endif;
 	
-	return false;
+	return $array_ret;
 }
 
 function promoteDataset($zdataset, $zforce) {
