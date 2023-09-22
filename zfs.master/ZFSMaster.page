@@ -394,9 +394,9 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  if (result.isConfirmed) {
 			  $.post('<?=$urlzmadmin?>',{cmd: 'unlockdataset', zdatazet: zdataset, passphrase: result.value}, function(data) {
 				Swal2.fire({
-					title: 'Operation Result!',
+					title: 'Lock Result',
 					icon: 'info',
-					html: 'result: <br>'+ formatAnswer(data)
+					html: formatAnswer(JSON.parse(data))
 				});
 			  });
 		  }
@@ -407,9 +407,9 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   function lockDataset(zdataset) {
 	  $.post('<?=$urlzmadmin?>',{cmd: 'lockdataset', zdatazet: zdataset},function(data) {
 		Swal2.fire({
-			title: 'Operation Result!',
+			title: 'Lock Result',
 			icon: 'info',
-			html: 'result: <br>'+ formatAnswer(data)
+			html: formatAnswer(JSON.parse(data))
 		});
 	  });
   }
@@ -417,9 +417,9 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   function promoteDataset(zdataset) {
 	  $.post('<?=$urlzmadmin?>',{cmd: 'promotedataset', zdataset: zdataset},function(data) {
 		Swal2.fire({
-			title: 'Operation Result!',
+			title: 'Promote Result',
 			icon: 'info',
-			html: 'result: <br>'+ formatAnswer(data)
+			html: formatAnswer(JSON.parse(data))
 		});
 	  });
   }
@@ -484,11 +484,11 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	  }).then((result) => {
 		  if (result.isConfirmed) {
 			  $.post('<?=$urlzmadmin?>',{cmd: 'destroydataset', zdataset: zdataset, force: result.value}, function(data) {
-				  Swal2.fire({
-						title: 'Operation Result!',
-						icon: 'info',
-						html: 'result: <br>'+ formatAnswer(data)
-				  });
+				Swal2.fire({
+					title: 'Destroy Result',
+					icon: 'info',
+					html: formatAnswer(JSON.parse(data))
+				});
 			  });
 		  }
 	  });

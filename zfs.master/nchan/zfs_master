@@ -108,10 +108,10 @@ while (true) {
 
         $sleep_time = 0.0;
         
-        if (file_exists('/tmp/zfsm_reload'))
+        if (file_exists('/tmp/zfsm_reload')):
             unlink('/tmp/zfsm_reload');
         endif;
-        
+
     endif;
 
     usleep(250000); 
