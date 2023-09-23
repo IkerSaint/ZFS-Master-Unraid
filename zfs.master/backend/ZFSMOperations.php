@@ -140,7 +140,7 @@ function setDatasetProperties( $zdataset, $zproperties) {
 	$array_ret = buildArrayRet();
 
 	foreach ($zproperties as $key => $value):
-		$ret = setDatasetProperty($zdataset, $key, $value)
+		$ret = setDatasetProperty($zdataset, $key, $value);
 
 		if ($ret == 0):
 			$array_ret['succeeded'][$key] = 0;
