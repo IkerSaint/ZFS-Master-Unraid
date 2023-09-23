@@ -178,8 +178,6 @@ function setDatasetProperties( $zdataset, $zproperties) {
 	$cmd_line = 'zfs set';
 	$cmd_line .= ' '.implodeWithKeys(' ', $params, '=');
 	$cmd_line .= ' '.$zdataset_name;*/
-	
-	return $array_ret;
 }
 
 function lockDataset($zdataset) {
