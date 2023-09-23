@@ -87,7 +87,7 @@ function createDataset( $zdataset, $zoptions) {
 	unset($zoptions["passphrase"]);
 		
 	$cmd_line = "zfs create -vP";
-	$cmd_line .= " -o ".implodeWithKeys(" -o ", $params, "=");
+	$cmd_line .= " -o ".implodeWithKeys(" -o ", $zoptions, "=");
 	$cmd_line .= ' '.escapeshellarg($zdataset).$boutput_str;
 
 	if ($zoptions["encryption"] == 'on'):
