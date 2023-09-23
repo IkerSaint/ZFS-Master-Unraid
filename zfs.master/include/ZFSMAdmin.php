@@ -50,7 +50,9 @@ switch ($_POST['cmd']) {
 		refreshData();
 		break;
 	case 'createdataset':
-		$zfs_cparams = cleanZFSCreateDatasetParams($_POST['data']);
+		$zfs_cparams = cleanZFSCreateDatasetParams($_POST['zdataset']);
+
+/*		$ret = createDataset( $zfs_cparams);
 
 		$passphrase = $zfs_cparams['passphrase'] ?? "";
 		unset($zfs_cparams['passphrase']);
@@ -72,7 +74,7 @@ switch ($_POST['cmd']) {
 		endif;
 			
 		# chgrp users <mountpoint>
-		# chown nobody <mountpoint>
+		# chown nobody <mountpoint>*/
 
 		break;
 	case 'updatedataset':
@@ -120,55 +122,55 @@ switch ($_POST['cmd']) {
 	case 'destroydataset':
 		$ret = destroyDataset($_POST['zdataset'], $_POST['force']);
 
-		returnAnswer($ret, "ZFS Dataset", "Dataset destroyed successfully", "Unable to destroy dataset", true);
+		returnAnswer($ret, "ZFS Dataset Destroy", "Dataset destroyed successfully", "Unable to destroy dataset", true);
 
 		break;
 	case 'lockdataset':
 		$ret = lockDataset($_POST['zdataset']);
 		
-		returnAnswer($ret, "ZFS Dataset", "Dataset Locked successfully", "Unable to Lock dataset", true);
+		returnAnswer($ret, "ZFS Dataset Lock", "Dataset Locked successfully", "Unable to Lock dataset", true);
 
 		break;
 	case 'unlockdataset':
 		$ret = unlockDataset($_POST['zdataset'], $_POST['passphrase']);
 		
-		returnAnswer($ret, "ZFS Dataset", "Dataset Unlocked successfully", "Unable to Unlock dataset", true);
+		returnAnswer($ret, "ZFS Dataset Unlock", "Dataset Unlocked successfully", "Unable to Unlock dataset", true);
 		
 		break;
 	case 'promotedataset':
 		$ret = promoteDataset($_POST['zdataset'], 0);
 
-		returnAnswer($ret, "ZFS Dataset", "Dataset promoted successfully", "Unable to promote dataset", true);
+		returnAnswer($ret, "ZFS Dataset Promote", "Dataset promoted successfully", "Unable to promote dataset", true);
 		
 		break;
 	case 'rollbacksnapshot':
 		$ret = rollbackDatasetSnapshot($_POST['snapshot']);
 
-		returnAnswer($ret, "ZFS Snapshot", "Snapshot rolled back successfully", "Unable to rollback snapshot", true);
+		returnAnswer($ret, "ZFS Snapshot Rollback", "Snapshot rolled back successfully", "Unable to rollback snapshot", true);
 
 		break;
 	case 'holdsnapshot':
 		$ret = holdDatasetSnapshot($_POST['snapshot']);
 
-		returnAnswer($ret, "ZFS Snapshot", "Snapshot reference added successfully", "Unable to add reference", false);
+		returnAnswer($ret, "ZFS Snapshot Reference", "Snapshot reference added successfully", "Unable to add reference", false);
 
 		break;
 	case 'releasesnapshot':
 		$ret = releaseDatasetSnapshot($_POST['snapshot']);
 
-		returnAnswer($ret, "ZFS Snapshot", "Snapshot reference removed successfully", "Unable to remove reference", false);
+		returnAnswer($ret, "ZFS Snapshot Release", "Snapshot reference removed successfully", "Unable to remove reference", false);
 
 		break;
 	case 'clonesnapshot':
 		$ret = cloneDatasetSnapshot($_POST['snapshot'], $_POST['clone']);
 
-		returnAnswer($ret, "ZFS Snapshot", "Snapshot cloned successfully", "Unable to clone snapshot", true);
+		returnAnswer($ret, "ZFS Snapshot Clone", "Snapshot cloned successfully", "Unable to clone snapshot", true);
 
 		break;
 	case 'destroysnapshot':
 		$ret = destroyDataset($_POST['snapshot'], 0);
 
-		returnAnswer($ret, "ZFS Snapshot", "Snapshot destroyed successfully", "Unable to destroy snapshot", true);
+		returnAnswer($ret, "ZFS Snapshot Destroy", "Snapshot destroyed successfully", "Unable to destroy snapshot", true);
 
 		break;
 	case 'snapshotdataset':
@@ -176,7 +178,7 @@ switch ($_POST['cmd']) {
 
 		$ret = createDatasetSnapshot( $_POST['zdataset'], $snapshot, $_POST['recursive']);
 
-		returnAnswer($ret, "ZFS Snapshot", "Snapshot created successfully", "Unable to create snapshot", true);
+		returnAnswer($ret, "ZFS Snapshot Create", "Snapshot created successfully", "Unable to create snapshot", true);
 
 		break;
 	default:

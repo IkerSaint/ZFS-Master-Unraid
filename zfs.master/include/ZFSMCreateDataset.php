@@ -9,8 +9,7 @@ require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
 require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
 
 $zpool = $_GET['zpool'];
-$session_file = loadJSONFromDisk($plugin_session_file);
-$zpool_datasets = $session_file;
+$zpool_datasets = getZFSPoolDatasets($zpool);
 ?>
 
 <!DOCTYPE html>
@@ -176,8 +175,6 @@ input[type=email]{margin-top:8px;float:left}
 					</select>
 					Quota
 					<input id="quota" name="quota" class="zfsm-input zfsm-w10" maxlength="7">
-					Set Permissions
-					<input id="permissions" name="permissions" class="zfsm-input zfsm-w10" maxlength="7">
 				</dl>
 			</div>
 			<hr>
@@ -269,7 +266,7 @@ input[type=email]{margin-top:8px;float:left}
   function createDataset() {
 	formData = getFormData("#dataset-form");
 		
-	$.post('<?=$urlzmadmin?>',{cmd: 'createdataset', 'data': formData, 'csrf_token': '<?=$csrf_token?>'}, function(data){
+	$.post('<?=$urlzmadmin?>',{cmd: 'createdataset', 'zpool': formData['zpool'], 'zdataset': formData, 'csrf_token': '<?=$csrf_token?>'}, function(data){
 		if (data == 'Ok') {
 			top.Swal2.fire({
 				title: 'Success!',
