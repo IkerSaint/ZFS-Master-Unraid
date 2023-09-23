@@ -50,7 +50,7 @@ switch ($_POST['cmd']) {
 		refreshData();
 		break;
 	case 'createdataset':
-		$zdataset = $_POST['data']['zpool'].$_POST['data']['name'].;
+		$zdataset = $_POST['data']['zpool']."/".$_POST['data']['name'];
 		$zfs_cparams = cleanZFSCreateDatasetParams($_POST['data']);
 
 		$ret = createDataset( $zdataset, $zfs_cparams);
