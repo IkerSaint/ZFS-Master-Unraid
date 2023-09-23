@@ -4,12 +4,15 @@ $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 $urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
 $csrf_token = $_GET['csrf_token'];
 
-require_once "$docroot/webGui/include/Helpers.php";
-require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
-require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
+require_once $docroot."/webGui/include/Helpers.php";
+require_once $docroot."/plugins/".$plugin."/include/ZFSMBase.php";
+require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
+require_once $docroot."/plugins/".$plugin."/backend/ZFSMOperations.php";
+
+$zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 
 $zpool = $_GET['zpool'];
-$zpool_datasets = getZFSPoolDatasets($zpool);
+$zpool_datasets = getZFSPoolDatasets($zpool, $zfsm_cfg['dataset_exclusion']);
 ?>
 
 <!DOCTYPE html>
@@ -149,8 +152,6 @@ input[type=email]{margin-top:8px;float:left}
 						<option value="no">No</option>
 					</select>
 					<input id="mountpoint" name="mountpoint" class="zfsm-input zfsm-w0 zfsm-unraid-border" placeholder="Empty for default, otherwise complete mountpoint path. ">
-				</dl>
-				<dl>
 					Access Time
 					<select id="atime" name="atime" class="zfsm-input">
 						<option value="inherit" selected>Inherit</option>
@@ -266,7 +267,7 @@ input[type=email]{margin-top:8px;float:left}
   function createDataset() {
 	formData = getFormData("#dataset-form");
 		
-	$.post('<?=$urlzmadmin?>',{cmd: 'createdataset', 'zpool': formData['zpool'], 'zdataset': formData, 'csrf_token': '<?=$csrf_token?>'}, function(data){
+	$.post('<?=$urlzmadmin?>',{cmd: 'createdataset', 'data': formData, 'csrf_token': '<?=$csrf_token?>'}, function(data){
 		if (data == 'Ok') {
 			top.Swal2.fire({
 				title: 'Success!',

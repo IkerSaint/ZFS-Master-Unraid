@@ -77,13 +77,15 @@ function getDatasetSnapshots($zpool, $zdataset) {
 	return $array_ret;
 }
 
-function createDataset($zpool, $zdataset, $zoptions) {
-	$passphrase = $zoptions["passphrase"] ?? "";
+function createDataset( $zdataset, $zoptions) {
+	saveJSONToDisk("/tmp/create_zdataset", $zdataset);
+	saveJSONToDisk("/tmp/create_option", $zoptions);
+	/*$passphrase = $zoptions["passphrase"] ?? "";
 	unset($zoptions["passphrase"]);
 		
 	$cmd_line = "zfs create -vP";
 	$cmd_line .= " -o ".implodeWithKeys(" -o ", $params, "=");
-	$cmd_line .= ' '.escapeshellarg($zpool.'/'.$zdataset).$boutput_str;
+	$cmd_line .= ' '.escapeshellarg($zdataset).$boutput_str;
 
 	if ($zoptions["encryption"] == 'on'):
 		$cmd_line = "echo ".escapeshellarg($passphrase)." | echo ".escapeshellarg($passphrase)." | ".$cmd_line;
@@ -97,7 +99,7 @@ function createDataset($zpool, $zdataset, $zoptions) {
 	endif;
 	
 	zfsnotify( "ZFS Create", "Creation of dataset ".$zpool."/".$zdataset." failed, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-	return false;
+	return false;*/
 }
 
 function renameDataset($zpool, $zdataset, $zdataset_new_name, $force) {
