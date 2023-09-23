@@ -57,28 +57,6 @@ switch ($_POST['cmd']) {
 
 		returnAnswer($ret, "ZFS Dataset Creation", "Dataset created successfully", "Unable to create dataset", true);
 
-/*		$passphrase = $zfs_cparams['passphrase'] ?? "";
-		unset($zfs_cparams['passphrase']);
-
-		$cmd_line = createZFSCreateDatasetCMDLine($zfs_cparams).$boutput_str;
-
-		if ($zfs_cparams['encryption'] == 'on'):
-			$cmd_line = "echo ".escapeshellarg($passphrase)." | echo ".escapeshellarg($passphrase)." | ".$cmd_line;
-		endif;
-
-		$ret = execCommand($cmd_line, $exec_result);
-		
-		if ($ret == 0):
-			zfsnotify( "ZFS Create", "Creation of dataset ".$zfs_cparams['zpool']."/".$zfs_cparams['name']." successful", $cmdoutput_str.$exec_result."","normal");
-			echo 'Ok';
-		else:
-			zfsnotify( "ZFS Create", "Creation of dataset ".$zfs_cparams['zpool']."/".$zfs_cparams['name']." failed, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-			echo $exec_result;
-		endif;
-			
-		# chgrp users <mountpoint>
-		# chown nobody <mountpoint>*/
-
 		break;
 	case 'updatedataset':
 		$cmd_line = createZFSUpdateDatasetCMDLine($_POST['data']).$boutput_str;

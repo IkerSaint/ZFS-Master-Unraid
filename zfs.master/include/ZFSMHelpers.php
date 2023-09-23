@@ -147,7 +147,11 @@ function cleanZFSCreateDatasetParams($params) {
 	
 	if (!isset($retParams['quota']) || $retParams['quota'] == '' || $retParams['quota'] == '0'):
 		unset($retParams['quota']);
+	else:
+		$retParams['quota'] = $retParams['quota'].$retParams['quotaunit'];
 	endif;
+
+	unset($retParams['quotaunit']);
 		
 	return $retParams;
 }
