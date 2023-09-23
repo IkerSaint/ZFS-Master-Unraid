@@ -392,7 +392,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  showCancelButton: true
 	  }).then((result) => {
 		  if (result.isConfirmed) {
-			  $.post('<?=$urlzmadmin?>',{cmd: 'unlockdataset', zdatazet: zdataset, passphrase: result.value}, function(data) {
+			  $.post('<?=$urlzmadmin?>',{cmd: 'unlockdataset', zdataset: zdataset, passphrase: result.value}, function(data) {
 				Swal2.fire({
 					title: 'Unlock Result',
 					icon: 'info',
@@ -401,11 +401,11 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 			  });
 		  }
 	  });
-	  $(".swal2-input").attr("type", "mytext");
+	  $(".swal2-input").css({"margin":"0 auto"});
   }
 
   function lockDataset(zdataset) {
-	  $.post('<?=$urlzmadmin?>',{cmd: 'lockdataset', zdatazet: zdataset},function(data) {
+	  $.post('<?=$urlzmadmin?>',{cmd: 'lockdataset', zdataset: zdataset},function(data) {
 		Swal2.fire({
 			title: 'Lock Result',
 			icon: 'info',
