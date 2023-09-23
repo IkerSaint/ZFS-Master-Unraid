@@ -5,4 +5,6 @@ end
 args = ...
 argv = args["argv"]
 
-return get_dataset_property(argv[1], argv[2])
+ret = get_dataset_property(argv[1], argv[2])
+
+return ret
