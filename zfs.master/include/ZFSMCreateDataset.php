@@ -158,14 +158,14 @@ input[type=email]{margin-top:8px;float:left}
 						<option value="off">Off</option>
 						<option value="on">On</option>
 					</select>
+				</dl>
+				<dl>
 					Case Sensitivity
 					<select id="casesensitivity" name="casesensitivity" class="zfsm-input">
 						<option value="sensitive" selected>Sensitive (Default)</option>
 						<option value="insensitive">Insensitive</option>
 						<option value="mixed">Mixed</option>
 					</select>
-				</dl>
-				<dl>
 					Compression
 					<select id="compression" name="compression" class="zfsm-input">
 						<option value="inherit" selected>Inherit</option>
@@ -176,6 +176,11 @@ input[type=email]{margin-top:8px;float:left}
 					</select>
 					Quota
 					<input id="quota" name="quota" class="zfsm-input zfsm-w10" maxlength="7">
+					<select id="quotaunit" name="quotaunit" class="zfsm-input">
+						<option value="M" selected>MB</option>
+						<option value="G">GB</option>
+						<option value="T">TB</option>
+					</select>
 				</dl>
 			</div>
 			<hr>
@@ -202,11 +207,11 @@ input[type=email]{margin-top:8px;float:left}
 					<select id="recordsize" name="recordsize" class="zfsm-input">
 						<option value="inherit" selected>Inherit</option>
 						<option value="512">512</option>
-						<option value="4K">4K</option>
-						<option value="8K">8K</option>
-						<option value="16K">16K</option>
-						<option value="64K">64K</option>
-						<option value="128K">128K</option>
+						<option value="4K">4KB</option>
+						<option value="8K">8KB</option>
+						<option value="16K">16KB</option>
+						<option value="64K">64KB</option>
+						<option value="128K">128KB</option>
 						<option value="1MB">1MB</option>
 					</select>
 				</dl>
@@ -268,7 +273,7 @@ input[type=email]{margin-top:8px;float:left}
 	formData = getFormData("#dataset-form");
 		
 	$.post('<?=$urlzmadmin?>',{cmd: 'createdataset', 'data': formData, 'csrf_token': '<?=$csrf_token?>'}, function(data){
-		Swal2.fire({
+		top.Swal2.fire({
 			title: 'Create Result',
 			icon: 'info',
 			html: formatAnswer(JSON.parse(data))

@@ -98,6 +98,13 @@ function createDataset( $zdataset, $zoptions) {
 
 	if ($ret == 0):
 		$array_ret['succeeded'][$zdataset] = 0;
+
+		$zpool = explode("/", $zdataset)[0];
+		
+		$mountpoint = getDatasetProperty($zpool, $zdataset, 'mountpoint');
+
+		chown($mountpoint, 'nobody');
+		chgrp($mountpoint, 'users');
 	else:
 		$array_ret['failed'][$zdataset] = $ret;
 	endif;
