@@ -113,7 +113,7 @@ function renameDataset($zdataset, $zdataset_new_name, $force) {
 	$array_ret = buildArrayRet();
 
 	$force = ($_POST['force'] == '1') ? '-f ' : '';
-	$cmd_line = "zfs rename ".$force.$zdataset_new_name." ".$zdataset_new_name.$boutput_str;
+	$cmd_line = "zfs rename ".$force.$zdataset." ".$zdataset_new_name.$boutput_str;
 
 	$ret = execCommand($cmd_line, $exec_result);
 	
