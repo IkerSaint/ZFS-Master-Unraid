@@ -451,20 +451,12 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	  }).then((result) => {
 		  console.log(result);
 		  if (result.isConfirmed) {
-			$.post('<?=$urlzmadmin?>',{cmd: 'renamedataset', data: zdataset, newname: result.value[0], force: result.value[1]}, function(data) {
-			  if (data == 'Ok') {
+			$.post('<?=$urlzmadmin?>',{cmd: 'renamedataset', zdataset: zdataset, newname: result.value[0], force: result.value[1]}, function(data) {
 				Swal2.fire({
-				  title: 'Success!',
-				  icon: 'success',
-				  text: 'Dataset '+zdataset+' renamed'
-			    });
-			  } else {
-				Swal2.fire({
-				  title: 'Error!',
-				  icon: 'error',
-				  html: 'Unable to rename dataset '+zdataset+'<br>Output: '+data
-				}); 
-			  }
+					title: 'Rename Result',
+					icon: 'info',
+					html: formatAnswer(JSON.parse(data))
+				});
 			});
 		  }
 	  });
@@ -492,7 +484,6 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 			  });
 		  }
 	  });
-	  $(".swal2-input").attr("type", "mytext");
   }
 
   function formatAnswer(answer, indentLevel = 0) {

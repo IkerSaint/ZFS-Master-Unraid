@@ -80,9 +80,6 @@ function getDatasetSnapshots($zpool, $zdataset) {
 function createDataset( $zdataset, $zoptions) {
 	$array_ret = buildArrayRet();
 
-	saveJSONToDisk("/tmp/create_zdataset", $zdataset);
-	saveJSONToDisk("/tmp/create_option", $zoptions);
-
 	$passphrase = $zoptions["passphrase"] ?? "";
 	unset($zoptions["passphrase"]);
 		
@@ -112,18 +109,21 @@ function createDataset( $zdataset, $zoptions) {
 	return $array_ret;
 }
 
-function renameDataset($zpool, $zdataset, $zdataset_new_name, $force) {
-	$cmd_line = "zfs rename ".$force.escapeshellarg($zdataset_new_name). " ".escapeshellarg($zdataset_new_name).$boutput_str;
+function renameDataset($zdataset, $zdataset_new_name, $force) {
+	$array_ret = buildArrayRet();
+
+	$force = ($_POST['force'] == '1') ? '-f ' : '';
+	$cmd_line = "zfs rename ".$force.$zdataset_new_name." ".$zdataset_new_name.$boutput_str;
 
 	$ret = execCommand($cmd_line, $exec_result);
 	
 	if ($ret == 0):
-		zfsnotify( "ZFS Rename ", "Dataset ".$zdataset." renamed successfully to ".$zdataset_new_name, $cmdoutput_str.$exec_result."","normal");
-		return true;
+		$array_ret['succeeded'][$zdataset_new_name] = 0;
+	else:
+		$array_ret['failed'][$zdataset_new_name] = $ret;
 	endif;
 	
-	zfsnotify( "ZFS Rename", "Unable to rename dataset ".$zdataset.", return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-	return false;
+	return $array_ret;
 }
 
 function setDatasetProperty($zpool, $zdataset, $zproperty) {
