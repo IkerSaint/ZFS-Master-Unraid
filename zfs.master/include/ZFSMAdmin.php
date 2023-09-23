@@ -50,11 +50,12 @@ switch ($_POST['cmd']) {
 		refreshData();
 		break;
 	case 'createdataset':
-		$zdataset = $POST['data']['name'].$_POST['data']['zpool'];
-
+		$zdataset = $_POST['data']['zpool'].$_POST['data']['name'].;
 		$zfs_cparams = cleanZFSCreateDatasetParams($_POST['data']);
 
 		$ret = createDataset( $zdataset, $zfs_cparams);
+
+		returnAnswer($ret, "ZFS Dataset Creation", "Dataset created successfully", "Unable to create dataset", true);
 
 /*		$passphrase = $zfs_cparams['passphrase'] ?? "";
 		unset($zfs_cparams['passphrase']);

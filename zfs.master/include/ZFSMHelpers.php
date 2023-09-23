@@ -113,6 +113,9 @@ function execCommand($cmd_line, &$exec_out) {
 	
 function cleanZFSCreateDatasetParams($params) {
 	$retParams = $params;
+
+	unset($retParams['zpool']);
+	unset($retParams['name']);
 		
 	foreach ($retParams as $key => $value):
 		if ($value == 'inherit'):
