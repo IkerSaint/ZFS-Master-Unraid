@@ -126,14 +126,58 @@ function renameDataset($zdataset, $zdataset_new_name, $force) {
 	return $array_ret;
 }
 
-function setDatasetProperty($zpool, $zdataset, $zproperty) {
-	# Currently zfs programs only support "user properties" so, this has to be done the hard way
+function setDatasetProperty( $zdataset, $zproperty, $zvalue) {
+	if ($zvalue == "inherit"):
+		$cmd_line = "zfs inherit ".$zproperty." ".$zdataset.$boutput_str;
+	else:
+		$cmd_line = "zfs set ".$zproperty."=".$zvalue." ".$zdataset.$boutput_str;
+	endif;
 
-	return $array_ret;
+	return execCommand($cmd_line, $exec_result);
 }
 
-function setDatasetProperties($zpool, $zdataset, $zproperties) {
-	# Currently zfs programs only support "user properties" so, this has to be done the hard way
+function setDatasetProperties( $zdataset, $zproperties) {
+	$array_ret = buildArrayRet();
+
+	foreach ($zproperties as $key => $value):
+		$ret = setDatasetProperty($zdataset, $key, $value)
+
+		if ($ret == 0):
+			$array_ret['succeeded'][$key] = 0;
+		else:
+			$array_ret['failed'][$key] = $ret;
+		endif;
+	endforeach;
+
+	return $array_ret;
+
+
+/*	$zdataset_name = $params['name'];
+
+	unset($params['update-dataset']);
+	unset($params['name']);
+
+	foreach ($params as $key => $value):
+		if ($value == 'inherit'):
+			unset($params[$key]);
+		endif;
+	endforeach;
+
+	if ($params['quota'] != '0 B' && $params['quota'] != ''):
+		$params['quota'] = str_replace(' ', '', $params['quota']);
+		$params['quota'] = rtrim($params['quota'],'B');
+	else:
+		$params['quota'] = 'none';
+	endif;
+
+	if (isset($params['recordsize'])):
+		$params['recordsize'] = str_replace(' ', '', $params['recordsize']);
+		$params['recordsize'] = rtrim($params['recordsize'],'B');
+	endif;
+
+	$cmd_line = 'zfs set';
+	$cmd_line .= ' '.implodeWithKeys(' ', $params, '=');
+	$cmd_line .= ' '.$zdataset_name;*/
 	
 	return $array_ret;
 }

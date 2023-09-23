@@ -3,15 +3,17 @@ $plugin = "zfs.master";
 $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 $urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
 
-require_once "$docroot/webGui/include/Helpers.php";
-require_once "$docroot/plugins/$plugin/include/ZFSMBase.php";
-require_once "$docroot/plugins/$plugin/include/ZFSMHelpers.php";
+require_once $docroot."/webGui/include/Helpers.php";
+require_once $docroot."/plugins/".$plugin."/include/ZFSMBase.php";
+require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
+require_once $docroot."/plugins/".$plugin."/backend/ZFSMOperations.php";
 
 $csrf_token = $_GET['csrf_token'];
 
 $zpool = $_GET['zpool'];
 $zdataset_name = $_GET['zdataset'];
-$zdataset = getDatasetProperties($zpool, $zdataset_name);
+$zdataset = getAllDatasetProperties($zpool, $zdataset_name);
+
 ?>
 
 <!DOCTYPE html>
@@ -219,13 +221,13 @@ window.onload = function() {
 		echo '<td>Record Size</td>';
 		echo '<td><select id="recordsize" name="recordsize" class="zfsm-input">
 		<option value="inherit">Inherit</option>
-		<option value="512 B">512 B</option>
-		<option value="4 KB">4 KB</option>
-		<option value="8 KB">8 KB</option>
-		<option value="16 KB">16 KB</option>
-		<option value="64 KB">64 KB</option>
-		<option value="128 KB">128 KB</option>
-		<option value="1 MB">1 MB</option>
+		<option value="512">512</option>
+		<option value="4K">4KB</option>
+		<option value="8K">8KB</option>
+		<option value="16K">16KB</option>
+		<option value="64K">64KB</option>
+		<option value="128K">128KB</option>
+		<option value="1M">1MB</option>
 		</select></td>';
 		echo '</tr>';
 		echo '<tr>';

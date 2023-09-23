@@ -366,7 +366,6 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 			  });
 		  }
 	  });
-	  $(".swal2-input").attr("type", "mytext");
   }
 
   function editDataset(zpool, zdataset) {

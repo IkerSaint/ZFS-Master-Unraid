@@ -212,7 +212,7 @@ input[type=email]{margin-top:8px;float:left}
 						<option value="16K">16KB</option>
 						<option value="64K">64KB</option>
 						<option value="128K">128KB</option>
-						<option value="1MB">1MB</option>
+						<option value="1M">1MB</option>
 					</select>
 				</dl>
 				<dl>
