@@ -395,7 +395,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  if (result.isConfirmed) {
 			  $.post('<?=$urlzmadmin?>',{cmd: 'unlockdataset', zdatazet: zdataset, passphrase: result.value}, function(data) {
 				Swal2.fire({
-					title: 'Lock Result',
+					title: 'Unlock Result',
 					icon: 'info',
 					html: formatAnswer(JSON.parse(data))
 				});

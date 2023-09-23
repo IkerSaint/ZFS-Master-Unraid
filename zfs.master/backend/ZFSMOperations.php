@@ -78,9 +78,12 @@ function getDatasetSnapshots($zpool, $zdataset) {
 }
 
 function createDataset( $zdataset, $zoptions) {
+	$array_ret = buildArrayRet();
+
 	saveJSONToDisk("/tmp/create_zdataset", $zdataset);
 	saveJSONToDisk("/tmp/create_option", $zoptions);
-	/*$passphrase = $zoptions["passphrase"] ?? "";
+
+	$passphrase = $zoptions["passphrase"] ?? "";
 	unset($zoptions["passphrase"]);
 		
 	$cmd_line = "zfs create -vP";
@@ -92,14 +95,14 @@ function createDataset( $zdataset, $zoptions) {
 	endif;
 
 	$ret = execCommand($cmd_line, $exec_result);
-		
+
 	if ($ret == 0):
-		zfsnotify( "ZFS Create", "Creation of dataset ".$zpool."/".$zdataset." successful", $cmdoutput_str.$exec_result."","normal");
-		return true;
+		$array_ret['succeeded'][$zdataset] = 0;
+	else:
+		$array_ret['failed'][$zdataset] = $ret;
 	endif;
 	
-	zfsnotify( "ZFS Create", "Creation of dataset ".$zpool."/".$zdataset." failed, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-	return false;*/
+	return $array_ret;
 }
 
 function renameDataset($zpool, $zdataset, $zdataset_new_name, $force) {

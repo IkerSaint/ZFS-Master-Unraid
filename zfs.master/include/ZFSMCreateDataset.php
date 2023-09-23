@@ -268,20 +268,27 @@ input[type=email]{margin-top:8px;float:left}
 	formData = getFormData("#dataset-form");
 		
 	$.post('<?=$urlzmadmin?>',{cmd: 'createdataset', 'data': formData, 'csrf_token': '<?=$csrf_token?>'}, function(data){
-		if (data == 'Ok') {
-			top.Swal2.fire({
-				title: 'Success!',
-				icon:'success',
-				html: 'Dataset '+formData['zpool']+'/'+formData['name']+' created'
-			});
-		} else {
-			top.Swal2.fire({
-				title: 'Error!',
-				icon:'error',
-				html: 'Unable to create dataset '+formData['zpool']+'/'+formData['name']+'<br>Output: '+data
-			}); 
-		}
+		Swal2.fire({
+			title: 'Create Result',
+			icon: 'info',
+			html: formatAnswer(JSON.parse(data))
+		});
 		top.Shadowbox.close();
 	});
+  }
+
+  function formatAnswer(answer, indentLevel = 0) {
+    const indent = '&emsp;&emsp;'.repeat(indentLevel); 
+    let result = '';
+
+    for (const key in answer) {
+        if (typeof answer[key] === 'object') {
+            result += `${formatAnswer(answer[key], indentLevel + 1)}`;
+        } else {
+            result += `${indent}${key}: ${answer[key]}<br>`;
+        }
+    }
+
+    return result;
   }
 </script>
