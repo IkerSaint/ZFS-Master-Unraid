@@ -152,34 +152,6 @@ function setDatasetProperties( $zdataset, $zproperties) {
 	endforeach;
 
 	return $array_ret;
-
-
-/*	$zdataset_name = $params['name'];
-
-	unset($params['update-dataset']);
-	unset($params['name']);
-
-	foreach ($params as $key => $value):
-		if ($value == 'inherit'):
-			unset($params[$key]);
-		endif;
-	endforeach;
-
-	if ($params['quota'] != '0 B' && $params['quota'] != ''):
-		$params['quota'] = str_replace(' ', '', $params['quota']);
-		$params['quota'] = rtrim($params['quota'],'B');
-	else:
-		$params['quota'] = 'none';
-	endif;
-
-	if (isset($params['recordsize'])):
-		$params['recordsize'] = str_replace(' ', '', $params['recordsize']);
-		$params['recordsize'] = rtrim($params['recordsize'],'B');
-	endif;
-
-	$cmd_line = 'zfs set';
-	$cmd_line .= ' '.implodeWithKeys(' ', $params, '=');
-	$cmd_line .= ' '.$zdataset_name;*/
 }
 
 function lockDataset($zdataset) {

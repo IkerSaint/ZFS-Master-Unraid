@@ -21,9 +21,9 @@
 	$script_dataset_destroy_snapshot = $plugin_scripts."zfs_dataset_destroy_snapshot.lua";
 	$script_dataset_create_snapshot = $plugin_scripts."zfs_dataset_create_snapshot.lua";
 		
-	$urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
-	$urlcreatedataset = "/plugins/".$plugin."/include/ZFSMCreateDataset.php";
-	$urladmindatasetsnaps = "/plugins/".$plugin."/include/ZFSMAdminDatasetSnaps.php";
+	$urlzmadmin = "/plugins/".$plugin."/backend/ZFSMAdmin.php";
+	$urlcreatedataset = "/plugins/".$plugin."/frontend/ZFSMCreateDataset.php";
+	$urladmindatasetsnaps = "/plugins/".$plugin."/frontend/ZFSMAdminDatasetSnaps.php";
 	
 	$statusColor = array(
 		'ONLINE' => 'green',
