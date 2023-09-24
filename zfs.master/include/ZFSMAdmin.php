@@ -93,7 +93,7 @@ switch ($_POST['cmd']) {
 	case 'getdatasetproperties':
 		$ret = getAllDatasetProperties($_POST['zdataset']);
 
-		echo $ret;
+		echo json_encode($ret);
 
 		break;
 	case 'renamedataset':
