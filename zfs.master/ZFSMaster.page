@@ -426,7 +426,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	  });
   }
 
-  function getPropertyEditHTML(zdataset, property,  value) {
+  function getPropertyEditHTML(zdataset, property, value) {
 	switch (property) {
 		case 'mountpoint':
 		return '<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Dataset new mountpoint (Full path)" value="'+value+'" type="mytext" style="display: flex;">';
@@ -437,15 +437,15 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		case 'recordsize':
 		return '<select id="swal2-input" name="recordsize" class="zfsm-input"><option value="inherit">Inherit</option><option value="512">512</option><option value="4K">4KB</option><option value="8K">8KB</option><option value="16K">16KB</option><option value="64K">64KB</option><option value="128K">128KB</option><option value="1M">1MB</option></select>';
 		case 'atime':
-		return '<select id="swal2-input" name="atime" class="zfsm-input"><option value="inherit" selected>Inherit</option><option value="off">Off</option><option value="on">On</option></select>';
+		return '<select id="swal2-input" name="atime" class="zfsm-input"><option value="inherit">Inherit</option><option value="off">Off</option><option value="on">On</option></select>';
 		case 'xattr':
-		return '<select id="swal2-input" name="xattr" class="zfsm-input"><option value="inherit" selected>Inherit</option><option value="sa">sa</option><option value="on">on</option><option value="off">off</option></select>';
+		return '<select id="swal2-input" name="xattr" class="zfsm-input"><option value="inherit">Inherit</option><option value="sa">sa</option><option value="on">on</option><option value="off">off</option></select>';
 		case 'primarycache':
-		return '<select id="swal2-input" name="primarycache" class="zfsm-input"><option value="inherit" selected>Inherit</option><option value="all">All</option><option value="metadata">Metadata</option><option value="none">None</option></select>';
+		return '<select id="swal2-input" name="primarycache" class="zfsm-input"><option value="inherit">Inherit</option><option value="all">All</option><option value="metadata">Metadata</option><option value="none">None</option></select>';
 		case 'readonly':
-		return '<select id="swal2-input" name="readonly" class="zfsm-input"><option value="off" selected>Off (Default)</option><option value="on">On</option></select>';
+		return '<select id="swal2-input" name="readonly" class="zfsm-input"><option value="off">Off (Default)</option><option value="on">On</option></select>';
 		case 'sync':
-		return '<select id="swal2-input" name="sync" class="zfsm-input"><option value="standard" selected>Standard (Default)</option><option value="always">Always</option><option value="disabled">Disabled</option></select>';
+		return '<select id="swal2-input" name="sync" class="zfsm-input"><option value="standard">Standard (Default)</option><option value="always">Always</option><option value="disabled">Disabled</option></select>';
 	}
   }
 
