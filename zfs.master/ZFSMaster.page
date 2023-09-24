@@ -392,7 +392,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
     context.attach("#" + id, opts);
 
-	$("#dropdown-"+id+" > li:nth-child(2)").addClass("dropdown-submenu");
+	$("#dropdown-"+id+" > li:nth-child(3)").addClass("dropdown-submenu");
 
   }
 
@@ -440,13 +440,13 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		case 'atime':
 		return '<select id="swal2-input" name="atime" class="zfsm-input"><option value="inherit" selected>Inherit</option><option value="off">Off</option><option value="on">On</option></select>';
 		case 'xattr':
-		return '<select id="xattr" name="xattr" class="zfsm-input"><option value="inherit" selected>Inherit</option><option value="sa">sa</option><option value="on">on</option><option value="off">off</option></select>';
+		return '<select id="swal2-input" name="xattr" class="zfsm-input"><option value="inherit" selected>Inherit</option><option value="sa">sa</option><option value="on">on</option><option value="off">off</option></select>';
 		case 'primarycache':
-		return '<select id="primarycache" name="primarycache" class="zfsm-input"><option value="inherit" selected>Inherit</option><option value="all">All</option><option value="metadata">Metadata</option><option value="none">None</option></select>';
+		return '<select id="swal2-input" name="primarycache" class="zfsm-input"><option value="inherit" selected>Inherit</option><option value="all">All</option><option value="metadata">Metadata</option><option value="none">None</option></select>';
 		case 'readonly':
-		return '<option value="off" selected>Off (Default)</option><option value="on">On</option>';
+		return '<select id="swal2-input" name="readonly" class="zfsm-input"><option value="off" selected>Off (Default)</option><option value="on">On</option></select>';
 		case 'sync':
-		return '<option value="standard" selected>Standard (Default)</option><option value="always">Always</option><option value="disabled">Disabled</option>';
+		return '<select id="swal2-input" name="sync" class="zfsm-input"><option value="standard" selected>Standard (Default)</option><option value="always">Always</option><option value="disabled">Disabled</option></select>';
 	}
   }
 
@@ -455,7 +455,14 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		title: '<strong>'+zdataset+' - '+property+'</strong>',
 		html: getPropertyEditHTML(zdataset, property,  value),
 		showConfirmButton: true,
-		showCancelButton: true
+		showCancelButton: true,
+		preConfirm: function () {
+			return new Promise(function (resolve) {
+				resolve([
+					$('#swal2-input').val()
+				])
+			}
+		}
 	}).then((result) => {
 		console.warn(result);
 		if (result.isConfirmed) {
