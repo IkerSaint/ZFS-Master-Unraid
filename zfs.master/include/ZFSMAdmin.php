@@ -90,6 +90,12 @@ switch ($_POST['cmd']) {
 		endif;*/
 
 		break;
+	case 'getdatasetproperties':
+		$ret = getAllDatasetProperties($_POST['zdataset']);
+
+		echo $ret;
+
+		break;
 	case 'renamedataset':
 		$ret = renameDataset($_POST['zdataset'], $_POST['newname'], $_POST['force']);
 
