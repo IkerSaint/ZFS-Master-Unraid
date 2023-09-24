@@ -433,11 +433,19 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		case 'mountpoint':
 			return '<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Dataset new mountpoint (Full path)" value="'+value+'" type="mytext" style="display: flex;">';
 		case 'quota':
+			if (value) {
+				value = fromBytesToString(value);
+			}
+
 			return '<input id="swal2-input" name="quota" class="swal2-input zfsm-w10" maxlength="7" type="number" value="'+value+'"><select id="quotaunit" name="quotaunit" class="zfsm-input"><option value="M">MB</option><option value="G">GB</option><option value="T">TB</option></select>';
 		case 'compression':
 			tmpHTML = '<select id="swal2-input" name="compression" class="swal2-input"><option value="inherit">Inherit</option><option value="off">Off</option><option value="lz4">lz4</option><option value="gzip">gzip</option><option value="zstd">zstd</option></select>';
 			break;
 		case 'recordsize':
+			if (value) {
+				value = fromBytesToString(value);
+			}
+			
 			tmpHTML ='<select id="swal2-input" name="recordsize" class="zfsm-input"><option value="inherit">Inherit</option><option value="512">512</option><option value="4K">4KB</option><option value="8K">8KB</option><option value="16K">16KB</option><option value="64K">64KB</option><option value="128K">128KB</option><option value="1M">1MB</option></select>';
 			break;
 		case 'atime':
@@ -457,10 +465,12 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 			break;
 	}
 
-	var element = $.parseHTML(tmpHTML);
+	var element = $(tmpHTML);
 
-	$(element)('.swal2-input option[value=value]').attr('selected','selected');
-	return tmpHTML;
+	element.find('option[value='+value+']').attr('selected', 'selected');
+	var res = element.prop('outerHTML');
+
+	return res;
   }
 
   function editDatasetProperty(zdataset, property) {
