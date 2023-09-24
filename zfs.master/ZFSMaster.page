@@ -450,39 +450,37 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   function editDatasetProperty(zdataset, property) {
-	var curValue = {};
+	var properties = {};
 
 	$.post('<?=$urlzmadmin?>',{cmd: 'getdatasetproperties', zdataset: zdataset}, function(data) {
-		curValue = JSON.parse(data);
-	});
+		properties = JSON.parse(data);
 
-	console.warn(curValue);
-
-	Swal2.fire({
-		title: '<strong>'+zdataset+' - '+property+'</strong>',
-		html: getPropertyEditHTML(zdataset, property, value),
-		showConfirmButton: true,
-		showCancelButton: true,
-		preConfirm: function () {
-			return new Promise(function (resolve) {
-				resolve([
-					$('#swal2-input').val()
-				])
+		Swal2.fire({
+			title: '<strong>'+zdataset+' - '+property+'</strong>',
+			html: getPropertyEditHTML(zdataset, property, properties[property]),
+			showConfirmButton: true,
+			showCancelButton: true,
+			preConfirm: function () {
+				return new Promise(function (resolve) {
+					resolve([
+						$('#swal2-input').val()
+					])
+				})
 			}
-		}
-	}).then((result) => {
-		console.warn(result);
-		if (result.isConfirmed) {
-/*			$.post('<?=$urlzmadmin?>',{cmd: 'editdatasetproperty', zdataset: zdataset, newname: result.value[0], force: result.value[1]}, function(data) {
-				Swal2.fire({
-					title: 'Rename Result',
-					icon: 'info',
-					html: formatAnswer(JSON.parse(data))
-				});
-			});*/
-		}
+		}).then((result) => {
+			console.warn(result);
+			if (result.isConfirmed) {
+	/*			$.post('<?=$urlzmadmin?>',{cmd: 'editdatasetproperty', zdataset: zdataset, newname: result.value[0], force: result.value[1]}, function(data) {
+					Swal2.fire({
+						title: 'Rename Result',
+						icon: 'info',
+						html: formatAnswer(JSON.parse(data))
+					});
+				});*/
+			}
+		});
+		$(".swal2-html-container").attr("style", "display: grid;");
 	});
-	$(".swal2-html-container").attr("style", "display: grid;");
   }
 
   function adminDatasetSnaps(zpool, zdataset) {
