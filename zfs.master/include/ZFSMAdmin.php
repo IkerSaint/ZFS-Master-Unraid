@@ -59,9 +59,17 @@ switch ($_POST['cmd']) {
 
 		break;
 	case 'editdatasetproperty':
-		$ret = setDatasetProperties($_POST['zdataset'], $_POST['property'], $_POST['value']);
+		$array_ret = buildArrayRet();
 
-		returnAnswer($ret, "ZFS Dataset Edit", "Dataset edited successfully", "Unable to edit dataset", true);
+		$ret = setDatasetProperty($_POST['zdataset'], $_POST['property'], $_POST['value']);
+
+		if ($ret == 0):
+			$array_ret['succeeded'][$_POST['property']] = 0;
+		else:
+			$array_ret['failed'][$key] = $ret;
+		endif;
+
+		returnAnswer($array_ret, "ZFS Dataset Edit", "Dataset edited successfully", "Unable to edit dataset", true);
 
 
 		/*$cmd_line = createZFSUpdateDatasetCMDLine($_POST['data']).$boutput_str;

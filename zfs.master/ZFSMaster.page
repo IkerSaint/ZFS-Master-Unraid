@@ -430,23 +430,31 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   function getPropertyEditHTML(zdataset, property, value) {
 	switch (property) {
 		case 'mountpoint':
-		return '<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Dataset new mountpoint (Full path)" value="'+value+'" type="mytext" style="display: flex;">';
+			return '<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Dataset new mountpoint (Full path)" value="'+value+'" type="mytext" style="display: flex;">';
 		case 'compression':
-		return '<select id="swal2-input" name="compression" class="swal2-input"><option value="inherit">Inherit</option><option value="off">Off</option><option value="lz4">lz4</option><option value="gzip">gzip</option><option value="zstd">zstd</option></select>';
+			var tmpHTML =  '<select id="swal2-input" name="compression" class="swal2-input"><option value="inherit">Inherit</option><option value="off">Off</option><option value="lz4">lz4</option><option value="gzip">gzip</option><option value="zstd">zstd</option></select>';
+			var element = $.parseHTML(tmpHTML);
+
+			$('.swal2-input option[value=value]').attr('selected','selected');
+			return tmpHTML;
 		case 'quota':
-		return '<input id="swal2-input" name="quota" class="swal2-input zfsm-w10" maxlength="7" type="number"><select id="quotaunit" name="quotaunit" class="zfsm-input"><option value="M">MB</option><option value="G">GB</option><option value="T">TB</option></select>';
+			return '<input id="swal2-input" name="quota" class="swal2-input zfsm-w10" maxlength="7" type="number" value="'+value+'"><select id="quotaunit" name="quotaunit" class="zfsm-input"><option value="M">MB</option><option value="G">GB</option><option value="T">TB</option></select>';
 		case 'recordsize':
-		return '<select id="swal2-input" name="recordsize" class="zfsm-input"><option value="inherit">Inherit</option><option value="512">512</option><option value="4K">4KB</option><option value="8K">8KB</option><option value="16K">16KB</option><option value="64K">64KB</option><option value="128K">128KB</option><option value="1M">1MB</option></select>';
+			var tmpHTML ='<select id="swal2-input" name="recordsize" class="zfsm-input"><option value="inherit">Inherit</option><option value="512">512</option><option value="4K">4KB</option><option value="8K">8KB</option><option value="16K">16KB</option><option value="64K">64KB</option><option value="128K">128KB</option><option value="1M">1MB</option></select>';
+			var element = $.parseHTML(tmpHTML);
+
+			$('.swal2-input option[value=value]').attr('selected','selected');
+			return tmpHTML;
 		case 'atime':
-		return '<select id="swal2-input" name="atime" class="zfsm-input"><option value="inherit">Inherit</option><option value="off">Off</option><option value="on">On</option></select>';
+			return '<select id="swal2-input" name="atime" class="zfsm-input"><option value="inherit">Inherit</option><option value="off">Off</option><option value="on">On</option></select>';
 		case 'xattr':
-		return '<select id="swal2-input" name="xattr" class="zfsm-input"><option value="inherit">Inherit</option><option value="sa">sa</option><option value="on">on</option><option value="off">off</option></select>';
+			return '<select id="swal2-input" name="xattr" class="zfsm-input"><option value="inherit">Inherit</option><option value="sa">sa</option><option value="on">on</option><option value="off">off</option></select>';
 		case 'primarycache':
-		return '<select id="swal2-input" name="primarycache" class="zfsm-input"><option value="inherit">Inherit</option><option value="all">All</option><option value="metadata">Metadata</option><option value="none">None</option></select>';
+			return '<select id="swal2-input" name="primarycache" class="zfsm-input"><option value="inherit">Inherit</option><option value="all">All</option><option value="metadata">Metadata</option><option value="none">None</option></select>';
 		case 'readonly':
-		return '<select id="swal2-input" name="readonly" class="zfsm-input"><option value="off">Off (Default)</option><option value="on">On</option></select>';
+			return '<select id="swal2-input" name="readonly" class="zfsm-input"><option value="off">Off (Default)</option><option value="on">On</option></select>';
 		case 'sync':
-		return '<select id="swal2-input" name="sync" class="zfsm-input"><option value="standard">Standard (Default)</option><option value="always">Always</option><option value="disabled">Disabled</option></select>';
+			return '<select id="swal2-input" name="sync" class="zfsm-input"><option value="standard">Standard (Default)</option><option value="always">Always</option><option value="disabled">Disabled</option></select>';
 	}
   }
 
@@ -471,13 +479,13 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		}).then((result) => {
 			console.warn(result);
 			if (result.isConfirmed) {
-	/*			$.post('<?=$urlzmadmin?>',{cmd: 'editdatasetproperty', zdataset: zdataset, newname: result.value[0], force: result.value[1]}, function(data) {
+				$.post('<?=$urlzmadmin?>',{cmd: 'editdatasetproperty', zdataset: zdataset, property: property, value: result.value[0]}, function(data) {
 					Swal2.fire({
-						title: 'Rename Result',
+						title: 'Edit Result',
 						icon: 'info',
 						html: formatAnswer(JSON.parse(data))
 					});
-				});*/
+				});
 			}
 		});
 		$(".swal2-html-container").attr("style", "display: grid;");
