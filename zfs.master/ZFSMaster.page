@@ -241,6 +241,73 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
   function addDatasetContext(zpool, zdataset, snapscount, id, destructive_mode, encryption, origin) {
     var opts = [];
+	var edit_opts = [];
+
+	edit_opts.push(
+		{
+			text: _("Mountpoint"),
+			action: function(e) {
+				e.preventDefault();
+				editDatasetProperty(zpool, zdataset, "mountpoint");
+			}
+		},
+		{
+			text: _("Compression"),
+			action: function(e) {
+				e.preventDefault();
+				editDatasetProperty(zpool, zdataset, "compression");
+			}
+		},
+		{
+			text: _("Quota"),
+			action: function(e) {
+				e.preventDefault();
+				editDatasetProperty(zpool, zdataset, "quota");
+			}
+		},
+		{
+			text: _("Record Size"),
+			action: function(e) {
+				e.preventDefault();
+				editDatasetProperty(zpool, zdataset, "recordsize");
+			}
+		},
+		{
+			text: _("Access Time (atime)"),
+			action: function(e) {
+				e.preventDefault();
+				editDatasetProperty(zpool, zdataset, "atime");
+			}
+		},
+		{
+			text: _("Extended Attributes (xattr)"),
+			action: function(e) {
+				e.preventDefault();
+				editDatasetProperty(zpool, zdataset, "xattr");
+			}
+		},
+		{
+			text: _("Primary Cache"),
+			action: function(e) {
+				e.preventDefault();
+				editDatasetProperty(zpool, zdataset, "primarycache");
+			}
+		},
+		{
+			text: _("Read Only"),
+			action: function(e) {
+				e.preventDefault();
+				editDatasetProperty(zpool, zdataset, "readonly");
+			}
+		},
+		{
+			text: _("Sync"),
+			action: function(e) {
+				e.preventDefault();
+				editDatasetProperty(zpool, zdataset, "sync");
+			}
+		}
+	);
 
 	if (destructive_mode != 0) {
 		opts.push(
@@ -255,10 +322,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  {
 			text: _("Edit Dataset"),
 			icon: "fa-pencil",
-			action: function (e) {
-				e.preventDefault();
-				editDataset(zpool, zdataset);
-			}
+			subMenu: edit_opts;
 		  },
 		  {
 			text: _("Destroy"),
@@ -327,13 +391,13 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
 	var father = document.getElementById(id).style;
 
-	let height = $(`#dropdown-${id}`).height()
-		$(`#dropdown-${id}`).css({
-			position: 'absolute',
-			top: father.pageY,
-			left: father.pageX,
-			display: 'block'
-		})
+	let height = $(`#dropdown-${id}`).height();
+	$(`#dropdown-${id}`).css({
+		position: 'absolute',
+		top: father.pageY,
+		left: father.pageX,
+		display: 'block'
+	})
   }
 
   function removeContext() {
@@ -367,10 +431,10 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	  });
   }
 
-  function editDataset(zpool, zdataset) {
+/*  function editDataset(zpool, zdataset) {
 	  var csrf_token = $("input[name='csrf_token']").val();	 
 	  openBox('<?=$urleditdataset?>?zpool='+zpool+'&zdataset='+zdataset+'&csrf_token='+csrf_token, zdataset+" - Edit Dataset",400,400,false);
-  }
+  }*/
 
   function adminDatasetSnaps(zpool, zdataset) {
 	  var csrf_token = $("input[name='csrf_token']").val();	 
