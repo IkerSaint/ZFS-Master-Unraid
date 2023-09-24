@@ -248,63 +248,63 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 			text: _("Mountpoint"),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zpool, zdataset, "mountpoint");
+				editDatasetProperty(zdataset, "mountpoint");
 			}
 		},
 		{
 			text: _("Compression"),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zpool, zdataset, "compression");
+				editDatasetProperty(zdataset, "compression");
 			}
 		},
 		{
 			text: _("Quota"),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zpool, zdataset, "quota");
+				editDatasetProperty(zdataset, "quota");
 			}
 		},
 		{
 			text: _("Record Size"),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zpool, zdataset, "recordsize");
+				editDatasetProperty(zdataset, "recordsize");
 			}
 		},
 		{
 			text: _("Access Time (atime)"),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zpool, zdataset, "atime");
+				editDatasetProperty(zdataset, "atime");
 			}
 		},
 		{
 			text: _("Extended Attributes (xattr)"),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zpool, zdataset, "xattr");
+				editDatasetProperty(zdataset, "xattr");
 			}
 		},
 		{
 			text: _("Primary Cache"),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zpool, zdataset, "primarycache");
+				editDatasetProperty(zdataset, "primarycache");
 			}
 		},
 		{
 			text: _("Read Only"),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zpool, zdataset, "readonly");
+				editDatasetProperty(zdataset, "readonly");
 			}
 		},
 		{
 			text: _("Sync"),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zpool, zdataset, "sync");
+				editDatasetProperty(zdataset, "sync");
 			}
 		}
 	);
@@ -426,10 +426,49 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	  });
   }
 
-/*  function editDataset(zpool, zdataset) {
-	  var csrf_token = $("input[name='csrf_token']").val();	 
-	  openBox('<?=$urleditdataset?>?zpool='+zpool+'&zdataset='+zdataset+'&csrf_token='+csrf_token, zdataset+" - Edit Dataset",400,400,false);
-  }*/
+  function getPropertyEditHTML(zdataset, property,  value) {
+	switch (property) {
+		case 'mountpoint':
+		return '<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Dataset new mountpoint (Full path)" value="'+value+'" type="mytext" style="display: flex;">';
+		case 'compression':
+		return '<select id="swal2-input" name="compression" class="swal2-input"><option value="inherit">Inherit</option><option value="off">Off</option><option value="lz4">lz4</option><option value="gzip">gzip</option><option value="zstd">zstd</option></select>';
+		case 'quota':
+		return '<input id="swal2-input" name="quota" class="swal2-input zfsm-w10" maxlength="7" type="number"><select id="quotaunit" name="quotaunit" class="zfsm-input"><option value="M">MB</option><option value="G">GB</option><option value="T">TB</option></select>';
+		case 'recordsize':
+		return '<select id="swal2-input" name="recordsize" class="zfsm-input"><option value="inherit">Inherit</option><option value="512">512</option><option value="4K">4KB</option><option value="8K">8KB</option><option value="16K">16KB</option><option value="64K">64KB</option><option value="128K">128KB</option><option value="1M">1MB</option></select>';
+		case 'atime':
+		return '<select id="swal2-input" name="atime" class="zfsm-input"><option value="inherit" selected>Inherit</option><option value="off">Off</option><option value="on">On</option></select>';
+		case 'xattr':
+		return '<select id="xattr" name="xattr" class="zfsm-input"><option value="inherit" selected>Inherit</option><option value="sa">sa</option><option value="on">on</option><option value="off">off</option></select>';
+		case 'primarycache':
+		return '<select id="primarycache" name="primarycache" class="zfsm-input"><option value="inherit" selected>Inherit</option><option value="all">All</option><option value="metadata">Metadata</option><option value="none">None</option></select>';
+		case 'readonly':
+		return '<option value="off" selected>Off (Default)</option><option value="on">On</option>';
+		case 'sync':
+		return '<option value="standard" selected>Standard (Default)</option><option value="always">Always</option><option value="disabled">Disabled</option>';
+	}
+  }
+
+  function editDatasetProperty(zdataset, property) {
+	Swal2.fire({
+		title: '<strong>'+zdataset+' - '+property+'</strong>',
+		html: getPropertyEditHTML(zdataset, property,  value),
+		showConfirmButton: true,
+		showCancelButton: true
+	}).then((result) => {
+		console.warn(result);
+		if (result.isConfirmed) {
+/*			$.post('<?=$urlzmadmin?>',{cmd: 'editdatasetproperty', zdataset: zdataset, newname: result.value[0], force: result.value[1]}, function(data) {
+				Swal2.fire({
+					title: 'Rename Result',
+					icon: 'info',
+					html: formatAnswer(JSON.parse(data))
+				});
+			});*/
+		}
+	});
+	$(".swal2-html-container").attr("style", "display: grid;");
+  }
 
   function adminDatasetSnaps(zpool, zdataset) {
 	  var csrf_token = $("input[name='csrf_token']").val();	 
@@ -507,7 +546,6 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		    })
 	      }
 	  }).then((result) => {
-		  console.log(result);
 		  if (result.isConfirmed) {
 			$.post('<?=$urlzmadmin?>',{cmd: 'renamedataset', zdataset: zdataset, newname: result.value[0], force: result.value[1]}, function(data) {
 				Swal2.fire({

@@ -175,7 +175,7 @@ input[type=email]{margin-top:8px;float:left}
 						<option value="zstd">zstd</option>
 					</select>
 					Quota
-					<input id="quota" name="quota" class="zfsm-input zfsm-w10" maxlength="7">
+					<input id="quota" name="quota" class="zfsm-input zfsm-w10" maxlength="7" type="number">
 					<select id="quotaunit" name="quotaunit" class="zfsm-input">
 						<option value="M" selected>MB</option>
 						<option value="G">GB</option>
