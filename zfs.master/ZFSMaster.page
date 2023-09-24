@@ -309,6 +309,8 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		}
 	);
 
+	opts.push({header:zdataset});
+
 	if (destructive_mode != 0) {
 		opts.push(
 		  {
@@ -387,8 +389,9 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		});
     }
 
-	context.settings({above:false});
     context.attach("#" + id, opts);
+
+	$("#dropdown-"+id+" > li:nth-child(2)").addClass("dropdown-submenu");
 
   }
 
