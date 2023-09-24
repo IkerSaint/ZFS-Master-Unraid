@@ -322,7 +322,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  {
 			text: _("Edit Dataset"),
 			icon: "fa-pencil",
-			subMenu: edit_opts;
+			subMenu: edit_opts
 		  },
 		  {
 			text: _("Destroy"),
@@ -387,17 +387,9 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		});
     }
 
+	context.settings({above:false});
     context.attach("#" + id, opts);
 
-	var father = document.getElementById(id).style;
-
-	let height = $(`#dropdown-${id}`).height();
-	$(`#dropdown-${id}`).css({
-		position: 'absolute',
-		top: father.pageY,
-		left: father.pageX,
-		display: 'block'
-	})
   }
 
   function removeContext() {
