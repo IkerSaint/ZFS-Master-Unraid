@@ -24,7 +24,6 @@
 	$urlzmadmin = "/plugins/".$plugin."/include/ZFSMAdmin.php";
 	$urlcreatedataset = "/plugins/".$plugin."/include/ZFSMCreateDataset.php";
 	$urladmindatasetsnaps = "/plugins/".$plugin."/include/ZFSMAdminDatasetSnaps.php";
-	$urleditdataset = "/plugins/".$plugin."/include/ZFSMEditDataset.php";
 	
 	$statusColor = array(
 		'ONLINE' => 'green',
