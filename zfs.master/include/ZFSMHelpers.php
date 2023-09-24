@@ -34,7 +34,7 @@ function zfsnotify( $subject, $description, $message, $type="normal") {
 	shell_exec($command);
 }
 
-function loadJSONFromDisk($file) {
+/*function loadJSONFromDisk($file) {
 	$readJSONFile = file_get_contents($file);
 	return json_decode($readJSONFile, true);
 }
@@ -60,7 +60,7 @@ function fromStringToBytes($spacestr) {
 	}
 		  
 	return $return_number;
-}
+}*/
 
 function fromBytesToString($bytes) {
 	$units = array('B', 'KB', 'MB', 'GB', 'TB'); 
@@ -74,13 +74,13 @@ function fromBytesToString($bytes) {
    return round($bytes, 2) . ' ' . $units[$pow]; 
 }
 	  
-function calculateFreePercent($used,$free) {
+/*function calculateFreePercent($used,$free) {
 	$used_tmp = gettype($used) == "string" ? fromStringToBytes($used) : $used;
 	$free_tmp = gettype($free) == "string" ? fromStringToBytes($free) : $free;
 		
 	$result = $free_tmp/($free_tmp+$used_tmp);
 	return $result*100;
-}
+}*/
 	  
 function implodeWithKeys($glue, $array, $symbol = ': ') {
 	return implode( $glue, array_map( function($k, $v) use($symbol) {
@@ -91,7 +91,7 @@ function implodeWithKeys($glue, $array, $symbol = ': ') {
 	);
 }
 	  
-function daysToNow($timestamp) {					
+/*function daysToNow($timestamp) {					
 	$currentdate = new DateTime();
 	$diffdate = new DateTime();
 		
@@ -99,7 +99,7 @@ function daysToNow($timestamp) {
 	$difference = $currentdate->diff($diffdate);
 
 	return $difference->days;
-}
+}*/
 	
 function execCommand($cmd_line, &$exec_out) {
 	exec($cmd_line, $out_arr, $val);
@@ -156,7 +156,7 @@ function cleanZFSCreateDatasetParams($params) {
 	return $retParams;
 }
 	
-function createZFSCreateDatasetCMDLine($zpool, $zdataset, $zparams) {
+/*function createZFSCreateDatasetCMDLine($zpool, $zdataset, $zparams) {
 	$zdataset_name = $zpool.'/'.$zdataset;
 		
 	$cmd_line = 'zfs create -vP';
@@ -220,7 +220,7 @@ function createZFSInheritDatasetCMDLine($params) {
 	$cmd_line .= ' '.$zdataset_name;
 
 	return $cmd_line;
-}
+}*/
 	
 function processCmdLine($regex, $cmd_line, $cleanfunction) {
 	$data = shell_exec($cmd_line.' 2>&1');
@@ -289,7 +289,7 @@ function sortDatasetArray($datasetArray) {
 	return $datasetArray;
 }
 
-function findDatasetInArray($dataset_name, $datasetArray) {
+/*function findDatasetInArray($dataset_name, $datasetArray) {
 	foreach ($datasetArray['child'] as $dataset):
 		if (strcmp($dataset['name'], $dataset_name) == 0):
 			return $dataset;
@@ -478,6 +478,6 @@ function getLastSnap($zsnapshots) {
 	endforeach;
 
 	return $lastsnap;
-}
+}*/
 
 ?>

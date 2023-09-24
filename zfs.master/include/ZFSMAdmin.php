@@ -70,33 +70,6 @@ switch ($_POST['cmd']) {
 		endif;
 
 		returnAnswer($array_ret, "ZFS Dataset Edit", "Dataset edited successfully", "Unable to edit dataset", true);
-
-
-		/*$cmd_line = createZFSUpdateDatasetCMDLine($_POST['data']).$boutput_str;
-
-		$ret = execCommand($cmd_line, $exec_result);
-
-		if ($ret == 0):
-			zfsnotify( "ZFS Update", "Dataset update successful", $cmdoutput_str.$exec_result."","normal");
-			echo 'Ok';
-		else:
-			zfsnotify( "ZFS Update", "Dataset update fail, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-			echo $exec_result;
-		endif;
-
-		$cmd_line = createZFSInheritDatasetCMDLine($_POST['data']).$boutput_str;
-
-		if ($cmd_line == '' || $ret != 0):
-			break;
-		endif;
-
-		$ret = execCommand($cmd_line, $exec_result);
-
-		if ($ret != 0):
-			zfsnotify( "ZFS Update", "Dataset update partially failed, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
-			echo $exec_result;
-		endif;*/
-
 		break;
 	case 'getdatasetproperties':
 		$ret = getAllDatasetProperties($_POST['zdataset']);

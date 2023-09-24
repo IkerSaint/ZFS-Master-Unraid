@@ -40,7 +40,7 @@ function fromBytesToString(bytes) {
 	bytes /= Math.pow(1024, limitedPow);
   
 	return (Math.round((bytes + Number.EPSILON) * 10) / 10) + ' ' + units[limitedPow];
-  }
+}
 
 function fromStringToBytes(spacestr) {
 	let returnNumber = parseFloat(spacestr);
