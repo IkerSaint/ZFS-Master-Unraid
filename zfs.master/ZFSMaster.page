@@ -427,34 +427,40 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   function getPropertyEditHTML(zdataset, property, value) {
+	var tmpHTML = '';
+
 	switch (property) {
 		case 'mountpoint':
 			return '<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Dataset new mountpoint (Full path)" value="'+value+'" type="mytext" style="display: flex;">';
-		case 'compression':
-			var tmpHTML =  '<select id="swal2-input" name="compression" class="swal2-input"><option value="inherit">Inherit</option><option value="off">Off</option><option value="lz4">lz4</option><option value="gzip">gzip</option><option value="zstd">zstd</option></select>';
-			var element = $.parseHTML(tmpHTML);
-
-			$('.swal2-input option[value=value]').attr('selected','selected');
-			return tmpHTML;
 		case 'quota':
 			return '<input id="swal2-input" name="quota" class="swal2-input zfsm-w10" maxlength="7" type="number" value="'+value+'"><select id="quotaunit" name="quotaunit" class="zfsm-input"><option value="M">MB</option><option value="G">GB</option><option value="T">TB</option></select>';
+		case 'compression':
+			tmpHTML = '<select id="swal2-input" name="compression" class="swal2-input"><option value="inherit">Inherit</option><option value="off">Off</option><option value="lz4">lz4</option><option value="gzip">gzip</option><option value="zstd">zstd</option></select>';
+			break;
 		case 'recordsize':
-			var tmpHTML ='<select id="swal2-input" name="recordsize" class="zfsm-input"><option value="inherit">Inherit</option><option value="512">512</option><option value="4K">4KB</option><option value="8K">8KB</option><option value="16K">16KB</option><option value="64K">64KB</option><option value="128K">128KB</option><option value="1M">1MB</option></select>';
-			var element = $.parseHTML(tmpHTML);
-
-			$('.swal2-input option[value=value]').attr('selected','selected');
-			return tmpHTML;
+			tmpHTML ='<select id="swal2-input" name="recordsize" class="zfsm-input"><option value="inherit">Inherit</option><option value="512">512</option><option value="4K">4KB</option><option value="8K">8KB</option><option value="16K">16KB</option><option value="64K">64KB</option><option value="128K">128KB</option><option value="1M">1MB</option></select>';
+			break;
 		case 'atime':
-			return '<select id="swal2-input" name="atime" class="zfsm-input"><option value="inherit">Inherit</option><option value="off">Off</option><option value="on">On</option></select>';
+			tmpHTML = '<select id="swal2-input" name="atime" class="zfsm-input"><option value="inherit">Inherit</option><option value="off">Off</option><option value="on">On</option></select>';
+			break;
 		case 'xattr':
-			return '<select id="swal2-input" name="xattr" class="zfsm-input"><option value="inherit">Inherit</option><option value="sa">sa</option><option value="on">on</option><option value="off">off</option></select>';
+			tmpHTML = '<select id="swal2-input" name="xattr" class="zfsm-input"><option value="inherit">Inherit</option><option value="sa">sa</option><option value="on">on</option><option value="off">off</option></select>';
+			break;
 		case 'primarycache':
-			return '<select id="swal2-input" name="primarycache" class="zfsm-input"><option value="inherit">Inherit</option><option value="all">All</option><option value="metadata">Metadata</option><option value="none">None</option></select>';
+			tmpHTML = '<select id="swal2-input" name="primarycache" class="zfsm-input"><option value="inherit">Inherit</option><option value="all">All</option><option value="metadata">Metadata</option><option value="none">None</option></select>';
+			break;
 		case 'readonly':
-			return '<select id="swal2-input" name="readonly" class="zfsm-input"><option value="off">Off (Default)</option><option value="on">On</option></select>';
+			tmpHTML = '<select id="swal2-input" name="readonly" class="zfsm-input"><option value="off">Off</option><option value="on">On</option></select>';
+			break;
 		case 'sync':
-			return '<select id="swal2-input" name="sync" class="zfsm-input"><option value="standard">Standard (Default)</option><option value="always">Always</option><option value="disabled">Disabled</option></select>';
+			tmpHTML = '<select id="swal2-input" name="sync" class="zfsm-input"><option value="standard">Standard</option><option value="always">Always</option><option value="disabled">Disabled</option></select>';
+			break;
 	}
+
+	var element = $.parseHTML(tmpHTML);
+
+	$(element)('.swal2-input option[value=value]').attr('selected','selected');
+	return tmpHTML;
   }
 
   function editDatasetProperty(zdataset, property) {
