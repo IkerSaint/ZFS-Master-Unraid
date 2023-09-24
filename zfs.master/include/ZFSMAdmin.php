@@ -58,8 +58,8 @@ switch ($_POST['cmd']) {
 		returnAnswer($ret, "ZFS Dataset Creation", "Dataset created successfully", "Unable to create dataset", true);
 
 		break;
-	case 'updatedataset':
-		$ret = setDatasetProperties($_POST['zdataset'], $_POST['properties']);
+	case 'editdatasetproperty':
+		$ret = setDatasetProperties($_POST['zdataset'], $_POST['property'], $_POST['value']);
 
 		returnAnswer($ret, "ZFS Dataset Edit", "Dataset edited successfully", "Unable to edit dataset", true);
 
