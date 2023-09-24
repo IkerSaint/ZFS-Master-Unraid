@@ -94,6 +94,10 @@ input[type=email]{margin-top:8px;float:left}
   .zfsm-wauto {
 	  width: auto;
   }
+
+  .zfsm-w5 {
+	  width: 5%;
+  }
   
   .zfsm-w10 {
 	  width: 10%;
@@ -141,7 +145,7 @@ input[type=email]{margin-top:8px;float:left}
 					<span class="zfsm-zpool" id="pool" name="<?echo $zpool?>"><?echo $zpool?></span> / <input id="name" class="zfsm-input zfsm-w75 zfsm-unraid-border" name="name" placeholder="Complete path, without the pool name." list="zpool-datasets" required>
 					<datalist id="zpool-datasets">
 					<?
-						//generatePoolDatasetOptions($zpool_datasets[$zpool]);
+						generatePoolDatasetOptions($zpool_datasets[$zpool]);
 					?>
 					</datalist>
 				</dl>
@@ -175,7 +179,7 @@ input[type=email]{margin-top:8px;float:left}
 						<option value="zstd">zstd</option>
 					</select>
 					Quota
-					<input id="quota" name="quota" class="zfsm-input zfsm-w10" maxlength="7" type="number">
+					<input id="quota" name="quota" class="zfsm-input zfsm-w5" maxlength="5">
 					<select id="quotaunit" name="quotaunit" class="zfsm-input">
 						<option value="M" selected>MB</option>
 						<option value="G">GB</option>
