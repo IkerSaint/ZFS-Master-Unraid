@@ -451,9 +451,17 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   function editDatasetProperty(zdataset, property) {
+	var curValue = {};
+
+	$.post('<?=$urlzmadmin?>',{cmd: 'getdatasetproperties', zdataset: zdataset}, function(data) {
+		curValue = JSON.parse(data);
+	});
+
+	console.warn(curValue);
+
 	Swal2.fire({
 		title: '<strong>'+zdataset+' - '+property+'</strong>',
-		html: getPropertyEditHTML(zdataset, property,  value),
+		html: getPropertyEditHTML(zdataset, property, value),
 		showConfirmButton: true,
 		showCancelButton: true,
 		preConfirm: function () {

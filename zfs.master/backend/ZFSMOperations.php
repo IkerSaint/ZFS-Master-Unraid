@@ -59,7 +59,9 @@ function getDatasetProperty($zpool, $zdataset, $zproperty) {
 	return $array_ret;
 }
 
-function getAllDatasetProperties($zpool, $zdataset) {
+function getAllDatasetProperties($zdataset) {
+	$zpool = explode("/", $zdataset)[0];
+	
 	$array_ret = executeZFSProgram($GLOBALS["script_dataset_get_properties"], $zpool, array($zdataset));
 
 	return $array_ret;
