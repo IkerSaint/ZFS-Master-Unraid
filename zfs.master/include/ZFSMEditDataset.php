@@ -285,7 +285,7 @@ window.onload = function() {
 	$("#sync").val('<?=$zdataset["sync"]?>');
   }
 
-  function updateDataset(dataset) {
+  function updateDataset(zdataset) {
 	let inputs = {};
 
 	$(":input").each(function(){
@@ -299,25 +299,31 @@ window.onload = function() {
 			inputs[$(this).attr('id')]=$(this).val();
 		}
     });
-
-	inputs['name'] = dataset;
 		
-	$.post('<?=$urlzmadmin?>',{cmd: 'updatedataset', 'data': inputs, 'csrf_token': '<?=$csrf_token?>'}, function(data){
-		if (data == 'Ok') {
-			top.Swal2.fire({
-				title: 'Success!',
-				icon:'success',
-				html: 'Dataset updated'
-			});
-		} else {
-			top.Swal2.fire({
-				title: 'Error!',
-				icon:'error',
-				html: 'Unable to update dataset <br>Output: '+data
-			}); 
-		}
+	$.post('<?=$urlzmadmin?>',{cmd: 'updatedataset', zdataset: zdataset, properties: inputs, 'csrf_token': '<?=$csrf_token?>'}, function(data){
+		top.Swal2.fire({
+			title: 'Edit Result',
+			icon: 'info',
+			html: formatAnswer(JSON.parse(data))
+		});
+
 		top.Shadowbox.close();
 	});
+  }
+
+  function formatAnswer(answer, indentLevel = 0) {
+    const indent = '&emsp;&emsp;'.repeat(indentLevel); // Four spaces for each level of indentation
+    let result = '';
+
+    for (const key in answer) {
+        if (typeof answer[key] === 'object') {
+            result += `{key}:${formatAnswer(answer[key], indentLevel + 1)}`;
+        } else {
+            result += `${indent}${key}: ${answer[key]}<br>`;
+        }
+    }
+
+    return result;
   }
 
 </script>

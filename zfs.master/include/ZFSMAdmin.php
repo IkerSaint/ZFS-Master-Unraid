@@ -59,7 +59,12 @@ switch ($_POST['cmd']) {
 
 		break;
 	case 'updatedataset':
-		$cmd_line = createZFSUpdateDatasetCMDLine($_POST['data']).$boutput_str;
+		$ret = setDatasetProperties($_POST['zdataset'], $_POST['properties']);
+
+		returnAnswer($ret, "ZFS Dataset Edit", "Dataset edited successfully", "Unable to edit dataset", true);
+
+
+		/*$cmd_line = createZFSUpdateDatasetCMDLine($_POST['data']).$boutput_str;
 
 		$ret = execCommand($cmd_line, $exec_result);
 
@@ -82,7 +87,7 @@ switch ($_POST['cmd']) {
 		if ($ret != 0):
 			zfsnotify( "ZFS Update", "Dataset update partially failed, return code (".$ret.")", $cmdoutput_str.$exec_result."","warning");
 			echo $exec_result;
-		endif;
+		endif;*/
 
 		break;
 	case 'renamedataset':
