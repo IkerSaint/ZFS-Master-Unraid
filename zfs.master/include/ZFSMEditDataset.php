@@ -317,7 +317,7 @@ window.onload = function() {
 
     for (const key in answer) {
         if (typeof answer[key] === 'object') {
-            result += `{key}:${formatAnswer(answer[key], indentLevel + 1)}`;
+            result += `${key}:${formatAnswer(answer[key], indentLevel + 1)}`;
         } else {
             result += `${indent}${key}: ${answer[key]}<br>`;
         }
