@@ -34,34 +34,6 @@ function zfsnotify( $subject, $description, $message, $type="normal") {
 	shell_exec($command);
 }
 
-/*function loadJSONFromDisk($file) {
-	$readJSONFile = file_get_contents($file);
-	return json_decode($readJSONFile, true);
-}
-
-function saveJSONToDisk($file, $data) {
-	file_put_contents($file, json_encode($data));
-}
-
-function fromStringToBytes($spacestr) {
-	$return_number = (double)$spacestr;
-		
-	switch ($spacestr[-1]) {
-		case 'T':
-			$return_number *= 1024;
-		case 'G':
-			$return_number *= 1024;
-		case 'M':
-			$return_number *= 1024;
-		case 'K':
-			$return_number *= 1024;
-		default:
-			break;
-	}
-		  
-	return $return_number;
-}*/
-
 function fromBytesToString($bytes) {
 	$units = array('B', 'KB', 'MB', 'GB', 'TB'); 
 		
@@ -74,14 +46,6 @@ function fromBytesToString($bytes) {
    return round($bytes, 2) . ' ' . $units[$pow]; 
 }
 	  
-/*function calculateFreePercent($used,$free) {
-	$used_tmp = gettype($used) == "string" ? fromStringToBytes($used) : $used;
-	$free_tmp = gettype($free) == "string" ? fromStringToBytes($free) : $free;
-		
-	$result = $free_tmp/($free_tmp+$used_tmp);
-	return $result*100;
-}*/
-	  
 function implodeWithKeys($glue, $array, $symbol = ': ') {
 	return implode( $glue, array_map( function($k, $v) use($symbol) {
 			return $k . $symbol . $v;
@@ -90,16 +54,6 @@ function implodeWithKeys($glue, $array, $symbol = ': ') {
 		array_values($array))
 	);
 }
-	  
-/*function daysToNow($timestamp) {					
-	$currentdate = new DateTime();
-	$diffdate = new DateTime();
-		
-	$diffdate->setTimestamp($timestamp);
-	$difference = $currentdate->diff($diffdate);
-
-	return $difference->days;
-}*/
 	
 function execCommand($cmd_line, &$exec_out) {
 	exec($cmd_line, $out_arr, $val);
@@ -155,72 +109,6 @@ function cleanZFSCreateDatasetParams($params) {
 		
 	return $retParams;
 }
-	
-/*function createZFSCreateDatasetCMDLine($zpool, $zdataset, $zparams) {
-	$zdataset_name = $zpool.'/'.$zdataset;
-		
-	$cmd_line = 'zfs create -vP';
-	$cmd_line .= ' -o '.implodeWithKeys(' -o ', $zparams, '=');
-	$cmd_line .= ' '.$zdataset_name;
-		
-	return $cmd_line;
-}
-
-function createZFSUpdateDatasetCMDLine($params) {
-	$zdataset_name = $params['name'];
-
-	unset($params['update-dataset']);
-	unset($params['name']);
-
-	foreach ($params as $key => $value):
-		if ($value == 'inherit'):
-			unset($params[$key]);
-		endif;
-	endforeach;
-
-	if ($params['quota'] != '0 B' && $params['quota'] != ''):
-		$params['quota'] = str_replace(' ', '', $params['quota']);
-		$params['quota'] = rtrim($params['quota'],'B');
-	else:
-		$params['quota'] = 'none';
-	endif;
-
-	if (isset($params['recordsize'])):
-		$params['recordsize'] = str_replace(' ', '', $params['recordsize']);
-		$params['recordsize'] = rtrim($params['recordsize'],'B');
-	endif;
-
-	$cmd_line = 'zfs set';
-	$cmd_line .= ' '.implodeWithKeys(' ', $params, '=');
-	$cmd_line .= ' '.$zdataset_name;
-
-	return $cmd_line;
-}
-
-function createZFSInheritDatasetCMDLine($params) {
-	$zdataset_name = $params['name'];
-
-	unset($params['update-dataset']);
-	unset($params['name']);
-
-	$cmd_line = 'zfs inherit';
-
-	foreach ($params as $key => $value):
-		if ($value != 'inherit'):
-			unset($params[$key]);
-			continue;
-		endif;
-
-		$cmd_line .= ' '.$key;
-	endforeach;
-
-	if (!count($params))
-		return '';
-
-	$cmd_line .= ' '.$zdataset_name;
-
-	return $cmd_line;
-}*/
 	
 function processCmdLine($regex, $cmd_line, $cleanfunction) {
 	$data = shell_exec($cmd_line.' 2>&1');
@@ -289,170 +177,6 @@ function sortDatasetArray($datasetArray) {
 	return $datasetArray;
 }
 
-/*function findDatasetInArray($dataset_name, $datasetArray) {
-	foreach ($datasetArray['child'] as $dataset):
-		if (strcmp($dataset['name'], $dataset_name) == 0):
-			return $dataset;
-		endif;
-
-		$ret = findDatasetInArray($dataset_name, $dataset);
-
-		if ($ret != null):
-			return $ret;
-		endif;
-	endforeach;
-
-	return null;
-}
-
-function generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass) {
-	echo '<tr class="zdataset-'.$zpool.' '.$zclass.'" style="display: '.$display.'">';
-	echo '<td>';
-	echo '</td>';
-	echo '<td>';
-	echo '</td>';
-	echo '<td>';
-		$creationdate = new DateTime();
-		$creationdate->setTimestamp($zdataset['creation']);
-
-		$tmp_array = ["Creation Date" => $creationdate->format('Y-m-d H:i:s'),
-				"Compression" =>  $zdataset['compression'],
-				"Compress Ratio" => ($zdataset['compressratio']/100),
-				"Record Size" =>  fromBytesToString($zdataset['recordsize']),
-				"Access Time" =>  $zdataset['atime'],
-				"XAttr" =>  $zdataset['xattr'],
-				"Primary Cache" =>  $zdataset['primarycache'],
-				"Encryption" => $zdataset['encryption'],
-				'Key Status' => $zdataset['keystatus'],
-				"Quota" =>  fromBytesToString($zdataset['quota']),
-				"Read Only" =>  $zdataset['readonly'],
-				"Case Sensitive" =>  $zdataset['casesensitivity'],
-				"Sync" =>  $zdataset['sync'],
-				"Origin" =>  $zdataset['origin'] ?? "",
-				"Space used by Snaps" =>  fromBytesToString($zdataset['usedbysnapshots'])];
-
-		$icon_color = 'grey';
-			
-		if (count($zdataset['snapshots']) > 0):
-			$snap = getLastSnap($zdataset['snapshots']);
-									
-			$snapdate = new DateTime();
-			$snapdate->setTimestamp($snap['creation']);
-				
-			if (daysToNow($snap['creation']) > $zfsm_cfg['snap_max_days_alert']):
-				$icon_color = 'orange';
-			else:
-				$icon_color = '#486dba';
-			endif;
-				
-			$tmp_array['Last Snap Date'] = $snapdate->format('Y-m-d H:i:s');
-			$tmp_array['Last Snap'] = $snap['name'];
-		endif;
-
-		$depth = substr_count($zdataset['name'], '/');
-
-		for ( $i = 1; $i <= $depth; $i++) {
-			echo '&emsp;&emsp;';
-		}
-
-		echo '<a class="info hand">';
-		echo '<i class="fa fa-hdd-o icon" style="color:'.$icon_color.'" onclick="toggleDataset(\''.$zdataset['name'].'\');"></i>';
-		echo '<span>'.implodeWithKeys('<br>', $tmp_array).'</span>';
-		echo '</a>';
-
-		if (count($zdataset['child']) > 0):
-			echo '<i class="fa fa-minus-square fa-append" name="'.$zdataset['name'].'"></i>';
-		endif;
-
-		if (isset($zdataset['origin'])):
-			echo '<i class="fa fa-clone fa-append"></i>';
-		endif;
-
-		if ($zdataset['keystatus'] != 'none'):
-			if ($zdataset['keystatus'] == 'available'):
-				echo '<i class="fa fa-unlock fa-append"></i>';
-			else:
-				echo '<i class="fa fa-lock fa-append"></i>';
-			endif;
-		endif;
-
-		echo substr( $zdataset['name'], strrpos($zdataset['name'], "/")  + 1,  strlen($zdataset['name']) );
-	echo '</td>';
-
-	// Actions
-
-	echo '<td>';
-		$id = md5($zdataset['name']);
-		echo '<button type="button" id="'.$id.'" onclick="addDatasetContext(\''.$zpool.'\', \''.$zdataset['name'].'\', '.count($zdataset['snapshots']).', \''.$id.'\', '.$zfsm_cfg['destructive_mode'].', \''.$zdataset['keystatus'].'\'';
-		if (isset($zdataset['origin'])):
-			echo ',\''.$zdataset['origin'].'\'';
-		endif;
-		echo ');" class="zfs_compact">Actions</button></span>';
-	echo '</td>';
-
-	//mountpoint
-	echo '<td>';
-		if ($zdataset['mountpoint'] != "none"): 
-			echo $zdataset['mountpoint'];
-		endif;
-	echo '</td>';
-
-	// Referr
-	echo '<td>';
-		echo fromBytesToString($zdataset['referenced']);
-	echo '</td>';
-
-	// Used
-	echo '<td>';
-		$percent = 100-round(calculateFreePercent($zdataset['used'], $zdataset['available']));
-		echo '<div class="usage-disk"><span style="width:'.$percent.'%" class=""><span>'.fromBytesToString($zdataset['used']).'</span></div>';
-	echo '</td>';
-
-	// Free
-	echo '<td>';
-		$percent = round(calculateFreePercent($zdataset['used'], $zdataset['available']));
-		echo '<div class="usage-disk"><span style="width:'.$percent.'%" class=""><span>'.fromBytesToString($zdataset['available']).'</span></div>';
-	echo '</td>';
-
-	//snapshots
-	echo '<td>';
-		$icon_color = 'grey';
-		
-		if (count($zdataset['snapshots']) > 0):
-			$snap = getLastSnap($zdataset['snapshots']);
-			$days = daysToNow($snap['creation']);
-			
-			if ($days > $zfsm_cfg['snap_max_days_alert']):
-				$icon_color = 'orange';
-			else:
-				$icon_color = '#486dba';
-			endif;
-		endif;
-	
-		echo '<i class="fa fa-camera-retro icon" style="color:'.$icon_color.'"></i> ';
-		echo count($zdataset['snapshots']);
-
-		if ($zdataset['mountpoint'] != "none"): 
-			echo ' <a href="/Main/Browse?dir='.$zdataset['mountpoint'].'"><i class="icon-u-tab zfs_bar_button" title="Browse '.$zdataset['mountpoint'].'"></i></a>';
-		endif;
-	echo '</td>';
-	echo '</tr>';
-}
-
-function generateDatasetArrayRows($zpool, $dataset_array, $display, $zfsm_cfg, $zclass){
-	if (is_null($dataset_array['child']) || count($dataset_array['child']) < 0):
-		return;
-	endif;
-
-	foreach ($dataset_array['child'] as $zdataset):
-		generateDatasetRow($zpool, $zdataset, $display, $zfsm_cfg, $zclass);
-
-		if (count($zdataset['child']) > 0):
-			generateDatasetArrayRows($zpool, $zdataset, $display, $zfsm_cfg, $zclass.' '.$zdataset['name']);
-		endif;
-	endforeach;
-}
-
 function generatePoolDatasetOptions($dataset_array) {
 	if (count($dataset_array['child']) < 0):
 		return;
@@ -467,17 +191,5 @@ function generatePoolDatasetOptions($dataset_array) {
 		endif;
 	endforeach;
 }
-
-function getLastSnap($zsnapshots) {
-	$lastsnap = $zsnapshots[0];
-
-	foreach ($zsnapshots as $snap):
-		if ($snap['creation'] > $lastsnap['creation']):
-			$lastsnap = $snap;
-		endif;
-	endforeach;
-
-	return $lastsnap;
-}*/
 
 ?>

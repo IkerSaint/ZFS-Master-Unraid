@@ -145,7 +145,7 @@ input[type=email]{margin-top:8px;float:left}
 					<span class="zfsm-zpool" id="pool" name="<?echo $zpool?>"><?echo $zpool?></span> / <input id="name" class="zfsm-input zfsm-w75 zfsm-unraid-border" name="name" placeholder="Complete path, without the pool name." list="zpool-datasets" required>
 					<datalist id="zpool-datasets">
 					<?
-						generatePoolDatasetOptions($zpool_datasets[$zpool]);
+						generatePoolDatasetOptions($zpool_datasets);
 					?>
 					</datalist>
 				</dl>
