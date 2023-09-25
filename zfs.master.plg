@@ -2,7 +2,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name		"zfs.master">
 <!ENTITY author		"IkerSaint">
-<!ENTITY version "2023.09.05.31.main">
+<!ENTITY version "2023.09.25.67.main">
 <!ENTITY launch     "Main">
 <!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/beta">
 <!ENTITY pluginURL	"&gitURL;/&name;.plg">
