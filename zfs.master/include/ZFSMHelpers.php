@@ -10,7 +10,7 @@ function loadConfig($config) {
 		$zfsm_ret['dataset_exclusion'] = ' ';
 	else:
 		if (!isset($config['general']['exclussion']) || $config['general']['exclussion'] == ''):
-			$zfsm_ret['dataset_exclusion'] = $config['general']['exclussion'];
+			$zfsm_ret['dataset_exclusion'] = $config['general']['exclusion'];
 		else:
 			$zfsm_ret['dataset_exclusion'] = $config['general']['exclussion'];
 		endif;
