@@ -128,7 +128,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   })
 
   function requestRefresh() {
-	  $.post('<?=$urlzmadmin?>', {cmd: 'refreshdata'} );
+	  $.post('<?=$urlzmadmin?>', {cmd: 'refresh'} );
   }
 
   function addButtons() {

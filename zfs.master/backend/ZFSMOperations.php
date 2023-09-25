@@ -9,6 +9,10 @@ function refreshData() {
 	touch("/tmp/zfsm_reload");
 }
 
+function refreshBackendConfig() {
+	touch("/tmp/zfsm_config");
+}
+
 function buildArrayRet() {
 	$array_ret = array();
 	$array_ret['succeeded'] = array();

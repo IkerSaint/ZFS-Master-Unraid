@@ -39,8 +39,8 @@ _(Lazy Load)_:
   </select>
 
 :zc_settings_lazy_load_plug:
-> How often the information gets updated. "No refresh" means that you have yo press the refresh button.
-> If you set Lazy Load to "yes" information gets updated one dataset at the time instead of all at once.
+> If you set Lazy Load to "yes" dataset information gets updated first and then snapshot information gets
+> updated one dataset at the time instead of all at once.
 :end
 
 
