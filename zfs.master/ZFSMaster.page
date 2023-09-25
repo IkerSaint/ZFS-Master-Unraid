@@ -89,26 +89,26 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
   zfs_sub.on('message', function(data) {
 	var msg = JSON.parse(data);
-    if (msg.op == "getAll") {
+    if (msg.op == 'getAll') {
 		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
-    } else if (msg.op == "getDatasets") {
-		$("#mypool-attribute-snapshots > span").text('0');
+    } else if (msg.op == 'getDatasets') {
+		$('#'+msg.data['pool']+'-attribute-snapshots > span').text('0');
 
 		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
-	} else if (msg.op == "getSnapshot") {
+	} else if (msg.op == 'getSnapshot') {
 		updateSnapshotInfo(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
 
-		var total_snaps = parseInt($("#mypool-attribute-snapshots > span").text());
-		$("#mypool-attribute-snapshots > span").text(total_snaps+msg.data['snapshots'].length);
+		var total_snaps = parseInt($('#'+msg.data['pool']+'-attribute-snapshots > span').text());
+		$('#'+msg.data['pool']+'-attribute-snapshots > span').text(total_snaps+msg.data['snapshots'].length);
 
-	} else if (msg.op == "start_refresh") {
-		replaceElementClass("#zfsm-refresh", "fa-refresh", "fa-spinner fa-spin");
+	} else if (msg.op == 'start_refresh') {
+		replaceElementClass('#zfsm-refresh', 'fa-refresh', 'fa-spinner fa-spin');
 
-	} else if (msg.op == "stop_refresh") {
+	} else if (msg.op == 'stop_refresh') {
 		const curDate = new Date();
 		
 		replaceElementClass('#zfsm-refresh', 'fa-spinner fa-spin', 'fa-refresh');
-		$("#zfsm-last-refresh").text('Last refresh at '+curDate.toLocaleTimeString('en-US'));
+		$('#zfsm-last-refresh').text('Last refresh at '+curDate.toLocaleTimeString('en-US'));
 	}
 
 	processHiddenDatasets();
@@ -143,9 +143,9 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   
   function getUnraidParentElement() {
 	  if ('<?=$zfsm_cfg['version']?>'.localeCompare('6.11.9', undefined, { numeric: true, sensitivity: 'base' }) == 1) {
-		return $(".title .left").filter(function(){return $(this).text() === 'ZFS Master';}).parent();
+		return $('.title .left').filter(function(){return $(this).text() === 'ZFS Master';}).parent();
 	  }
-	  return $("div#title > span.left").filter(function(){return $(this).text() === 'ZFS Master';}).parent();
+	  return $('div#title > span.left').filter(function(){return $(this).text() === 'ZFS Master';}).parent();
   }
 
   function processHiddenDatasets() {
@@ -184,10 +184,10 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
 	for (let row of myRows) {
 		if (index == -1) {
-			$(row).hide( "fast");
+			$(row).hide( 'fast');
 			$('i[name=\''+zdataset+'\']').attr('class', 'fa fa-plus-square fa-append');
 		} else {
-			$(row).show( "fast");
+			$(row).show( 'fast');
 			$('i[name=\''+zdataset+'\']') .attr('class', 'fa fa-minus-square fa-append');
 		}
 	}
@@ -208,7 +208,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	}
 
 	for (let mytr of myArray) {
-		if (visibility == "none") {
+		if (visibility == 'none') {
 			var classList = $(mytr).attr('class').split(/\s+/);
 			var cont = false;
 			
@@ -224,19 +224,19 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 			}
 
 			setCookie(trclass, 'table-row');	
-			$(mytr).show("slow");
-			myButton.firstChild.data = "Hide Datasets";
+			$(mytr).show('slow');
+			myButton.firstChild.data = 'Hide Datasets';
 		} else {
 			setCookie(trclass, 'none');	
-			$(mytr).hide("slow");
-			myButton.firstChild.data = "Show Datasets";
+			$(mytr).hide('slow');
+			myButton.firstChild.data = 'Show Datasets';
 		}
 	}
   }
   
   function createDataset(zpool) {
-	  var csrf_token = $("input[name='csrf_token']").val();	  
-	  openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,"Create Dataset",550,680,false);
+	  var csrf_token = $('input[name="csrf_token"]').val();	  
+	  openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,'Create Dataset',550,680,false);
   }
 
   function addDatasetContext(zpool, zdataset, snapscount, id, destructive_mode, encryption, origin) {
@@ -245,66 +245,66 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
 	edit_opts.push(
 		{
-			text: _("Mountpoint"),
+			text: _('Mountpoint'),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zdataset, "mountpoint");
+				editDatasetProperty(zdataset, 'mountpoint');
 			}
 		},
 		{
-			text: _("Compression"),
+			text: _('Compression'),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zdataset, "compression");
+				editDatasetProperty(zdataset, 'compression');
 			}
 		},
 		{
-			text: _("Quota"),
+			text: _('Quota'),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zdataset, "quota");
+				editDatasetProperty(zdataset, 'quota');
 			}
 		},
 		{
-			text: _("Record Size"),
+			text: _('Record Size'),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zdataset, "recordsize");
+				editDatasetProperty(zdataset, 'recordsize');
 			}
 		},
 		{
-			text: _("Access Time (atime)"),
+			text: _('Access Time (atime)'),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zdataset, "atime");
+				editDatasetProperty(zdataset, 'atime');
 			}
 		},
 		{
-			text: _("Extended Attributes (xattr)"),
+			text: _('Extended Attributes (xattr)'),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zdataset, "xattr");
+				editDatasetProperty(zdataset, 'xattr');
 			}
 		},
 		{
-			text: _("Primary Cache"),
+			text: _('Primary Cache'),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zdataset, "primarycache");
+				editDatasetProperty(zdataset, 'primarycache');
 			}
 		},
 		{
-			text: _("Read Only"),
+			text: _('Read Only'),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zdataset, "readonly");
+				editDatasetProperty(zdataset, 'readonly');
 			}
 		},
 		{
-			text: _("Sync"),
+			text: _('Sync'),
 			action: function(e) {
 				e.preventDefault();
-				editDatasetProperty(zdataset, "sync");
+				editDatasetProperty(zdataset, 'sync');
 			}
 		}
 	);
@@ -314,21 +314,21 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	if (destructive_mode != 0) {
 		opts.push(
 		  {
-			text: _("Rename"),
-			icon: "fa-font",
+			text: _('Rename'),
+			icon: 'fa-font',
 			action: function (e) {
 				e.preventDefault();
 				renameDataset(zdataset);
 			}
 		  },
 		  {
-			text: _("Edit Dataset"),
-			icon: "fa-pencil",
+			text: _('Edit Dataset'),
+			icon: 'fa-pencil',
 			subMenu: edit_opts
 		  },
 		  {
-			text: _("Destroy"),
-			icon: "fa-trash",
+			text: _('Destroy'),
+			icon: 'fa-trash',
 			action: function (e) {
 				e.preventDefault();
 				destroyDataset(zdataset);
@@ -339,8 +339,8 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	}
 
     opts.push({
-        text: _("Take Snapshot"),
-        icon: "fa-camera-retro",
+        text: _('Take Snapshot'),
+        icon: 'fa-camera-retro',
 		action: function (e) {
 			e.preventDefault();
 			takeDatasetSnapshot(zdataset);
@@ -349,8 +349,8 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
     
 	if (encryption == 'available') {
 		opts.push({
-			text: _("Lock Dataset"),
-			icon: "fa-lock",
+			text: _('Lock Dataset'),
+			icon: 'fa-lock',
 			action: function(e) {
 				e.preventDefault();
 				lockDataset(zdataset);
@@ -358,8 +358,8 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		});
 	} else if (encryption == 'unavailable') {
 		opts.push({
-			text: _("Unlock Dataset"),
-			icon: "fa-unlock",
+			text: _('Unlock Dataset'),
+			icon: 'fa-unlock',
 			action: function(e) {
 				e.preventDefault();
 				unlockDataset(zdataset);
@@ -369,8 +369,8 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
 	if (origin) {
 		opts.push({
-			text: _("Promote Dataset"),
-			icon: "fa-upload",
+			text: _('Promote Dataset'),
+			icon: 'fa-upload',
 			action: function(e) {
 				e.preventDefault();
 				promoteDataset(zdataset);
@@ -380,8 +380,8 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
 	if (snapscount >= 1) {
         opts.push({
-			text: _("Snapshots Admin"),
-			icon: "fa-gears",
+			text: _('Snapshots Admin'),
+			icon: 'fa-gears',
 			action: function(e) {
 				e.preventDefault();
 				adminDatasetSnaps(zpool, zdataset);
@@ -389,9 +389,9 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		});
     }
 
-    context.attach("#" + id, opts);
+    context.attach('#' + id, opts);
 
-	$("#dropdown-"+id+" > li:nth-child(3)").addClass("dropdown-submenu");
+	$('#dropdown-'+id+' > li:nth-child(3)').addClass('dropdown-submenu');
 
   }
 
@@ -411,7 +411,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  input: 'checkbox',
 		  inputPlaceholder: 'Recursively create snapshots of all descendent datasets',
 		  showConfirmButton: true,
-		  confirmButtonText: "Snapshot",
+		  confirmButtonText: 'Snapshot',
 		  showCancelButton: true
 	  }).then((result) => {
 		  if (result.isConfirmed) {
@@ -434,7 +434,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 			return '<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Dataset new mountpoint (Full path)" value="'+value+'" type="mytext" style="display: flex;">';
 		case 'quota':
 			if (value) {
-				value = fromBytesToString(value).replace(/ +/g, "");
+				value = fromBytesToString(value).replace(/ +/g, '');
 			}
 
 			return '<input id="swal2-input" name="quota" class="swal2-input zfsm-w10" maxlength="7" value="'+value+'">';
@@ -443,7 +443,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 			break;
 		case 'recordsize':
 			if (value) {
-				value = fromBytesToString(value).replace(/ +/g, "");
+				value = fromBytesToString(value).replace(/ +/g, '');
 			}
 
 			tmpHTML ='<select id="swal2-input" name="recordsize" class="zfsm-input"><option value="inherit">Inherit</option><option value="512B">512</option><option value="4KB">4KB</option><option value="8KB">8KB</option><option value="16KB">16KB</option><option value="64KB">64KB</option><option value="128KB">128KB</option><option value="1MB">1MB</option></select>';
@@ -502,13 +502,13 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 				});
 			}
 		});
-		$(".swal2-html-container").attr("style", "display: grid;");
+		$('.swal2-html-container').attr('style', 'display: grid;');
 	});
   }
 
   function adminDatasetSnaps(zpool, zdataset) {
-	  var csrf_token = $("input[name='csrf_token']").val();	 
-	  openBox('<?=$urladmindatasetsnaps?>?zpool='+zpool+'&zdataset='+zdataset+'&csrf_token='+csrf_token, zdataset+" - Admin Snapshots",680,680,false);
+	  var csrf_token = $('input[name="csrf_token"]').val();	 
+	  openBox('<?=$urladmindatasetsnaps?>?zpool='+zpool+'&zdataset='+zdataset+'&csrf_token='+csrf_token, zdataset+' - Admin Snapshots',680,680,false);
   }
 
   function unlockDataset(zdataset) {
@@ -534,7 +534,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 			  });
 		  }
 	  });
-	  $(".swal2-input").css({"margin":"0 auto"});
+	  $('.swal2-input').css({'margin':'0 auto'});
   }
 
   function lockDataset(zdataset) {
@@ -570,13 +570,13 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  preConfirm: function () {
 			return new Promise(function (resolve) {
 			  if ($('#swal2-input').val() == '') {
-				Swal2.showValidationMessage("Enter a value for the dataset name");
+				Swal2.showValidationMessage('Enter a value for the dataset name');
 				Swal2.enableButtons(); // Enable the confirm button again.
               } else {
 				Swal2.resetValidationMessage();
 				resolve([
 				  $('#swal2-input').val(),
-				  $('#swal2-checkbox').attr("checked") ? 1 : 0
+				  $('#swal2-checkbox').attr('checked') ? 1 : 0
 				])
 			  }
 		    })
@@ -592,7 +592,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 			});
 		  }
 	  });
-	  $(".swal2-html-container").attr("style", "display: grid;");
+	  $('.swal2-html-container').attr('style', 'display: grid;');
   }
   
   function destroyDataset(zdataset) {
@@ -603,7 +603,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  input: 'checkbox',
 		  inputPlaceholder: 'Force and Recursively Destroy all Children and Dependents',
 		  showConfirmButton: true,
-		  confirmButtonText: "Destroy",
+		  confirmButtonText: 'Destroy',
 		  showCancelButton: true
 	  }).then((result) => {
 		  if (result.isConfirmed) {
