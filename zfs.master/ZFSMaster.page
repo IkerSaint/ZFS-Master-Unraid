@@ -393,7 +393,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
     context.attach('#' + id, opts);
 
-	$('#dropdown-'+id+' > li:nth-child(3)').addClass('dropdown-submenu');
+//	$('#dropdown-'+id+' > li:nth-child(3)').addClass('dropdown-submenu');
 
   }
 
