@@ -18,8 +18,8 @@
 ###2023.09.25
 - Add - Lazy load functionality
 - Add - Nchan for updates
-- Add - Refresh options (On demand)
-- Add - Last refesh timestamp
+- Add - Refresh options (Including On demand)
+- Add - Last refresh timestamp
 - Change - Quota setting on Create Dataset Dialog
 - Change - Notifications and messages improvement
 - Change - Edit datasets UI as a dropdown menu
