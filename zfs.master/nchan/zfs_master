@@ -89,33 +89,45 @@ function getLazyLoadData($exclusion_pattern) {
     publish('zfs_master', '{"op":"stop_refresh"}');
 }
 
+function checkConfig() {
+    if (file_exists('/tmp/zfsm_config') == true):
+        $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
+        $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
+
+        unlink('/tmp/zfsm_config');
+    endif;
+}
+
 $sleep_time = 0.0;
 
 while (true) {
     if ($zfsm_cfg['refresh_interval'] == 0 && file_exists('/tmp/zfsm_reload') == true):
-        if ($zfsm_cfg['lazy_load'] == "0"):
-            getAllData($zfsm_cfg['dataset_exclusion']);
-        else:
-            getLazyLoadData($zfsm_cfg['dataset_exclusion']);
-        endif;
-
         unlink('/tmp/zfsm_reload');
-    elseif (($zfsm_cfg['refresh_interval'] > 0 && $zfsm_cfg['refresh_interval'] <= $sleep_time) || file_exists('/tmp/zfsm_reload') == true):
+
         if ($zfsm_cfg['lazy_load'] == "0"):
             getAllData($zfsm_cfg['dataset_exclusion']);
         else:
             getLazyLoadData($zfsm_cfg['dataset_exclusion']);
         endif;
 
-        $sleep_time = 0.0;
-        
+        checkConfig();
+    elseif (($zfsm_cfg['refresh_interval'] > 0 && $zfsm_cfg['refresh_interval'] <= $sleep_time) || file_exists('/tmp/zfsm_reload') == true):
         if (file_exists('/tmp/zfsm_reload')):
             unlink('/tmp/zfsm_reload');
         endif;
 
+        if ($zfsm_cfg['lazy_load'] == "0"):
+            getAllData($zfsm_cfg['dataset_exclusion']);
+        else:
+            getLazyLoadData($zfsm_cfg['dataset_exclusion']);
+        endif;
+
+        checkConfig();
+
+        $sleep_time = 0.0;
     endif;
 
-    usleep(250000); 
-    $sleep_time += 0.25;
+    usleep(150000); 
+    $sleep_time += 0.15;
 }
 ?>
