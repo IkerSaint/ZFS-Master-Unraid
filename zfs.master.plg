@@ -21,7 +21,7 @@
 - Add - Refresh options (Including On demand)
 - Add - Last refresh timestamp
 - Add - Dynamic refresh after an operation
-- Change - Migration to zfs programs as the main source for functionality
+- Change - Migration to zfs programs for most operations
 - Change - Quota setting on Create Dataset Dialog
 - Change - Notifications and messages improvement
 - Change - Edit datasets UI as a dropdown menu
