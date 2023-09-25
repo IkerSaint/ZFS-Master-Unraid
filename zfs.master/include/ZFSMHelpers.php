@@ -158,7 +158,7 @@ function cleanupZPoolInfo($matched) {
 }
 
 function sortDatasetArray($datasetArray) {
-	if ($datasetArray['snapshots'] > 0):
+	if (isset($datasetArray['snapshots']) && $datasetArray['snapshots'] > 0):
 		usort($datasetArray['snapshots'], function($item1, $item2) { 
 			return $item1['creation'] <=> $item2['creation'];
 		});
