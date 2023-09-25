@@ -306,10 +306,10 @@ function generateDatasetArrayRows(zpool, dataset, parent, show_status, destructi
 	var tr = '';
 
 	Object.values(dataset.child).forEach((zdataset) => {
-		tr += generateDatasetRow(zpool, zdataset, dataset['name'], show_status, destructive_mode, snap_max_days_alert);
+		tr += generateDatasetRow(zpool, zdataset, parent+' '+dataset['name'], show_status, destructive_mode, snap_max_days_alert);
 
 		if (Object.keys(zdataset.child).length > 0) {
-			tr += generateDatasetArrayRows(zpool, zdataset, dataset['name'], show_status, destructive_mode, snap_max_days_alert);
+			tr += generateDatasetArrayRows(zpool, zdataset, parent+' '+dataset['name'], show_status, destructive_mode, snap_max_days_alert);
 		}
 	});
 
