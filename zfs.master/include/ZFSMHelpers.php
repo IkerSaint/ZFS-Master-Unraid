@@ -6,14 +6,14 @@ function loadConfig($config) {
 
 	$zfsm_ret['destructive_mode'] = isset($config['general']['destructive_mode']) ? intval($config['general']['destructive_mode']) : 0;
 
-	if ((!isset($config['general']['exclusion']) || $config['general']['exclusion'] == '') && (!isset($config['general']['exclussion']) || $config['general']['exclussion'] == '')):
-		$zfsm_ret['dataset_exclusion'] = ' ';
+	if (isset($config['general']['exclussion']) && $config['general']['exclussion'] != '' && !isset($config['general']['exclusion'])):
+		$config['general']['exclusion'] = $config['general']['exclussion'];
+	endif;
+
+	if (!isset($config['general']['exclusion']) || $config['general']['exclusion'] == '' || $config['general']['exclusion'] == ' '):
+		$zfsm_ret['dataset_exclusion'] = '';
 	else:
-		if (!isset($config['general']['exclussion']) || $config['general']['exclussion'] == ''):
-			$zfsm_ret['dataset_exclusion'] = $config['general']['exclusion'];
-		else:
-			$zfsm_ret['dataset_exclusion'] = $config['general']['exclussion'];
-		endif;
+		$zfsm_ret['dataset_exclusion'] = $config['general']['exclusion'];
 	endif;
 		
 	$zfsm_ret['snap_max_days_alert'] = isset($config['general']['snap_max_days_alert']) ? intval($config['general']['snap_max_days_alert']) : 30;

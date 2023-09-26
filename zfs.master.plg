@@ -16,6 +16,11 @@
 <CHANGES>
 
 ###2023.09.25
+- Fix - Config load 
+- Fix - Exclusion patterns for datasets with spaces
+- Fix - Destroy dataset functionality
+
+###2023.09.25
 - Add - Lazy load functionality
 - Add - Nchan for updates
 - Add - Refresh options (Including On demand)
