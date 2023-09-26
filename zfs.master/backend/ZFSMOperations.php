@@ -119,7 +119,7 @@ function renameDataset($zdataset, $zdataset_new_name, $force) {
 	$array_ret = buildArrayRet();
 
 	$force = ($_POST['force'] == '1') ? '-f ' : '';
-	$cmd_line = "zfs rename ".$force.$zdataset." ".$zdataset_new_name.$boutput_str;
+	$cmd_line = "zfs rename ".$force.escapeshellarg($zdataset)." ".escapeshellarg($zdataset_new_name).$boutput_str;
 
 	$ret = execCommand($cmd_line, $exec_result);
 	
@@ -134,9 +134,9 @@ function renameDataset($zdataset, $zdataset_new_name, $force) {
 
 function setDatasetProperty( $zdataset, $zproperty, $zvalue) {
 	if ($zvalue == "inherit"):
-		$cmd_line = "zfs inherit ".$zproperty." ".$zdataset.$boutput_str;
+		$cmd_line = "zfs inherit ".$zproperty." ".escapeshellarg($zdataset).$boutput_str;
 	else:
-		$cmd_line = "zfs set ".$zproperty."=".$zvalue." ".$zdataset.$boutput_str;
+		$cmd_line = "zfs set ".$zproperty."=".$zvalue." ".escapeshellarg($zdataset).$boutput_str;
 	endif;
 
 	return execCommand($cmd_line, $exec_result);
@@ -161,7 +161,7 @@ function setDatasetProperties( $zdataset, $zproperties) {
 function lockDataset($zdataset) {
 	$array_ret = buildArrayRet();
 
-	$cmd_line = "zfs umount -f ".$zdataset.$boutput_str;
+	$cmd_line = "zfs umount -f ".escapeshellarg($zdataset).$boutput_str;
 
 	$ret = execCommand($cmd_line, $exec_result);
 
@@ -170,7 +170,7 @@ function lockDataset($zdataset) {
 		return $array_ret;
 	endif;
 
-	$cmd_line = "zfs unload-key -r ".$zdataset.$boutput_str;
+	$cmd_line = "zfs unload-key -r ".escapeshellarg($zdataset).$boutput_str;
 
 	$ret = execCommand($cmd_line, $exec_result);
 
@@ -186,7 +186,7 @@ function lockDataset($zdataset) {
 function unlockDataset($zdataset, $zpass) {
 	$array_ret = buildArrayRet();
 
-	$cmd_line = "echo ".escapeshellarg($zpass)."| zfs mount -l ".$zdataset.$boutput_str;
+	$cmd_line = "echo ".escapeshellarg($zpass)."| zfs mount -l ".escapeshellarg($zdataset).$boutput_str;
 
 	$ret = execCommand($cmd_line, $exec_result);
 
@@ -208,9 +208,17 @@ function promoteDataset($zdataset, $zforce) {
 }
 
 function destroyDataset($zdataset, $zforce) {
-	$zpool = explode("/", $zdataset)[0];
+	$force = ($zforce == '1') ? '-fRr ' : '';
 
-	$array_ret = executeSyncZFSProgram($GLOBALS["script_dataset_destroy"], $zpool, array($zdataset, $zforce));
+	$cmd_line = 'zfs destroy -vp '.$force.escapeshellarg($zdataset).$boutput_str;
+
+	$ret = execCommand($cmd_line, $exec_result);
+
+	if ($ret == 0):
+		$array_ret['succeeded'][$zdataset] = 0;
+	else:
+		$array_ret['failed'][$zdataset] = $ret;
+	endif;
 	
 	return $array_ret;
 }
@@ -228,7 +236,7 @@ function createDatasetSnapshot($zdataset, $znapshot, $zrecursive) {
 function rollbackDatasetSnapshot($znapshot) {
 	$array_ret = buildArrayRet();
 
-	$cmd_line = "zfs rollback -rf ".$znapshot.$boutput_str;
+	$cmd_line = "zfs rollback -rf ".escapeshellarg($znapshot).$boutput_str;
 	
 	$ret = execCommand($cmd_line, $exec_result);
 
@@ -260,7 +268,7 @@ function receiveDatasetSnapshot($zpool, $znapshot, $zoptions) {
 function holdDatasetSnapshot($znapshot) {
 	$array_ret = buildArrayRet();
 	
-	$cmd_line = "zfs hold zfsmaster ".$znapshot.$boutput_str;
+	$cmd_line = "zfs hold zfsmaster ".escapeshellarg($znapshot).$boutput_str;
 
 	$ret = execCommand($cmd_line, $exec_result);
 
