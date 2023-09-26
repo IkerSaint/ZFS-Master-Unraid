@@ -208,6 +208,8 @@ function promoteDataset($zdataset, $zforce) {
 }
 
 function destroyDataset($zdataset, $zforce) {
+	$array_ret = buildArrayRet();
+	
 	$force = ($zforce == '1') ? '-fRr ' : '';
 
 	$cmd_line = 'zfs destroy -vp '.$force.escapeshellarg($zdataset).$boutput_str;

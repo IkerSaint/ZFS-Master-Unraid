@@ -6,7 +6,7 @@ function loadConfig($config) {
 
 	$zfsm_ret['destructive_mode'] = isset($config['general']['destructive_mode']) ? intval($config['general']['destructive_mode']) : 0;
 
-	if (isset($config['general']['exclussion']) && $config['general']['exclussion'] != '' && (!isset($config['general']['exclusion']) || $config['general']['exclusion'] == '')):
+	if (isset($config['general']['exclussion']) && $config['general']['exclussion'] != '' && !isset($config['general']['exclusion'])):
 		$config['general']['exclusion'] = $config['general']['exclussion'];
 	endif;
 
