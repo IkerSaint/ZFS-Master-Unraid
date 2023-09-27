@@ -48,7 +48,6 @@ function returnAnswer($ret, $title, $success_text, $failed_text, $refresh) {
 switch ($_POST['cmd']) {
 	case 'refresh':
 		refreshData();
-		refreshBackendConfig();
 		break;
 	case 'createdataset':
 		$zdataset = $_POST['data']['zpool']."/".$_POST['data']['name'];
