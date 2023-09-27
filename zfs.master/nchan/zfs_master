@@ -94,12 +94,9 @@ $iters = 0;
 
 while (true) {
     if ($iters > 200):
-        if (file_exists('/tmp/zfsm_config') == true):
-            $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
-            $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
-    
-            unlink('/tmp/zfsm_config');
-        endif;
+        $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
+        $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
+
         $iters = 0;
     endif;
 
