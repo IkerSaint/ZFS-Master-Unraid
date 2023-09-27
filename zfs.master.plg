@@ -4,7 +4,7 @@
 <!ENTITY author		"IkerSaint">
 <!ENTITY version "2023.09.27.75.beta">
 <!ENTITY launch     "Main">
-<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/beta">
+<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main">
 <!ENTITY pluginURL	"&gitURL;/&name;.plg">
 ]>
 
@@ -16,8 +16,8 @@
 <CHANGES>
 
 ###2023.09.27
-- Change - "No refresh" option, doesn't load information even on refresh page
-- Fix - Config reload
+- Change - "No refresh" option now doesn't load information on page refresh
+- Fix - Dynamic Config reload
 
 ###2023.09.25
 - Fix - Config load 
