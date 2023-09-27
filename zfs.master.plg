@@ -15,6 +15,10 @@
 		min="6.9.2">
 <CHANGES>
 
+###2023.09.27
+- Change - "No refresh" option, doesn't load information even on refresh page
+- Fix - Config reload
+
 ###2023.09.25
 - Fix - Config load 
 - Fix - Exclusion patterns for datasets with spaces

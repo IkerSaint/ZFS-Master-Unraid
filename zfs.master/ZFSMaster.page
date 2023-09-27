@@ -120,7 +120,9 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   $(function() {
 	  zfs_sub.start();
 	  addButtons();
-	  requestRefresh();
+	  if (<?=$zfsm_cfg['refresh_interval']?> > 0) {
+	  	requestRefresh();
+	  }
   });
 
   $(document).click(function() {
