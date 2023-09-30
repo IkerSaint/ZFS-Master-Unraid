@@ -28,7 +28,7 @@ _(Refresh Interval)_:
   </select>
 
 :zc_settings_refresh_interval_plug:
-> How often the information gets updated. "No refresh" means that you have yo press the refresh button.
+> How often the information gets updated. "No refresh" means that you have to press the refresh button.
 :end
 
 
