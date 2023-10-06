@@ -1,5 +1,5 @@
-**ZFS Master for Unraid**
+# ZFS Master for Unraid
 
 The ZFS Master plugin provides information and control over the ZFS Pools in your Unraid. Available ZFS Pools are listed under the "Main/ZFSMaster" tab.
 
-PREREQUISITE: ZFS for Unraid 6 Plugin installed.
+PREREQUISITE: Prior to Unraid 6.12 you need ZFS for Unraid 6 Plugin installed.

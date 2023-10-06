@@ -105,13 +105,14 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		$('#'+msg.data['pool']+'-attribute-snapshots > span').text(total_snaps+msg.data['snapshots'].length);
 
 	} else if (msg.op == 'start_refresh') {
+		const curDate = new Date();
+
+		$('#zfsm-last-refresh').text('Last refresh at '+curDate.toLocaleTimeString('en-US', { hour12: false }));
+		
 		replaceElementClass('#zfsm-refresh', 'fa-refresh', 'fa-spinner fa-spin');
 
 	} else if (msg.op == 'stop_refresh') {
-		const curDate = new Date();
-		
 		replaceElementClass('#zfsm-refresh', 'fa-spinner fa-spin', 'fa-refresh');
-		$('#zfsm-last-refresh').text('Last refresh at '+curDate.toLocaleTimeString('en-US'));
 	}
 
 	processHiddenDatasets();
@@ -154,7 +155,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   function processHiddenDatasets() {
-	var datasets = JSON.parse(getCookie('datasetsHidden'));
+	var datasets = loadFromLocalStorage('datasetsHidden');
 	
 	if (datasets == null || datasets.length <= 0)
 		return;
@@ -170,7 +171,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   function toggleDataset(zdataset) {
-	var datasets = JSON.parse(getCookie('datasetsHidden'));
+	var datasets = loadFromLocalStorage('datasetsHidden');
 	var index = -1;
 
 	if (datasets == null) {
@@ -197,23 +198,23 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		}
 	}
 
-	setCookie('datasetsHidden', JSON.stringify(datasets));
+	saveToLocalStorage('datasetsHidden', datasets);
 
 	processHiddenDatasets();
   }
   
   function togglePoolTable(zpool_id, trclass) {
-	var datasets = JSON.parse(getCookie('datasetsHidden'));
+	var datasets = loadFromLocalStorage('datasetsHidden');
 	var myArray = document.getElementsByClassName(trclass);
 	var myButton = document.getElementById(zpool_id);
-	var visibility = getCookie(trclass);
+	var visibility = loadFromLocalStorage(trclass);
 
 	if (datasets == null) {
 		datasets = [];
 	}
 
 	for (let mytr of myArray) {
-		if (visibility == 'none') {
+		if (visibility === null) {
 			var classList = $(mytr).attr('class').split(/\s+/);
 			var cont = false;
 			
@@ -228,11 +229,11 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 				continue;
 			}
 
-			setCookie(trclass, 'table-row');	
+			saveToLocalStorage(trclass, 'show');	
 			$(mytr).show('slow');
 			myButton.firstChild.data = 'Hide Datasets';
 		} else {
-			setCookie(trclass, 'none');	
+			removeFromLocalStorage(trclass);	
 			$(mytr).hide('slow');
 			myButton.firstChild.data = 'Show Datasets';
 		}

@@ -86,20 +86,22 @@ function daysToNow(timestamp) {
     return daysDifference;
 }
 
-function setCookie(key, value, daysToLive=365) {
-	var expires = new Date();
-	expires.setTime(expires.getTime() + (daysToLive * 24 * 60 * 60));
-	document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+function saveToLocalStorage(key, value) {
+	localStorage.setItem(key, JSON.stringify(value));
 }
 
-function getCookie(key) {
-	var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-	return keyValue ? keyValue[2] : null;
+function loadFromLocalStorage(key) {
+	let value = localStorage.getItem(key);
+
+	if (value === null) {
+		return null;
+	} 
+
+	return JSON.parse(value);
 }
 
-function eraseCookie(key) {
-	var keyValue = getCookie(key);
-    setCookie(key, keyValue, '-1');
+function removeFromLocalStorage(key) {
+	localStorage.removeItem(key);
 }
 
 //endregion utils
@@ -160,15 +162,12 @@ function getPoolShowButtonText(show_status) {
 }
 
 function getPoolShowStatus(zpool) {
-	var cookie = getCookie('zdataset-'+zpool);
+	var status = loadFromLocalStorage('hide-'+zpool);
 
-	if (cookie === undefined)
-		return false;
+	if (status === null)
+		return true;
 
-	if (cookie == 'none')
-		return false;
-
-	return true;
+	return false;
 }
 
 function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert) {
@@ -178,7 +177,7 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	const creationDate = new Date(zdataset['creation'] * 1000);
 
 	const properties = {
-		'Creation Date' : creationDate.toISOString(),
+		'Creation Date' : creationDate.toLocaleString('en-US', { hour12: false }),
 		'Compression' : zdataset['compression'],
 		'Compress Ratio' : zdataset['compressratio']/100,
 		'Record Size' : fromBytesToString(zdataset['recordsize']),
@@ -208,7 +207,7 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 			icon_color = '#486dba';
 		}
 
-		properties['Last Snap Date'] = snapdate.toLocaleString();
+		properties['Last Snap Date'] = snapdate.toLocaleString('en-US', { hour12: false });
 		properties['Last Snap'] = snap['name'];
 
 		snap_count = zdataset['snapshots'].length;
@@ -328,7 +327,7 @@ function generatePoolTableRows(zpool, devices, show_status) {
 	tr += '<td id="'+zpool['Pool']+'-attribute-health"><a class="info hand"><i class="fa fa-heartbeat" style="color:'+status_color+'"></i><span>'+status_msg+'</span></a> '+zpool['Health']+'</td>';
 
 	// Buttons
-	tr += '<td id="'+zpool['Pool']+'-attribute-name"><button type="button" id="show-zpool-'+zpool['Pool']+'" onclick="togglePoolTable(\'show-zpool-'+zpool['Pool']+'\', \'zdataset-'+zpool['Pool']+'\');">'+show_button_text+'</button>'; 
+	tr += '<td id="'+zpool['Pool']+'-attribute-name"><button type="button" id="show-zpool-'+zpool['Pool']+'" onclick="togglePoolTable(\'show-zpool-'+zpool['Pool']+'\', \'hide-'+zpool['Pool']+'\');">'+show_button_text+'</button>'; 
 	tr += '<button type="button" onclick="createDataset(\''+zpool['Pool']+'\')";">Create Dataset</button></td>';
 
 	// Size
@@ -382,7 +381,7 @@ function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
 	const creationDate = new Date(data.dataset['creation'] * 1000);
 
 	const properties = {
-		'Creation Date' : creationDate.toISOString(),
+		'Creation Date' : creationDate.toLocaleString('en-US', { hour12: false }),
 		'Compression' : data.dataset['compression'],
 		'Compress Ratio' : data.dataset['compressratio']/100,
 		'Record Size' : fromBytesToString(data.dataset['recordsize']),
@@ -412,7 +411,7 @@ function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
 			icon_color = '#486dba';
 		}
 
-		properties['Last Snap Date'] = snapdate.toLocaleString();
+		properties['Last Snap Date'] = snapdate.toLocaleString('en-US', { hour12: false });
 		properties['Last Snap'] = snap['name'];
 
 		snap_count = data['snapshots'].length;

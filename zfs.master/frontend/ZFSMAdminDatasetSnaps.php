@@ -155,7 +155,7 @@ window.onload = function() {
 	<tbody id="zpools">
 		<?
 		foreach ($snapshots as $snap):
-			echo '<tr>';
+			echo '<tr> class="'.$snap['name'].'"';
 			echo '<td class="snapl-delete"><input class="snapl-check" type="checkbox" id="'.$snap['name'].'"></td>';
 			echo '<td class="snapl-attribute-name">';
 				echo '<i class="fa fa-hdd-o icon" style="color:#486dba"></i>';
@@ -203,14 +203,11 @@ window.onload = function() {
 		return this.id;
 	}).get();
 
-	$.ajaxSetup({async: false});
 	for (const snapshot of checkedVals) {
 		$.post('<?=$urlzmadmin?>',{cmd: 'destroysnapshot', 'snapshot': snapshot, 'csrf_token': '<?=$csrf_token?>'}, function(data) {
 			updateStatusOnDeletion(JSON.parse(data), snapshot);
 		});
 	}
-	$.ajaxSetup({async: true});
-	window.location.reload();
   });
 
   $("#checkAll").click(function(){
@@ -229,6 +226,8 @@ window.onload = function() {
 		updateStatus('Destroy of Snapshot '+snapshot+' Failed - '+formatAnswer(data['failed']));
 	} else {
 		updateStatus('Destroy of Snapshot '+snapshot+' Successful');
+
+		$('#zpools > tr.'.snapshot).remove();
 	}
   }
 

@@ -66,11 +66,11 @@ _(Datasets Exclusion Patterns (Just One!))_:
 :end
 
 <div id="title" class="nocontrol">_(Snapshots)_</div>
-_(Snapshots Icon Alert Max Days)_:
+_(Dataset Icon Alert Max Days)_:
 : <input type="text" name="snap_max_days_alert" value="<?=$zfsm_cfg['snap_max_days_alert']?>">
 
-:zc_settings_datasets_exclusion_plug:
-> Maximum days old for Snapshots before the icon color in the main UI changes to orange.
+:zc_settings_dataset_icon_color_plug:
+> Maximum days old since the last snapshots before the icon color in the main UI changes to orange.
 :end
 
 _(Snapshots Pattern)_:
