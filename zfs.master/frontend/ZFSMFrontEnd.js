@@ -170,12 +170,12 @@ function getPoolShowButtonText(show_status) {
 }
 
 function getPoolShowStatus(zpool) {
-	var status = loadFromLocalStorage('hide-'+zpool);
+	var status = loadFromLocalStorage('zdataset-'+zpool);
 
-	if (status === null)
-		return true;
+	if (status == 'hide')
+		return false;
 
-	return false;
+	return true;
 }
 
 function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert) {
@@ -335,7 +335,7 @@ function generatePoolTableRows(zpool, devices, show_status) {
 	tr += '<td id="'+zpool['Pool']+'-attribute-health"><a class="info hand"><i class="fa fa-heartbeat" style="color:'+status_color+'"></i><span>'+status_msg+'</span></a> '+zpool['Health']+'</td>';
 
 	// Buttons
-	tr += '<td id="'+zpool['Pool']+'-attribute-name"><button type="button" id="show-zpool-'+zpool['Pool']+'" onclick="togglePoolTable(\'show-zpool-'+zpool['Pool']+'\', \'hide-'+zpool['Pool']+'\');">'+show_button_text+'</button>'; 
+	tr += '<td id="'+zpool['Pool']+'-attribute-name"><button type="button" id="show-zpool-'+zpool['Pool']+'" onclick="togglePoolTable(\'show-zpool-'+zpool['Pool']+'\', \'zdataset-'+zpool['Pool']+'\');">'+show_button_text+'</button>'; 
 	tr += '<button type="button" onclick="createDataset(\''+zpool['Pool']+'\')";">Create Dataset</button></td>';
 
 	// Size
