@@ -86,18 +86,26 @@ function daysToNow(timestamp) {
     return daysDifference;
 }
 
-function saveToLocalStorage(key, value) {
-	localStorage.setItem(key, JSON.stringify(value));
+function saveToLocalStorage(key, value, encode=true) {
+	if (encode) {
+		localStorage.setItem(key, JSON.stringify(value));
+	}
+
+	localStorage.setItem(key, value);
 }
 
-function loadFromLocalStorage(key) {
+function loadFromLocalStorage(key, decode=true) {
 	let value = localStorage.getItem(key);
 
 	if (value === null) {
 		return null;
-	} 
+	}
 
-	return JSON.parse(value);
+	if (decode) {
+		return JSON.parse(value);
+	}
+
+	return value;
 }
 
 function removeFromLocalStorage(key) {

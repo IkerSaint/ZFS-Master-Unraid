@@ -108,7 +108,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		const curDate = new Date();
 
 		$('#zfsm-last-refresh').text('Last refresh at '+curDate.toLocaleTimeString('en-US', { hour12: false }));
-		
+
 		replaceElementClass('#zfsm-refresh', 'fa-refresh', 'fa-spinner fa-spin');
 
 	} else if (msg.op == 'stop_refresh') {
@@ -207,14 +207,14 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	var datasets = loadFromLocalStorage('datasetsHidden');
 	var myArray = document.getElementsByClassName(trclass);
 	var myButton = document.getElementById(zpool_id);
-	var visibility = loadFromLocalStorage(trclass);
+	var visibility = loadFromLocalStorage(trclass, false);
 
 	if (datasets == null) {
 		datasets = [];
 	}
 
 	for (let mytr of myArray) {
-		if (visibility === null) {
+		if (visibility !== null) {
 			var classList = $(mytr).attr('class').split(/\s+/);
 			var cont = false;
 			
@@ -229,7 +229,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 				continue;
 			}
 
-			saveToLocalStorage(trclass, 'show');	
+			saveToLocalStorage(trclass, 'show', false);	
 			$(mytr).show('slow');
 			myButton.firstChild.data = 'Hide Datasets';
 		} else {
