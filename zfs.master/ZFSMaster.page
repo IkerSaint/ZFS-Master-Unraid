@@ -157,7 +157,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   function processHiddenDatasets() {
 	var datasets = loadFromLocalStorage('datasetsHidden');
 	
-	if (datasets == null || datasets.length <= 0)
+	if (datasets === null || datasets.hidden.length <= 0)
 		return;
 
 	for (let zdataset of datasets) {
@@ -174,16 +174,16 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	var datasets = loadFromLocalStorage('datasetsHidden');
 	var index = -1;
 
-	if (datasets == null) {
-		datasets = [];
+	if (datasets === null) {
+		datasets = {hidden : []};
 	}
 
-	var index = datasets.indexOf(zdataset);
+	var index = datasets.hidden.indexOf(zdataset);
 
 	if (index > -1) {
-		datasets.splice(index, 1);
+		datasets.hidden.splice(index, 1);
 	} else {
-		datasets.push(zdataset);
+		datasets.hidden.push(zdataset);
 	}
 
 	var myRows = document.getElementsByClassName(zdataset);
@@ -209,8 +209,8 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	var myButton = document.getElementById(zpool_id);
 	var visibility = loadFromLocalStorage(trclass, false);
 
-	if (datasets == null) {
-		datasets = [];
+	if (datasets === null) {
+		datasets = {hidden:[]};
 	}
 
 	for (let mytr of myArray) {
@@ -219,7 +219,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 			var cont = false;
 			
 			for (var i = 0; i < classList.length; i++) {
-				if (datasets.indexOf(classList[i]) != -1) {
+				if (datasets.hidden.indexOf(classList[i]) != -1) {
 					cont = true;
 					break;
 				}

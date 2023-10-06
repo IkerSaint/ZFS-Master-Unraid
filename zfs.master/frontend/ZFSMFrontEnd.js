@@ -170,7 +170,7 @@ function getPoolShowButtonText(show_status) {
 }
 
 function getPoolShowStatus(zpool) {
-	var status = loadFromLocalStorage('zdataset-'+zpool);
+	var status = loadFromLocalStorage('zdataset-'+zpool, false);
 
 	if (status == 'hide')
 		return false;
