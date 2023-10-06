@@ -155,7 +155,7 @@ window.onload = function() {
 	<tbody id="zpools">
 		<?
 		foreach ($snapshots as $snap):
-			echo '<tr> class="'.$snap['name'].'"';
+			echo '<tr class="'.$snap['name'].'">';
 			echo '<td class="snapl-delete"><input class="snapl-check" type="checkbox" id="'.$snap['name'].'"></td>';
 			echo '<td class="snapl-attribute-name">';
 				echo '<i class="fa fa-hdd-o icon" style="color:#486dba"></i>';
