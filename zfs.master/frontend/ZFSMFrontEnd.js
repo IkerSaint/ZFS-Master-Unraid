@@ -89,6 +89,7 @@ function daysToNow(timestamp) {
 function saveToLocalStorage(key, value, encode=true) {
 	if (encode) {
 		localStorage.setItem(key, JSON.stringify(value));
+		return;
 	}
 
 	localStorage.setItem(key, value);

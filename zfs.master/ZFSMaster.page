@@ -160,7 +160,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	if (datasets === null || datasets.hidden.length <= 0)
 		return;
 
-	for (let zdataset of datasets) {
+	for (let zdataset of datasets.hidden) {
 		var myRows = document.getElementsByClassName(zdataset);
 		
 		for (let row of myRows) {
