@@ -227,7 +227,7 @@ window.onload = function() {
 	} else {
 		updateStatus('Destroy of Snapshot '+snapshot+' Successful');
 		
-		$('#zpools > tr.'+encodeURIComponent(snapshot)).remove();
+		$('#zpools > tr.'+ $.escapeSelector(snapshot)).remove();
 	}
   }
 
