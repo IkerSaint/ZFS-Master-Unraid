@@ -201,7 +201,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		return;
 
 	dataset['snapshots'] = data['snapshots'];
-	cache[data['pool']]['Snapshots'] = total_snaps;
+	cache[data['pool']]['Snapshots'] = total_snaps + data['snapshots'].length;
 
 	saveCache(cache);
   }
