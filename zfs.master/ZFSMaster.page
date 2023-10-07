@@ -166,11 +166,11 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	
 	data['timestamp'] = curDate.toLocaleTimeString('en-US', { hour12: false })
 
-	saveToLocalStorage('cache', data);
+	saveToLocalStorage('zfsm-cache', data);
   }
   
   function updateSnapshotCache(data, total_snaps) {
-	var cache = loadFromLocalStorage('cache');
+	var cache = loadFromLocalStorage('zfsm-cache');
 
 	if (cache === null) {
 		return;
@@ -206,7 +206,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   function loadCache() {
-	var data = loadFromLocalStorage('cache');
+	var data = loadFromLocalStorage('zfsm-cache');
 
 	if (data === null) {
 		return;
@@ -220,7 +220,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   function processHiddenDatasets() {
-	var datasets = loadFromLocalStorage('datasetsHidden');
+	var datasets = loadFromLocalStorage('zfsm-datasetsHidden');
 	
 	if (datasets === null || datasets.hidden.length <= 0)
 		return;
@@ -236,7 +236,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   function toggleDataset(zdataset) {
-	var datasets = loadFromLocalStorage('datasetsHidden');
+	var datasets = loadFromLocalStorage('zfsm-datasetsHidden');
 	var index = -1;
 
 	if (datasets === null) {
@@ -263,13 +263,13 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		}
 	}
 
-	saveToLocalStorage('datasetsHidden', datasets);
+	saveToLocalStorage('zfsm-datasetsHidden', datasets);
 
 	processHiddenDatasets();
   }
   
   function togglePoolTable(zpool_id, trclass) {
-	var datasets = loadFromLocalStorage('datasetsHidden');
+	var datasets = loadFromLocalStorage('zfsm-datasetsHidden');
 	var myArray = document.getElementsByClassName(trclass);
 	var myButton = document.getElementById(zpool_id);
 	var visibility = loadFromLocalStorage(trclass, false);
