@@ -176,7 +176,26 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		return;
 	}
 
-	var dataset = findByKey(cache, data.dataset['name']);
+	const stack = [cache];
+	var dataset =  null;
+
+	while (stack.length > 0) {
+		const currentObj = stack.pop();
+
+		if (typeof currentObj !== 'object') {
+			continue;
+		}
+
+		for (const key in currentObj) {
+			if (key === data.dataset['name']) {
+				obj = currentObj;
+			}
+
+			if (typeof currentObj[key] === 'object') {
+				stack.push(currentObj[key]);
+			}
+		}
+	}
 
 	if (dataset === null)
 		return;

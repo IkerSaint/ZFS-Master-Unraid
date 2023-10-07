@@ -75,18 +75,6 @@ function implodeWithKeys(glue, array, symbol = ': ') {
 	  .join(glue);
 }
 
-function findByKey(obj, kee) {
-	if (kee in obj) {
-		return obj[kee];
-	}
-
-	for(n of Object.values(obj).filter(Boolean).filter(v => typeof v === 'object')) {
-		return findByKey(n, kee);
-	}
-
-	return null;
-}
-
 function daysToNow(timestamp) {
     const currentDate = new Date();
     const diffDate = new Date(timestamp * 1000);
