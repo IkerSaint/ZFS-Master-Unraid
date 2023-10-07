@@ -70,6 +70,10 @@ function getAllDatasetProperties($zdataset) {
 function getDatasetSnapshots($zpool, $zdataset) {
 	$array_ret = executeZFSProgram($GLOBALS["script_dataset_get_snapshots"], $zpool, array($zdataset));
 
+	if ($array_ret == null):
+		return array();
+	endif;
+
 	if (count($array_ret) > 0):
 		usort($array_ret, function($item1, $item2) { 
 			return $item1['creation'] <=> $item2['creation'];

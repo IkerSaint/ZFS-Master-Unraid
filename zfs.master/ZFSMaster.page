@@ -92,26 +92,32 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	var msg = JSON.parse(data);
     if (msg.op == 'getAll') {
 		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
+
+		saveCache(msg.data);
     } else if (msg.op == 'getDatasets') {
 		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
 
         for (const pool in msg.data['pools']) {
 			$('#'+pool+'-attribute-snapshots > span').text('0');
 		}
+
+		saveCache(msg.data);
 	} else if (msg.op == 'getSnapshot') {
 		updateSnapshotInfo(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
 
 		var total_snaps = parseInt($('#'+msg.data['pool']+'-attribute-snapshots > span').text());
 		$('#'+msg.data['pool']+'-attribute-snapshots > span').text(total_snaps+msg.data['snapshots'].length);
 
+		updateSnapshotCache(msg.data, total_snaps);
 	} else if (msg.op == 'start_refresh') {
+		const curDate = new Date();
+
+		$('#zfsm-last-refresh').text('Last refresh at '+curDate.toLocaleTimeString('en-US', { hour12: false }));
+
 		replaceElementClass('#zfsm-refresh', 'fa-refresh', 'fa-spinner fa-spin');
 
 	} else if (msg.op == 'stop_refresh') {
-		const curDate = new Date();
-		
 		replaceElementClass('#zfsm-refresh', 'fa-spinner fa-spin', 'fa-refresh');
-		$('#zfsm-last-refresh').text('Last refresh at '+curDate.toLocaleTimeString('en-US'));
 	}
 
 	processHiddenDatasets();
@@ -122,6 +128,8 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	  addButtons();
 	  if (<?=$zfsm_cfg['refresh_interval']?> > 0) {
 	  	requestRefresh();
+	  } else {
+		loadCache();
 	  }
   });
 
@@ -153,13 +161,72 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	  return $('div#title > span.left').filter(function(){return $(this).text() === 'ZFS Master';}).parent();
   }
 
-  function processHiddenDatasets() {
-	var datasets = JSON.parse(getCookie('datasetsHidden'));
+  function saveCache(data) {
+	const curDate = new Date();
 	
-	if (datasets == null || datasets.length <= 0)
+	data['timestamp'] = curDate.toLocaleTimeString('en-US', { hour12: false })
+
+	saveToLocalStorage('zfsm-cache', data);
+  }
+  
+  function updateSnapshotCache(data, total_snaps) {
+	var cache = loadFromLocalStorage('zfsm-cache');
+
+	if (cache === null) {
+		return;
+	}
+
+	const stack = [cache];
+	var dataset =  null;
+
+	while (stack.length > 0) {
+		const currentObj = stack.pop();
+
+		if (typeof currentObj !== 'object') {
+			continue;
+		}
+
+		for (const key in currentObj) {
+			if (key === data.dataset['name']) {
+				dataset = currentObj[key];
+			}
+
+			if (typeof currentObj[key] === 'object') {
+				stack.push(currentObj[key]);
+			}
+		}
+	}
+
+	if (dataset === null)
 		return;
 
-	for (let zdataset of datasets) {
+	dataset['snapshots'] = data['snapshots'];
+	cache['pools'][data['pool']]['Snapshots'] = total_snaps + data['snapshots'].length;
+
+	saveCache(cache);
+  }
+
+  function loadCache() {
+	var data = loadFromLocalStorage('zfsm-cache');
+
+	if (data === null) {
+		return;
+	}
+
+	updateFullBodyTable(data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
+
+	$('#zfsm-last-refresh').text('Last refresh at '+data.timestamp);
+
+	processHiddenDatasets();
+  }
+
+  function processHiddenDatasets() {
+	var datasets = loadFromLocalStorage('zfsm-datasetsHidden');
+	
+	if (datasets === null || datasets.hidden.length <= 0)
+		return;
+
+	for (let zdataset of datasets.hidden) {
 		var myRows = document.getElementsByClassName(zdataset);
 		
 		for (let row of myRows) {
@@ -170,19 +237,19 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   function toggleDataset(zdataset) {
-	var datasets = JSON.parse(getCookie('datasetsHidden'));
+	var datasets = loadFromLocalStorage('zfsm-datasetsHidden');
 	var index = -1;
 
-	if (datasets == null) {
-		datasets = [];
+	if (datasets === null) {
+		datasets = {hidden : []};
 	}
 
-	var index = datasets.indexOf(zdataset);
+	var index = datasets.hidden.indexOf(zdataset);
 
 	if (index > -1) {
-		datasets.splice(index, 1);
+		datasets.hidden.splice(index, 1);
 	} else {
-		datasets.push(zdataset);
+		datasets.hidden.push(zdataset);
 	}
 
 	var myRows = document.getElementsByClassName(zdataset);
@@ -197,28 +264,28 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		}
 	}
 
-	setCookie('datasetsHidden', JSON.stringify(datasets));
+	saveToLocalStorage('zfsm-datasetsHidden', datasets);
 
 	processHiddenDatasets();
   }
   
   function togglePoolTable(zpool_id, trclass) {
-	var datasets = JSON.parse(getCookie('datasetsHidden'));
+	var datasets = loadFromLocalStorage('zfsm-datasetsHidden');
 	var myArray = document.getElementsByClassName(trclass);
 	var myButton = document.getElementById(zpool_id);
-	var visibility = getCookie(trclass);
+	var visibility = loadFromLocalStorage(trclass, false);
 
-	if (datasets == null) {
-		datasets = [];
+	if (datasets === null) {
+		datasets = {hidden:[]};
 	}
 
 	for (let mytr of myArray) {
-		if (visibility == 'none') {
+		if (visibility == 'hide') {
 			var classList = $(mytr).attr('class').split(/\s+/);
 			var cont = false;
 			
 			for (var i = 0; i < classList.length; i++) {
-				if (datasets.indexOf(classList[i]) != -1) {
+				if (datasets.hidden.indexOf(classList[i]) != -1) {
 					cont = true;
 					break;
 				}
@@ -228,14 +295,19 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 				continue;
 			}
 
-			setCookie(trclass, 'table-row');	
 			$(mytr).show('slow');
 			myButton.firstChild.data = 'Hide Datasets';
 		} else {
-			setCookie(trclass, 'none');	
+			removeFromLocalStorage(trclass);	
 			$(mytr).hide('slow');
 			myButton.firstChild.data = 'Show Datasets';
 		}
+	}
+
+	if (visibility == 'hide') {
+		saveToLocalStorage(trclass, 'show', false);	
+	} else {
+		saveToLocalStorage(trclass, 'hide', false);	
 	}
   }
   
@@ -395,8 +467,6 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
     }
 
     context.attach('#' + id, opts);
-
-//	$('#dropdown-'+id+' > li:nth-child(3)').addClass('dropdown-submenu');
 
   }
 

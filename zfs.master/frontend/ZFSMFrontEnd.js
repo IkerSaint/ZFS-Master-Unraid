@@ -86,20 +86,31 @@ function daysToNow(timestamp) {
     return daysDifference;
 }
 
-function setCookie(key, value, daysToLive=365) {
-	var expires = new Date();
-	expires.setTime(expires.getTime() + (daysToLive * 24 * 60 * 60));
-	document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+function saveToLocalStorage(key, value, encode=true) {
+	if (encode) {
+		localStorage.setItem(key, JSON.stringify(value));
+		return;
+	}
+
+	localStorage.setItem(key, value);
 }
 
-function getCookie(key) {
-	var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-	return keyValue ? keyValue[2] : null;
+function loadFromLocalStorage(key, decode=true) {
+	let value = localStorage.getItem(key);
+
+	if (value === null) {
+		return null;
+	}
+
+	if (decode) {
+		return JSON.parse(value);
+	}
+
+	return value;
 }
 
-function eraseCookie(key) {
-	var keyValue = getCookie(key);
-    setCookie(key, keyValue, '-1');
+function removeFromLocalStorage(key) {
+	localStorage.removeItem(key);
 }
 
 //endregion utils
@@ -160,12 +171,9 @@ function getPoolShowButtonText(show_status) {
 }
 
 function getPoolShowStatus(zpool) {
-	var cookie = getCookie('zdataset-'+zpool);
+	var status = loadFromLocalStorage('zdataset-'+zpool, false);
 
-	if (cookie === undefined)
-		return false;
-
-	if (cookie == 'none')
+	if (status == 'hide')
 		return false;
 
 	return true;
@@ -178,7 +186,7 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	const creationDate = new Date(zdataset['creation'] * 1000);
 
 	const properties = {
-		'Creation Date' : creationDate.toISOString(),
+		'Creation Date' : creationDate.toLocaleString('en-US', { hour12: false }),
 		'Compression' : zdataset['compression'],
 		'Compress Ratio' : zdataset['compressratio']/100,
 		'Record Size' : fromBytesToString(zdataset['recordsize']),
@@ -208,7 +216,7 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 			icon_color = '#486dba';
 		}
 
-		properties['Last Snap Date'] = snapdate.toLocaleString();
+		properties['Last Snap Date'] = snapdate.toLocaleString('en-US', { hour12: false });
 		properties['Last Snap'] = snap['name'];
 
 		snap_count = zdataset['snapshots'].length;
@@ -370,7 +378,7 @@ function updateFullBodyTable(data, destructive_mode, snap_max_days_alert) {
 	zfs_table_body.innerHTML = html_pools;
 }
 
-function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
+async function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
 	var row = document.getElementById('tr-'+data.dataset['name']);
 
 	tds = row.getElementsByTagName('td');
@@ -382,7 +390,7 @@ function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
 	const creationDate = new Date(data.dataset['creation'] * 1000);
 
 	const properties = {
-		'Creation Date' : creationDate.toISOString(),
+		'Creation Date' : creationDate.toLocaleString('en-US', { hour12: false }),
 		'Compression' : data.dataset['compression'],
 		'Compress Ratio' : data.dataset['compressratio']/100,
 		'Record Size' : fromBytesToString(data.dataset['recordsize']),
@@ -412,7 +420,7 @@ function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
 			icon_color = '#486dba';
 		}
 
-		properties['Last Snap Date'] = snapdate.toLocaleString();
+		properties['Last Snap Date'] = snapdate.toLocaleString('en-US', { hour12: false });
 		properties['Last Snap'] = snap['name'];
 
 		snap_count = data['snapshots'].length;

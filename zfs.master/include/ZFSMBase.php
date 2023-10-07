@@ -44,5 +44,4 @@
 	);
 
 	$boutput_str = " 2>&1";
-	$cmdoutput_str = "CMD output: ";
 ?>
