@@ -212,6 +212,7 @@ window.onload = function() {
 
   $("#checkAll").click(function(){
     $('input:checkbox').not(this).prop('checked', this.checked);
+	$('#delete-snaps').prop('disabled', checkBoxes.filter(':checked').length < 1);
   });
 
   var checkBoxes = $('.snapl-check');
