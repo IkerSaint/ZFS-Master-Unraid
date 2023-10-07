@@ -93,7 +93,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
     if (msg.op == 'getAll') {
 		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
 
-		saveToCache(msg.data);
+		saveCache(msg.data);
     } else if (msg.op == 'getDatasets') {
 		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
 
@@ -125,6 +125,8 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	  addButtons();
 	  if (<?=$zfsm_cfg['refresh_interval']?> > 0) {
 	  	requestRefresh();
+	  } else {
+		loadCache();
 	  }
   });
 
@@ -155,8 +157,27 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	  }
 	  return $('div#title > span.left').filter(function(){return $(this).text() === 'ZFS Master';}).parent();
   }
-  function saveToCache(data) {
+
+  function saveCache(data) {
+	const curDate = new Date();
+	
+	data['timestamp'] = curDate.toLocaleTimeString('en-US', { hour12: false })
+
 	saveToLocalStorage('cache', data);
+  }
+
+  function loadCache() {
+	var data = loadFromLocalStorage('cache');
+
+	if (data === null) {
+		return;
+	}
+
+	updateFullBodyTable(data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
+
+	$('#zfsm-last-refresh').text('Last refresh at '+data.timestamp);
+
+	processHiddenDatasets();
   }
 
   function processHiddenDatasets() {
