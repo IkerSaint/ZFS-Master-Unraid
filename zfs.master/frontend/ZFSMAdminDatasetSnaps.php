@@ -226,8 +226,8 @@ window.onload = function() {
 		updateStatus('Destroy of Snapshot '+snapshot+' Failed - '+formatAnswer(data['failed']));
 	} else {
 		updateStatus('Destroy of Snapshot '+snapshot+' Successful');
-
-		$('#zpools > tr.'.snapshot).remove();
+		
+		$('#zpools > tr.'+encodeURIComponent(snapshot)).remove();
 	}
   }
 
