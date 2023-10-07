@@ -4,7 +4,7 @@
 <!ENTITY author		"IkerSaint">
 <!ENTITY version "2023.10.07.4.main">
 <!ENTITY launch     "Main">
-<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/beta">
+<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main">
 <!ENTITY pluginURL	"&gitURL;/&name;.plg">
 ]>
 
@@ -17,6 +17,7 @@
 
 ###2023.10.05
 - Add - Cache last data in Local Storage when using "no refresh"
+- Fix - Dataset admin Dialog - Error on select all datasets 
 - Fix - Multiple typos
 - Fix - Special condition crashing the backend
 - Fix - Status refresh on Snapshots admin dialog
