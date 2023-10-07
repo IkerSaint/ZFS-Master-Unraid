@@ -170,7 +170,20 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
   
   function updateSnapshotCache(data, total_snaps) {
+	var cache = loadFromLocalStorage('cache');
 
+	if (cache === null) {
+		return;
+	}
+
+	var dataset = findByKey(cache, data.dataset['name']);
+
+	if (dataset === null)
+		return;
+
+	dataset['snapshots'] = data['snapshots'];
+
+	saveCache(cache);
   }
 
   function loadCache() {
