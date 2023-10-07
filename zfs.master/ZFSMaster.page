@@ -92,6 +92,8 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	var msg = JSON.parse(data);
     if (msg.op == 'getAll') {
 		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
+
+		saveToCache(msg.data);
     } else if (msg.op == 'getDatasets') {
 		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
 
@@ -152,6 +154,9 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		return $('.title .left').filter(function(){return $(this).text() === 'ZFS Master';}).parent();
 	  }
 	  return $('div#title > span.left').filter(function(){return $(this).text() === 'ZFS Master';}).parent();
+  }
+  function saveToCache(data) {
+	saveToLocalStorage('cache', data);
   }
 
   function processHiddenDatasets() {
