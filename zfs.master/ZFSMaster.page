@@ -100,12 +100,15 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
         for (const pool in msg.data['pools']) {
 			$('#'+pool+'-attribute-snapshots > span').text('0');
 		}
+
+		saveCache(msg.data);
 	} else if (msg.op == 'getSnapshot') {
 		updateSnapshotInfo(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
 
 		var total_snaps = parseInt($('#'+msg.data['pool']+'-attribute-snapshots > span').text());
 		$('#'+msg.data['pool']+'-attribute-snapshots > span').text(total_snaps+msg.data['snapshots'].length);
 
+		updateSnapshotCache(msg.data, total_snaps);
 	} else if (msg.op == 'start_refresh') {
 		const curDate = new Date();
 
@@ -164,6 +167,10 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	data['timestamp'] = curDate.toLocaleTimeString('en-US', { hour12: false })
 
 	saveToLocalStorage('cache', data);
+  }
+  
+  function updateSnapshotCache(data, total_snaps) {
+
   }
 
   function loadCache() {

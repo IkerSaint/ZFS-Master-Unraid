@@ -378,7 +378,7 @@ function updateFullBodyTable(data, destructive_mode, snap_max_days_alert) {
 	zfs_table_body.innerHTML = html_pools;
 }
 
-function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
+async function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
 	var row = document.getElementById('tr-'+data.dataset['name']);
 
 	tds = row.getElementsByTagName('td');
