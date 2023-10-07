@@ -16,11 +16,12 @@
 <CHANGES>
 
 ###2023.10.05
+- Add - Cache last data in Local Storage when using "no refresh"
 - Fix - Multiple typos
 - Fix - Special condition crashing the backend
 - Fix - Status refresh on Snapshots admin dialog
 - Change - Date format across multiple dialogs
-- Change - Local Storage replacing cookies for datasets and pools view options
+- Change - Local Storage for datasets and pools view options
 
 ###2023.09.27
 - Change - "No refresh" option now doesn't load information on page refresh
