@@ -188,7 +188,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
 		for (const key in currentObj) {
 			if (key === data.dataset['name']) {
-				obj = currentObj;
+				dataset = currentObj[key];
 			}
 
 			if (typeof currentObj[key] === 'object') {
