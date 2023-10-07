@@ -201,7 +201,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		return;
 
 	dataset['snapshots'] = data['snapshots'];
-	cache[data['pool']]['Snapshots'] = total_snaps + data['snapshots'].length;
+	cache['pools'][data['pool']]['Snapshots'] = total_snaps + data['snapshots'].length;
 
 	saveCache(cache);
   }
@@ -467,8 +467,6 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
     }
 
     context.attach('#' + id, opts);
-
-//	$('#dropdown-'+id+' > li:nth-child(3)').addClass('dropdown-submenu');
 
   }
 
