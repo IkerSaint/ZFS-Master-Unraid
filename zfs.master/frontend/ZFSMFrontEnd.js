@@ -114,8 +114,27 @@ function removeFromLocalStorage(key) {
 }
 
 // WORK IN PROGRESS
-function usage_color(limit, free) {
-	return 'greenbar';
+function usage_color(percent, free, display) {
+	if (display['text'] ==1 || intval(display['text']/10)==1)
+		return '';
+
+	if (!free) {
+	  if (display['critical'] > 0 && percent >= display['critical'])
+	  	return 'redbar';
+
+	  if (display['warning'] > 0 && limit >= display['warning'])
+	  	return 'orangebar';
+
+	  return 'greenbar';
+	} else {
+	  if (display['critical'] > 0 && limit <= 100-display['critical'])
+	  	return 'redbar';
+
+	  if (display['warning'] > 0 && limit <= 100-display['warning'])
+	  	return 'orangebar';
+
+	  return 'greenbar';
+	}
 }
 // WORK IN PROGRESS
 
@@ -288,12 +307,20 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	var percent = 100-Math.round(calculateFreePercent(zdataset['used'], zdataset['available']));
 
 	tr += '<td>';
-	tr += '<div class="usage-disk"><span style="margin:0;width:'+percent+'%" class="'+usage_color(percent, false)+'"></span><span>'+fromBytesToString(zdataset['used'])+'</span></div>';
+	if (display['text'] % 10 == 0) {
+		tr += fromBytesToString(zdataset['used']);
+	} else {
+		tr += '<div class="usage-disk"><span style="margin:0;width:'+percent+'%" class="'+usage_color(percent, false, display)+'"></span><span>'+fromBytesToString(zdataset['used'])+'</span></div>';
+	}
 	tr += '</td>';
 
 	// Free
 	tr += '<td>';	
-	tr += '<div class="usage-disk"><span style="margin:0;width:'+100-percent+'%" class="'+usage_color(100-percent, true)+'"></span><span>'+fromBytesToString(zdataset['available'])+'</span></div>';
+	if (display['text'] < 10 ? display['text'] % 10 == 0 : display['text'] % 10 != 0) {
+		tr += fromBytesToString(zdataset['available']);
+	} else {
+		tr += '<div class="usage-disk"><span style="margin:0;width:'+100-percent+'%" class="'+usage_color(100-percent, true, display)+'"></span><span>'+fromBytesToString(zdataset['available'])+'</span></div>';
+	}
 	tr += '</td>';
 
 	// Snapshots
