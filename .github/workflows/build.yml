@@ -1,0 +1,24 @@
+name: ZFS Master Build
+
+on:
+  push:
+    branches:
+      - beta
+  workflow_dispatch:
+  
+jobs:
+  zfs-master-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v1
+      - name: Set version
+        run: |
+            buildver=$(date +'%%Y.%%m.%%d')
+            
+            echo "Replacing current version line"
+            sed -i "s/<!ENTITY version.*/<!ENTITY version \"${buildver}.${{ github.run_number }}.${{ github.ref_name }}\">/g" zfs.master.plg
+            sed -i "s,IkerSaint/ZFS-Master-Unraid/main,IkerSaint/ZFS-Master-Unraid/${{ github.ref_name }},g" zfs.master.plg
+      - name: Delete other releases
+        run: |
+            find -name 'zfs.master-*.tgz' -type f | grep -v "${{ github.ref_name }}" | xargs -t -I {} rm -f {}
