@@ -20,7 +20,7 @@ function buildArrayRet() {
 #region zpools
 
 function getZFSPools() {
-	$regex = "/^(?'pool'[\w-]+)\s+(?'size'[\d.]+.)\s+(?'used'[\d.]+.)\s+(?'free'[\d.]+.)\s+(?'checkpoint'([\d.]+.)|-)\s+(?'expandz'([\d.]+.)|-)\s+(?'fragmentation'\d+.)\s+(?'usedpercent'\d+.)\s+(?'dedup'[\d.]+.x)\s+(?'health'\w+)/";
+	$regex = "/^(?'pool'[\w\._\-]+)\s+(?'size'[\d.]+.)\s+(?'used'[\d.]+.)\s+(?'free'[\d.]+.)\s+(?'checkpoint'([\d.]+.)|-)\s+(?'expandz'([\d.]+.)|-)\s+(?'fragmentation'([\d.]+.)|-)\s+(?'usedpercent'[\d.]+.)\s+(?'dedup'[\d.]+.x)\s+(?'health'\w+)/"
 	  
 	$tmpPools = processCmdLine($regex, "zpool list -v", "cleanupZPoolInfo");
 	$retPools = array();
