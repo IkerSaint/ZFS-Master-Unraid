@@ -89,15 +89,14 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   var zfs_sub = new NchanSubscriber('/sub/zfs_master',{subscriber:'websocket'});
 
   zfs_sub.on('message', function(data) {
-	global $display;
 
 	var msg = JSON.parse(data);
     if (msg.op == 'getAll') {
-		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>, <?=$display?>);
+		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
 
 		saveCache(msg.data);
     } else if (msg.op == 'getDatasets') {
-		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>, <?=$display?>);
+		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
 
         for (const pool in msg.data['pools']) {
 			$('#'+pool+'-attribute-snapshots > span').text('0');
@@ -209,14 +208,13 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   function loadCache() {
-	global $display;
 	var data = loadFromLocalStorage('zfsm-cache');
 
 	if (data === null) {
 		return;
 	}
 
-	updateFullBodyTable(data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>, <?=$display?>);
+	updateFullBodyTable(data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
 
 	$('#zfsm-last-refresh').text('Last refresh at '+data.timestamp);
 

@@ -114,30 +114,8 @@ function removeFromLocalStorage(key) {
 }
 
 // WORK IN PROGRESS
-function usage_color(disk, limit, free, display) {
-	if (display['text'] ==1 || intval(display['text']/10)==1)
-		return '';
-
-	critical = disk['critical'] >=0 ? disk['critical'] : (display['critical']>=0 ? display['critical'] : 0);
-	warning = disk['warning']>=0 ? disk['warning'] : (display['warning']>=0 ? display['warning'] : 0);
-
-	if (!free) {
-	  if (critical>0 && limit>=critical)
-	  	return 'redbar';
-
-	  if (warning>0 && limit>=warning)
-	  	return 'orangebar';
-
-	  return 'greenbar';
-	} else {
-	  if (critical>0 && limit<=100-critical)
-	  	return 'redbar';
-
-	  if (warning>0 && limit<=100-warning)
-	  	return 'orangebar';
-
-	  return 'greenbar';
-	}
+function usage_color(limit, free) {
+	return 'greenbar';
 }
 // WORK IN PROGRESS
 
@@ -207,7 +185,7 @@ function getPoolShowStatus(zpool) {
 	return true;
 }
 
-function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert, display) {
+function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert) {
 	var tr = '<tr id="tr-'+zdataset['name']+'" class="zdataset-'+zpool+' '+parent+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
 	tr += '<td></td><td></td><td>';
 
@@ -306,31 +284,16 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	tr += fromBytesToString(zdataset['referenced']);
 	tr += '</td>';
 
-	console.warn(display)
-
 	// Used
 	var percent = 100-Math.round(calculateFreePercent(zdataset['used'], zdataset['available']));
 
 	tr += '<td>';
-
-	if (display['text'] % 10 == 0) {
-		tr += fromBytesToString(zdataset['used']);
-		//tr += '<div class="usage-disk"><span style="position:absolute; width:'+percent+'%" class=""><span>'+fromBytesToString(zdataset['used'])+'</span></div>';
-	} else {
-		tr += '<div class="usage-disk"><span style="margin:0;width:'+percent+' class="'+usage_color(display,percent,false)+'"></span><span>'+fromBytesToString(zdataset['used'])+'</span></div>';
-	}
+	tr += '<div class="usage-disk"><span style="margin:0;width:'+percent+' class="'+usage_color(percent, false)+'"></span><span>'+fromBytesToString(zdataset['used'])+'</span></div>';
 	tr += '</td>';
 
 	// Free
-	tr += '<td>';
-	
-	if (display['text'] % 10 == 0) {
-		tr += fromBytesToString(zdataset['available']);
-		//tr += '<div class="usage-disk"><span style="position:absolute; width:'+(100-percent)+'%" class=""><span>'+fromBytesToString(zdataset['available'])+'</span></div>';
-	} else {
-		tr += '<div class="usage-disk"><span style="margin:0;width:'+100-percent+' class="'+usage_color(display,100-percent,false)+'"></span><span>'+fromBytesToString(zdataset['available'])+'</span></div>';
-	}
-
+	tr += '<td>';	
+	tr += '<div class="usage-disk"><span style="margin:0;width:'+100-percent+' class="'+usage_color(100-percent, true)+'"></span><span>'+fromBytesToString(zdataset['available'])+'</span></div>';
 	tr += '</td>';
 
 	// Snapshots
@@ -350,18 +313,18 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	return tr;
 }
 
-function generateDatasetArrayRows(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display) {
+function generateDatasetArrayRows(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert) {
 	if (Object.keys(dataset.child).length == 0 && dataset['name'] != parent) {
-		return generateDatasetRow(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display);
+		return generateDatasetRow(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert);
 	}
 
 	var tr = '';
 
 	Object.values(dataset.child).forEach((zdataset) => {
-		tr += generateDatasetRow(zpool, zdataset, parent+' '+dataset['name'], show_status, destructive_mode, snap_max_days_alert, display);
+		tr += generateDatasetRow(zpool, zdataset, parent+' '+dataset['name'], show_status, destructive_mode, snap_max_days_alert);
 
 		if (Object.keys(zdataset.child).length > 0) {
-			tr += generateDatasetArrayRows(zpool, zdataset, parent+' '+dataset['name'], show_status, destructive_mode, snap_max_days_alert, display);
+			tr += generateDatasetArrayRows(zpool, zdataset, parent+' '+dataset['name'], show_status, destructive_mode, snap_max_days_alert);
 		}
 	});
 
@@ -405,7 +368,7 @@ function generatePoolTableRows(zpool, devices, show_status) {
 	return tr; 
 }
 
-function updateFullBodyTable(data, destructive_mode, snap_max_days_alert, display) {
+function updateFullBodyTable(data, destructive_mode, snap_max_days_alert) {
 	var html_pools = "";
 
 	Object.values(data.pools).forEach((zpool) => {
@@ -415,7 +378,7 @@ function updateFullBodyTable(data, destructive_mode, snap_max_days_alert, displa
 
 		html_pools += '<tr>';
 		html_pools += generatePoolTableRows( zpool, data['devices'][zpool['Pool']], show_status);
-		html_pools += generateDatasetArrayRows( zpool['Pool'], data['datasets'][zpool['Pool']], zpool['Pool'], show_status, destructive_mode, snap_max_days_alert, display);
+		html_pools += generateDatasetArrayRows( zpool['Pool'], data['datasets'][zpool['Pool']], zpool['Pool'], show_status, destructive_mode, snap_max_days_alert);
 		html_pools += '</tr>';
 	});
 
