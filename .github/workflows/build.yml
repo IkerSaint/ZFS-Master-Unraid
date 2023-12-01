@@ -11,16 +11,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Git checkout
-        uses: actions/checkout@v1
-      - name: Set version
+        uses: actions/checkout@v4
+      - name: Set base version
+        run: echo "buildver=$(date +'%Y.%m.%d').${{ github.run_number }}.${{ github.ref_name }}" >> $GITHUB_ENV
+      - name: Replace version
         run: |
-            buildver=$(date +'%%Y.%%m.%%d')
-            
             echo "Replacing current version line"
-            sed -i "s/<!ENTITY version.*/<!ENTITY version \"${buildver}.${{ github.run_number }}.${{ github.ref_name }}\">/g" zfs.master.plg
+            sed -i "s/<!ENTITY version.*/<!ENTITY version \"$buildver\">/g" zfs.master.plg
             sed -i "s,IkerSaint/ZFS-Master-Unraid/main,IkerSaint/ZFS-Master-Unraid/${{ github.ref_name }},g" zfs.master.plg
+            echo "Done!!"
             cat zfs.master.plg
       - name: Delete other releases
         run: |
             find -name 'zfs.master-*.tgz' -type f | grep -v "${{ github.ref_name }}" | xargs -t -I {} rm -f {}
             find -name 'zfs.master-*.tgz' -type f
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+      - name: Pack the app
+        run: |
+          echo "Packaging app - zfs.master-$buildver.tgz"
+          tar -cvzf zfs.master-$buildver.tgz zfs.master
+          echo "Done!!"
+        
