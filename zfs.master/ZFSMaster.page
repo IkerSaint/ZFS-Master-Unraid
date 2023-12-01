@@ -10,6 +10,7 @@ $docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
 
 require_once $docroot."/plugins/".$plugin."/include/ZFSMBase.php";
 require_once $docroot."/plugins/".$plugin."/include/ZFSMHelpers.php";
+require_once $docroot."/webGui/include/Helpers.php";
 
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
@@ -92,11 +93,11 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
 	var msg = JSON.parse(data);
     if (msg.op == 'getAll') {
-		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
+		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>, <?=json_encode($display)?>);
 
 		saveCache(msg.data);
     } else if (msg.op == 'getDatasets') {
-		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
+		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>, <?=json_encode($display)?>);
 
         for (const pool in msg.data['pools']) {
 			$('#'+pool+'-attribute-snapshots > span').text('0');
@@ -214,7 +215,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		return;
 	}
 
-	updateFullBodyTable(data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
+	updateFullBodyTable(data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>, <?=json_encode($display)?>);
 
 	$('#zfsm-last-refresh').text('Last refresh at '+data.timestamp);
 

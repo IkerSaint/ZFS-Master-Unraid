@@ -185,7 +185,7 @@ function getPoolShowStatus(zpool) {
 	return true;
 }
 
-function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert) {
+function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert, display) {
 	var tr = '<tr id="tr-'+zdataset['name']+'" class="zdataset-'+zpool+' '+parent+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
 	tr += '<td></td><td></td><td>';
 
@@ -288,12 +288,12 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	var percent = 100-Math.round(calculateFreePercent(zdataset['used'], zdataset['available']));
 
 	tr += '<td>';
-	tr += '<div class="usage-disk"><span style="margin:0;width:'+percent+' class="'+usage_color(percent, false)+'"></span><span>'+fromBytesToString(zdataset['used'])+'</span></div>';
+	tr += '<div class="usage-disk"><span style="margin:0;width:'+percent+'%" class="'+usage_color(percent, false)+'"></span><span>'+fromBytesToString(zdataset['used'])+'</span></div>';
 	tr += '</td>';
 
 	// Free
 	tr += '<td>';	
-	tr += '<div class="usage-disk"><span style="margin:0;width:'+100-percent+' class="'+usage_color(100-percent, true)+'"></span><span>'+fromBytesToString(zdataset['available'])+'</span></div>';
+	tr += '<div class="usage-disk"><span style="margin:0;width:'+100-percent+'%" class="'+usage_color(100-percent, true)+'"></span><span>'+fromBytesToString(zdataset['available'])+'</span></div>';
 	tr += '</td>';
 
 	// Snapshots
@@ -313,25 +313,25 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	return tr;
 }
 
-function generateDatasetArrayRows(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert) {
+function generateDatasetArrayRows(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display) {
 	if (Object.keys(dataset.child).length == 0 && dataset['name'] != parent) {
-		return generateDatasetRow(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert);
+		return generateDatasetRow(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display);
 	}
 
 	var tr = '';
 
 	Object.values(dataset.child).forEach((zdataset) => {
-		tr += generateDatasetRow(zpool, zdataset, parent+' '+dataset['name'], show_status, destructive_mode, snap_max_days_alert);
+		tr += generateDatasetRow(zpool, zdataset, parent+' '+dataset['name'], show_status, destructive_mode, snap_max_days_alert, display);
 
 		if (Object.keys(zdataset.child).length > 0) {
-			tr += generateDatasetArrayRows(zpool, zdataset, parent+' '+dataset['name'], show_status, destructive_mode, snap_max_days_alert);
+			tr += generateDatasetArrayRows(zpool, zdataset, parent+' '+dataset['name'], show_status, destructive_mode, snap_max_days_alert, display);
 		}
 	});
 
 	return tr;
 }
 
-function generatePoolTableRows(zpool, devices, show_status) {
+function generatePoolTableRows(zpool, devices, show_status, display) {
 	const show_button_text = getPoolShowButtonText(show_status);
 	const status_color = getPoolStatusColor(zpool['Health']);
 	const status_msg = getPoolStatusMsg(zpool['Health']);
@@ -368,7 +368,7 @@ function generatePoolTableRows(zpool, devices, show_status) {
 	return tr; 
 }
 
-function updateFullBodyTable(data, destructive_mode, snap_max_days_alert) {
+function updateFullBodyTable(data, destructive_mode, snap_max_days_alert, display) {
 	var html_pools = "";
 
 	Object.values(data.pools).forEach((zpool) => {
@@ -377,8 +377,8 @@ function updateFullBodyTable(data, destructive_mode, snap_max_days_alert) {
 		zfs_table_body = document.getElementById('zfs_master_body');
 
 		html_pools += '<tr>';
-		html_pools += generatePoolTableRows( zpool, data['devices'][zpool['Pool']], show_status);
-		html_pools += generateDatasetArrayRows( zpool['Pool'], data['datasets'][zpool['Pool']], zpool['Pool'], show_status, destructive_mode, snap_max_days_alert);
+		html_pools += generatePoolTableRows( zpool, data['devices'][zpool['Pool']], show_status, display);
+		html_pools += generateDatasetArrayRows( zpool['Pool'], data['datasets'][zpool['Pool']], zpool['Pool'], show_status, destructive_mode, snap_max_days_alert, display);
 		html_pools += '</tr>';
 	});
 
