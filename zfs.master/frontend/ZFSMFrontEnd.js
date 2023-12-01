@@ -113,30 +113,28 @@ function removeFromLocalStorage(key) {
 	localStorage.removeItem(key);
 }
 
-// WORK IN PROGRESS
 function usage_color(percent, free, display) {
-	if (display['text'] ==1 || intval(display['text']/10)==1)
+	if (display['text'] ==1 || parseInt(display['text']/10)==1)
 		return '';
 
 	if (!free) {
 	  if (display['critical'] > 0 && percent >= display['critical'])
 	  	return 'redbar';
 
-	  if (display['warning'] > 0 && limit >= display['warning'])
+	  if (display['warning'] > 0 && percent >= display['warning'])
 	  	return 'orangebar';
 
 	  return 'greenbar';
 	} else {
-	  if (display['critical'] > 0 && limit <= 100-display['critical'])
+	  if (display['critical'] > 0 && percent <= 100-display['critical'])
 	  	return 'redbar';
 
-	  if (display['warning'] > 0 && limit <= 100-display['warning'])
+	  if (display['warning'] > 0 && percent <= 100-display['warning'])
 	  	return 'orangebar';
 
 	  return 'greenbar';
 	}
 }
-// WORK IN PROGRESS
 
 //endregion utils
 
@@ -319,7 +317,7 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	if (display['text'] < 10 ? display['text'] % 10 == 0 : display['text'] % 10 != 0) {
 		tr += fromBytesToString(zdataset['available']);
 	} else {
-		tr += '<div class="usage-disk"><span style="margin:0;width:'+100-percent+'%" class="'+usage_color(100-percent, true, display)+'"></span><span>'+fromBytesToString(zdataset['available'])+'</span></div>';
+		tr += '<div class="usage-disk"><span style="margin:0;width:'+(100-percent)+'%" class="'+usage_color(100-percent, true, display)+'"></span><span>'+fromBytesToString(zdataset['available'])+'</span></div>';
 	}
 	tr += '</td>';
 
@@ -384,10 +382,25 @@ function generatePoolTableRows(zpool, devices, show_status, display) {
 
 	// Used
 	var percent = 100-Math.round(calculateFreePercent(zpool['Used'], zpool['Free']));
-	tr += '<td id="'+zpool['Pool']+'-attribute-used"><div class="usage-disk"><span style="position:absolute; width:'+percent+'%" class=""><span>'+zpool['Used']+'B</span></div></td>';
+
+	tr += '<td id="'+zpool['Pool']+'-attribute-used">';
+
+	if (display['text'] % 10 == 0) {
+		tr += zpool['Used']+'B';
+	} else {
+		tr += '<div class="usage-disk"><span style="margin:0;width:'+percent+'%" class="'+usage_color(percent, false, display)+'"></span><span>'+zpool['Used']+'B</span></div>';
+	}
+	tr += '</td>';
 
 	// Free
-	tr += '<td id="'+zpool['Pool']+'-attribute-free"><div class="usage-disk"><span style="position:absolute; width:'+(100-percent)+'%" class=""><span>'+zpool['Free']+'B</span></div></td>';
+	tr += '<td id="'+zpool['Pool']+'-attribute-free">';
+
+	if (display['text'] < 10 ? display['text'] % 10 == 0 : display['text'] % 10 != 0) {
+		tr += zpool['Free']+'B';
+	} else {
+		tr += '<div class="usage-disk"><span style="margin:0;width:'+(100-percent)+'%" class="'+usage_color(100-percent, true, display)+'"></span><span>'+zpool['Free']+'B</span></div>';
+	}
+	tr += '</td>';
 
 	// Snapshots
 	tr += '<td id="'+zpool['Pool']+'-attribute-snapshots"><i class="fa fa-camera-retro icon"></i><span>'+(zpool['Snapshots'] == null ? 0 : zpool['Snapshots'])+'</span></td>';
