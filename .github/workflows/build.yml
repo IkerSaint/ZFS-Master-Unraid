@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
   
 jobs:
-  prepare-repo:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Git checkout
@@ -25,14 +25,11 @@ jobs:
         run: |
             find -name 'zfs.master-*.tgz' -type f | grep -v "${{ github.ref_name }}" | xargs -t -I {} rm -f {}
             find -name 'zfs.master-*.tgz' -type f
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v4
       - name: Pack the app
         run: |
           echo "Packaging app - zfs.master-$buildver.tgz"
           tar -cvzf zfs.master-$buildver.tgz zfs.master
           echo "Done!!"
+      - name: Commit
+        uses: stefanzweifel/git-auto-commit-action@v5
         
