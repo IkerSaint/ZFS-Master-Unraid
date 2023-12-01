@@ -21,7 +21,7 @@ jobs:
             sed -i "s,IkerSaint/ZFS-Master-Unraid/main,IkerSaint/ZFS-Master-Unraid/${{ github.ref_name }},g" zfs.master.plg
             echo "Done!!"
             cat zfs.master.plg
-      - name: Delete other releases
+      - name: Delete other branches releases
         run: |
             find -name 'zfs.master-*.tgz' -type f | grep -v "${{ github.ref_name }}" | xargs -t -I {} rm -f {}
             find -name 'zfs.master-*.tgz' -type f
