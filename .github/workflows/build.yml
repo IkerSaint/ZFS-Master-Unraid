@@ -13,7 +13,12 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v4
       - name: Set base version
-        run: echo "buildver=$(date +'%Y.%m.%d').${{ github.run_number }}.${{ github.ref_name }}" >> $GITHUB_ENV
+        run: |
+          if [ "${{ github.ref }}" != "refs/heads/main" ]; then
+            echo "buildver=$(date +'%Y.%m.%d').${{ github.run_number }}.${{ github.ref_name }}" >> $GITHUB_ENV
+          else
+            echo "buildver=$(date +'%Y.%m.%d').${{ github.run_number }}" >> $GITHUB_ENV
+          fi
       - name: Replace version
         run: |
             echo "Replacing current version line"

@@ -15,6 +15,12 @@
 		min="6.9.2">
 <CHANGES>
 
+###2023.12.4
+- Fix - Used and Free % bars/texts are now consistent with unraid theme and config
+- Fix - Set time format for the last refresh to short date and time
+- Fix - Detect Pools with used % under 0%
+- Fix - ZPool regex not caching some pools with dots or Underscore in the name
+
 ###2023.10.07
 - Add - Cache last data in Local Storage when using "no refresh"
 - Fix - Dataset admin Dialog - Error on select all datasets 
