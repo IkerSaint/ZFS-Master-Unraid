@@ -38,4 +38,3 @@ jobs:
           echo "Done!!"
       - name: Commit
         uses: stefanzweifel/git-auto-commit-action@v5
-        
