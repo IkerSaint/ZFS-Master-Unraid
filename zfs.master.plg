@@ -2,9 +2,9 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name		"zfs.master">
 <!ENTITY author		"IkerSaint">
-<!ENTITY version "2023.12.01.14.main">
+<!ENTITY version "2023.12.05.9.beta">
 <!ENTITY launch     "Main">
-<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main">
+<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/beta">
 <!ENTITY pluginURL	"&gitURL;/&name;.plg">
 ]>
 
@@ -14,6 +14,12 @@
 		pluginURL="&pluginURL;"
 		min="6.9.2">
 <CHANGES>
+
+###2023.12.4
+- Fix - Used and Free % bars/texts are now consistent with unraid theme and config
+- Fix - Set time format for the last refresh to short date and time
+- Fix - Detect Pools with used % under 0%
+- Fix - ZPool regex not caching some pools with dots or Underscore in the name
 
 ###2023.10.07
 - Add - Cache last data in Local Storage when using "no refresh"
