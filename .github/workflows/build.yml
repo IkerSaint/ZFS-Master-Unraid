@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - beta
+      - main
   workflow_dispatch:
   
 jobs:
