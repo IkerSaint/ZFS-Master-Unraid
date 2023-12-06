@@ -272,6 +272,8 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	}
 
 	tr += zdataset['name'].substring(zdataset['name'].lastIndexOf("/") + 1);
+
+	tr += '<a class="info hand"><i class="fa fa-search icon" style="color:'+icon_color+'" onclick="getDatasetDirectories(\''+zdataset['mountpoint']+'\',\''+zdataset['name']+'\');"></i>';
 	tr += '</td>';
 
 	// Actions
@@ -502,6 +504,8 @@ async function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
 	}
 
 	tmp += data.dataset['name'].substring(data.dataset['name'].lastIndexOf("/") + 1);
+
+	tmp += '<a class="info hand"><i class="fa fa-search icon" style="color:'+icon_color+'" onclick="getDatasetDirectories(\''+zdataset['mountpoint']+'\');"></i>';
 	tmp += '</td>';
 
 	td_dataset.innerHTML = tmp;

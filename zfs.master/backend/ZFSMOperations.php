@@ -59,6 +59,18 @@ function getDatasetProperty($zpool, $zdataset, $zproperty) {
 	return $array_ret;
 }
 
+function getDatasetDirectories($zdataset_path) {
+	$dirs = glob($zdataset_path."/{,.}*" , GLOB_ONLYDIR | GLOB_BRACE);
+
+	if (!isset($dirs) || !is_array($dirs)):
+    	return array();
+	endif;
+	
+	$array_ret = array_diff($dirs, array($zdataset_path."/..", $zdataset_path."/."));
+
+	return $array_ret;
+}
+
 function getAllDatasetProperties($zdataset) {
 	$zpool = explode("/", $zdataset)[0];
 	

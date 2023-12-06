@@ -314,8 +314,14 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
   
   function createDataset(zpool) {
-	  var csrf_token = $('input[name="csrf_token"]').val();	  
-	  openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,'Create Dataset',550,680,false);
+	var csrf_token = $('input[name="csrf_token"]').val();	  
+	openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,'Create Dataset',550,680,false);
+  }
+
+  function getDatasetDirectories(zdataset_path, zdataset_name) {
+	$.post('<?=$urlzmadmin?>',{cmd: 'getdatasetdirectories', zdataset_path: zdataset_path}, function(data) {
+		console.warn(JSON.parse(data))
+	});
   }
 
   function addDatasetContext(zpool, zdataset, snapscount, id, destructive_mode, encryption, origin) {

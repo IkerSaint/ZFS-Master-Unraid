@@ -77,6 +77,11 @@ switch ($_POST['cmd']) {
 		echo json_encode($ret);
 
 		break;
+	case 'getdatasetdirectories':
+		$ret = getDatasetDirectories($_POST['zdataset_path']);
+		
+		echo json_encode($ret);
+		break;
 	case 'renamedataset':
 		$ret = renameDataset($_POST['zdataset'], $_POST['newname'], $_POST['force']);
 
