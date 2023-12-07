@@ -1,6 +1,7 @@
 <?php
 	$plugin = "zfs.master";
 	$docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
+	$plugin_config = "/boot/config/plugins/".$plugin."/".$plugin.".cfg"
 	$plugin_scripts = $docroot."/plugins/".$plugin."/scripts/";
 	$plugin_include = $docroot."/plugins/".$plugin."/include/";
 	$plugin_session_file = "/tmp/".$plugin."-session.data";

@@ -45,9 +45,7 @@ function saveConfig($array) {
         }
     }
 
-    $filePath = "/boot/config/plugins/zfs.master/zfs.master.cfg";
-
-    if (!$handle = fopen($filePath, 'w')) {
+    if (!$handle = fopen($plugin_config, 'w')) {
         return false;
     }
 
@@ -63,7 +61,7 @@ function saveConfig($array) {
 function addToDirectoryListing($zdataset) {
 	$array_ret = buildArrayRet();
 
-	$config = parse_plugin_cfg("zfs.master", true);
+	$config = parse_plugin_cfg( $plugin, true);
 
 	if (!isset($config['general']['directory_listing'])):
 		$config['general']['directory_listing'] = $zdataset;
@@ -85,22 +83,24 @@ function addToDirectoryListing($zdataset) {
 function removeFromDirectoryListing($zdataset) {
 	$array_ret = buildArrayRet();
 
-	$config = loadConfig(parse_plugin_cfg("zfs.master", true));
+	$config = parse_plugin_cfg( $plugin, true);
 
-	if (!isset($config['directory_listing'])):
-		$array_ret['failed'][$zdataset] = 1001;
-		return false;
+	if (!isset($config['general']['directory_listing'])):
+		$array_ret['failed'][$zdataset] = ZFSM_ERR_NOT_IN_CONFIG;
+		return $array_ret;
 	endif;
 
-	if (!in_array($zdataset, $config['directory_listing'])):
-		$array_ret['failed'][$zdataset] = 1001;
-		return false;
+	$tmp_array = preg_split('/\r\n|\r|\n/', $config['general']['directory_listing']);
+
+	if (!in_array($zdataset, $tmp_array)):
+		$array_ret['failed'][$zdataset] = ZFSM_ERR_NOT_IN_CONFIG;
+		return $array_ret;
 	endif;
 	
-	$key = array_search($zdataset, $config['directory_listing']);
-	unset($config['directory_listing'][$key]);
+	$key = array_search($zdataset, $tmp_array);
+	unset($tmp_array[$key]);
 
-	$config['directory_listing'] = implode(PHP_EOL, $config['directory_listing']);
+	$config['general']['directory_listing'] = implode(PHP_EOL, $tmp_array);
 
 	$ret = saveConfig($config);
 
