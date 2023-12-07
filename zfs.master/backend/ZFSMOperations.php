@@ -5,6 +5,7 @@ define('__ROOT__', dirname(dirname(__FILE__)));
 require_once __ROOT__."/include/ZFSMBase.php";
 require_once __ROOT__."/include/ZFSMError.php";
 require_once __ROOT__."/include/ZFSMHelpers.php";
+require_once "/usr/local/emhttp/webGui/include/Helpers.php";
 
 #region helpers
 
@@ -62,7 +63,7 @@ function saveConfig($array) {
 function addToDirectoryListing($zdataset) {
 	$array_ret = buildArrayRet();
 
-	$config = parse_plugin_cfg( $plugin, true);
+	$config = parse_plugin_cfg( 'zfs.master', true);
 
 	if (!isset($config['general']['directory_listing'])):
 		$config['general']['directory_listing'] = $zdataset;
@@ -84,7 +85,7 @@ function addToDirectoryListing($zdataset) {
 function removeFromDirectoryListing($zdataset) {
 	$array_ret = buildArrayRet();
 
-	$config = parse_plugin_cfg( $plugin, true);
+	$config = parse_plugin_cfg( 'zfs.master', true);
 
 	if (!isset($config['general']['directory_listing'])):
 		$array_ret['failed'][$zdataset] = ZFSM_ERR_NOT_IN_CONFIG;

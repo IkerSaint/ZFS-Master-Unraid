@@ -15,9 +15,9 @@ function resolve_error(int $error_code) {
 
     switch ($error_code) {
         case 1001:
-            return ZFSM_ERR_NOT_IN_CONFIG;
+            return ZFSM_ERR_NOT_IN_CONFIG_STR;
         case 1002:
-            return ZFSM_ERR_UNABLE_TO_SAVE;
+            return ZFSM_ERR_UNABLE_TO_SAVE_STR;
     }
 
     return ZFSM_ERR_UNKOWN;
