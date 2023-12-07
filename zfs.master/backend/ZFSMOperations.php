@@ -5,6 +5,8 @@ define('__ROOT__', dirname(dirname(__FILE__)));
 require_once __ROOT__."/include/ZFSMBase.php";
 require_once __ROOT__."/include/ZFSMHelpers.php";
 
+#region helpers
+
 function refreshData() {
 	touch("/tmp/zfsm_reload");
 }
@@ -16,6 +18,16 @@ function buildArrayRet() {
 
 	return $array_ret;
 }
+
+function addToDirectoryListing($zdataset) {
+	
+}
+
+function removeFromDirectoryListing($zdataset) {
+	
+}
+
+#endregion helpers
 
 #region zpools
 

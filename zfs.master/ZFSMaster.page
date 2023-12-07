@@ -170,6 +170,12 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
 	saveToLocalStorage('zfsm-cache', data);
   }
+
+  function getConfig() {
+	config = <?=json_encode($zfsm_cfg)?>
+
+	return config;
+  }
   
   function updateSnapshotCache(data, total_snaps) {
 	var cache = loadFromLocalStorage('zfsm-cache');
@@ -316,12 +322,6 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   function createDataset(zpool) {
 	var csrf_token = $('input[name="csrf_token"]').val();	  
 	openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,'Create Dataset',550,680,false);
-  }
-
-  function getDatasetDirectories(zdataset_path, zdataset_name) {
-	$.post('<?=$urlzmadmin?>',{cmd: 'getdatasetdirectories', zdataset_path: zdataset_path}, function(data) {
-		console.warn(JSON.parse(data))
-	});
   }
 
   function addDatasetContext(zpool, zdataset, snapscount, id, destructive_mode, encryption, origin) {
@@ -473,6 +473,26 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 			},
 		});
     }
+
+	if (!config['directory_monitor'].includes(zdataset)) {
+		opts.push({
+			text: _('Add Directory Listing'),
+			icon: 'fa-folder',
+			action: function (e) {
+				e.preventDefault();
+				addDirectoryListing(zdataset);
+			},
+		});
+	} else {
+		opts.push({
+			text: _('Remove Directory Listing'),
+			icon: 'fa-folder',
+			action: function (e) {
+				e.preventDefault();
+				removeDirectoryListing(zdataset);
+			},
+		});
+	}
 
     context.attach('#' + id, opts);
 
@@ -675,6 +695,26 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  }
 	  });
 	  $('.swal2-html-container').attr('style', 'display: grid;');
+  }
+
+  function addDirectoryListing(zdataset) {
+	$.post('<?=$urlzmadmin?>',{cmd: 'adddirectorlisting', zdataset: zdataset}, function(data) {
+		Swal2.fire({
+			title: 'Directory Listing Result',
+			icon: 'info',
+			html: formatAnswer(JSON.parse(data))
+		});
+	});
+  }
+
+  function removeDirectoryListing(zdataset) {
+	$.post('<?=$urlzmadmin?>',{cmd: 'removedirectorylisting', zdataset: zdataset}, function(data) {
+		Swal2.fire({
+			title: 'Directory Listing Result',
+			icon: 'info',
+			html: formatAnswer(JSON.parse(data))
+		});
+	});
   }
   
   function destroyDataset(zdataset) {
