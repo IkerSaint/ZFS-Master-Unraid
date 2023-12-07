@@ -26,9 +26,9 @@ function loadConfig($config) {
 	endif;
 
 	if (!isset($config['general']['directory_listing'])):
-		$zfsm_ret['directory_listing'] = array()
+		$zfsm_ret['directory_listing'] = array();
 	else:
-		$zfsm_ret['directory_listing'] = $config['general']['directory_listing'];
+		$zfsm_ret['directory_listing'] = preg_split('/\r\n|\r|\n/', $config['general']['directory_listing']);
 	endif;
 	
 	return $zfsm_ret;

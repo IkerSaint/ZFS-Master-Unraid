@@ -19,8 +19,77 @@ function buildArrayRet() {
 	return $array_ret;
 }
 
+function saveCofig($array) {
+    unset($content, $arrayMulti);
+
+    foreach($array AS $arrayTest){
+        if(is_array($arrayTest)) {
+          $arrayMulti = true;
+        }
+    }
+
+    if ($arrayMulti) {
+        foreach ($array AS $key => $elem) {
+            $content .= "[" . $key . "]\n";
+            foreach ($elem AS $key2 => $elem2) {
+                if (is_array($elem2)) {
+                    for ($i = 0; $i < count($elem2); $i++) {
+                        $content .= $key2 . "[] = \"" . $elem2[$i] . "\"\n";
+                    }
+                } else if ($elem2 == "") {
+                    $content .= $key2 . " = \n";
+                } else {
+                    $content .= $key2 . " = \"" . $elem2 . "\"\n";
+                }
+            }
+        }
+    } else {
+        foreach ($array AS $key2 => $elem2) {
+            if (is_array($elem2)) {
+                for ($i = 0; $i < count($elem2); $i++) {
+                    $content .= $key2 . "[] = \"" . $elem2[$i] . "\"\n";
+                }
+            } else if ($elem2 == "") {
+                $content .= $key2 . " = \n";
+            } else {
+                $content .= $key2 . " = \"" . $elem2 . "\"\n";
+            }
+        }
+    }
+
+    if (!$handle = fopen("/boot/config/plugins/zfs.master/zfs.master.cfg", 'w')) {
+        return false;
+    }
+
+    if (!fwrite($handle, $content)) {
+        return false;
+    }
+
+    fclose($handle);
+
+    return true;
+}
+
 function addToDirectoryListing($zdataset) {
-	
+	$array_ret = buildArrayRet();
+
+	$config = parse_plugin_cfg("zfs.master", true)
+
+	if (!isset($config['general']['directory_listing'])):
+		$config['general']['directory_listing'] = $zdataset;
+	else:
+		$config['general']['directory_listing'] = $config['general']['directory_listing']."\r\n".$zdataset;
+	endif;
+
+	$ret = saveConfig($config)
+
+	if ($ret == true):
+		$array_ret['succeeded'][$zdataset] = 0;
+	else:
+		$array_ret['failed'][$zdataset] = -1;
+	endif;
+
+	return $array_ret;
 }
 
 function removeFromDirectoryListing($zdataset) {
