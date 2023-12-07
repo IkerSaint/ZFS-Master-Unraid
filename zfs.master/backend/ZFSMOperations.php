@@ -19,61 +19,51 @@ function buildArrayRet() {
 	return $array_ret;
 }
 
-function saveCofig($array) {
-    unset($content, $arrayMulti);
+function saveConfig($array) {
+    $content = '';
 
-    foreach($array AS $arrayTest){
-        if(is_array($arrayTest)) {
-          $arrayMulti = true;
-        }
-    }
-
-    if ($arrayMulti) {
-        foreach ($array AS $key => $elem) {
+    foreach ($array as $key => $elem) {
+        if (is_array($elem)) {
             $content .= "[" . $key . "]\n";
-            foreach ($elem AS $key2 => $elem2) {
+            foreach ($elem as $key2 => $elem2) {
                 if (is_array($elem2)) {
-                    for ($i = 0; $i < count($elem2); $i++) {
-                        $content .= $key2 . "[] = \"" . $elem2[$i] . "\"\n";
+                    foreach ($elem2 as $value) {
+                        $content .= $key2 . "[] = \"" . $value . "\"\n";
                     }
-                } else if ($elem2 == "") {
-                    $content .= $key2 . " = \n";
                 } else {
-                    $content .= $key2 . " = \"" . $elem2 . "\"\n";
+                    $content .= $key2 . " = " . (empty($elem2) ? '' : "\"" . $elem2 . "\"") . "\n";
                 }
             }
-        }
-    } else {
-        foreach ($array AS $key2 => $elem2) {
-            if (is_array($elem2)) {
-                for ($i = 0; $i < count($elem2); $i++) {
-                    $content .= $key2 . "[] = \"" . $elem2[$i] . "\"\n";
+        } else {
+            if (is_array($elem)) {
+                foreach ($elem as $value) {
+                    $content .= $key . "[] = \"" . $value . "\"\n";
                 }
-            } else if ($elem2 == "") {
-                $content .= $key2 . " = \n";
             } else {
-                $content .= $key2 . " = \"" . $elem2 . "\"\n";
+                $content .= $key . " = " . (empty($elem) ? '' : "\"" . $elem . "\"") . "\n";
             }
         }
     }
 
-    if (!$handle = fopen("/boot/config/plugins/zfs.master/zfs.master.cfg", 'w')) {
+    $filePath = "/boot/config/plugins/zfs.master/zfs.master.cfg";
+
+    if (!$handle = fopen($filePath, 'w')) {
         return false;
     }
 
     if (!fwrite($handle, $content)) {
+        fclose($handle);
         return false;
     }
 
     fclose($handle);
-
     return true;
 }
 
 function addToDirectoryListing($zdataset) {
 	$array_ret = buildArrayRet();
 
-	$config = parse_plugin_cfg("zfs.master", true)
+	$config = parse_plugin_cfg("zfs.master", true);
 
 	if (!isset($config['general']['directory_listing'])):
 		$config['general']['directory_listing'] = $zdataset;
@@ -81,7 +71,7 @@ function addToDirectoryListing($zdataset) {
 		$config['general']['directory_listing'] = $config['general']['directory_listing']."\r\n".$zdataset;
 	endif;
 
-	$ret = saveConfig($config)
+	$ret = saveConfig($config);
 
 	if ($ret == true):
 		$array_ret['succeeded'][$zdataset] = 0;
