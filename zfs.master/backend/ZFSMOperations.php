@@ -3,6 +3,7 @@
 define('__ROOT__', dirname(dirname(__FILE__)));
 
 require_once __ROOT__."/include/ZFSMBase.php";
+require_once __ROOT__."/include/ZFSMError.php";
 require_once __ROOT__."/include/ZFSMHelpers.php";
 
 #region helpers
