@@ -24,6 +24,12 @@ function loadConfig($config) {
 	else:
 		$zfsm_ret['snap_pattern'] = $config['general']['snap_pattern'];
 	endif;
+
+	if (!isset($config['general']['directory_listing'])):
+		$zfsm_ret['directory_listing'] = array()
+	else:
+		$zfsm_ret['directory_listing'] = $config['general']['directory_listing'];
+	endif;
 	
 	return $zfsm_ret;
 }
