@@ -76,13 +76,41 @@ function addToDirectoryListing($zdataset) {
 	if ($ret == true):
 		$array_ret['succeeded'][$zdataset] = 0;
 	else:
-		$array_ret['failed'][$zdataset] = -1;
+		$array_ret['failed'][$zdataset] = ZFSM_ERR_UNABLE_TO_SAVE;
 	endif;
 
 	return $array_ret;
 }
 
 function removeFromDirectoryListing($zdataset) {
+	$array_ret = buildArrayRet();
+
+	$config = loadConfig(parse_plugin_cfg("zfs.master", true));
+
+	if (!isset($config['directory_listing'])):
+		$array_ret['failed'][$zdataset] = 1001;
+		return false;
+	endif;
+
+	if (!in_array($zdataset, $config['directory_listing'])):
+		$array_ret['failed'][$zdataset] = 1001;
+		return false;
+	endif;
+	
+	$key = array_search($zdataset, $config['directory_listing']);
+	unset($config['directory_listing'][$key]);
+
+	$config['directory_listing'] = implode(PHP_EOL, $config['directory_listing'])
+
+	$ret = saveConfig($config);
+
+	if ($ret == true):
+		$array_ret['succeeded'][$zdataset] = 0;
+	else:
+		$array_ret['failed'][$zdataset] = ZFSM_ERR_UNABLE_TO_SAVE;
+	endif;
+
+	return $array_ret;
 	
 }
 
