@@ -100,7 +100,7 @@ function removeFromDirectoryListing($zdataset) {
 	$key = array_search($zdataset, $config['directory_listing']);
 	unset($config['directory_listing'][$key]);
 
-	$config['directory_listing'] = implode(PHP_EOL, $config['directory_listing'])
+	$config['directory_listing'] = implode(PHP_EOL, $config['directory_listing']);
 
 	$ret = saveConfig($config);
 
@@ -111,7 +111,6 @@ function removeFromDirectoryListing($zdataset) {
 	endif;
 
 	return $array_ret;
-	
 }
 
 #endregion helpers
