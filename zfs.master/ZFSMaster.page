@@ -325,7 +325,8 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   function addDatasetContext(zpool, zdataset, snapscount, id, destructive_mode, encryption, origin) {
-    var opts = [];
+    var config = getConfig();
+	var opts = [];
 	var edit_opts = [];
 
 	edit_opts.push(
@@ -474,7 +475,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		});
     }
 
-	if (!config['directory_monitor'].includes(zdataset)) {
+	if (!config['directory_listing'].includes(zdataset)) {
 		opts.push({
 			text: _('Add Directory Listing'),
 			icon: 'fa-folder',
@@ -698,7 +699,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   function addDirectoryListing(zdataset) {
-	$.post('<?=$urlzmadmin?>',{cmd: 'adddirectorlisting', zdataset: zdataset}, function(data) {
+	$.post('<?=$urlzmadmin?>',{cmd: 'adddirectortlisting', zdataset: zdataset}, function(data) {
 		Swal2.fire({
 			title: 'Directory Listing Result',
 			icon: 'info',

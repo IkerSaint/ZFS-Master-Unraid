@@ -77,15 +77,15 @@ switch ($_POST['cmd']) {
 		echo json_encode($ret);
 
 		break;
-	case 'adddirectorlisting':
+	case 'adddirectortlisting':
 		$ret = addToDirectoryListing($_POST['zdataset']);
 
-		returnAnswer($array_ret, "Directory Listing", "Dataset added successfully", "Unable to add dataset", false);
+		returnAnswer($ret, "Directory Listing", "Dataset added successfully", "Unable to add dataset", false);
 		break;
 	case 'removedirectorylisting':
 		$ret = removeFromDirectoryListing($_POST['zdataset']);
 
-		returnAnswer($array_ret, "Directory Listing", "Dataset removed successfully", "Unable to remove dataset", false);
+		returnAnswer($ret, "Directory Listing", "Dataset removed successfully", "Unable to remove dataset", false);
 		break;
 	case 'renamedataset':
 		$ret = renameDataset($_POST['zdataset'], $_POST['newname'], $_POST['force']);
