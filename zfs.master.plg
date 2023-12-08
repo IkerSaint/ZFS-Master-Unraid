@@ -15,6 +15,10 @@
 		min="6.9.2">
 <CHANGES>
 
+###2023.12.8
+- Add - Directory Listing functionality
+- Fix - Optimize multiple operations
+
 ###2023.12.4
 - Fix - Used and Free % bars/texts are now consistent with unraid theme and config
 - Fix - Set time format for the last refresh to short date and time
