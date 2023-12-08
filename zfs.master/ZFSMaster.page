@@ -108,7 +108,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		updateSnapshotInfo(msg.data, zfsm_config['destructive_mode'], zfsm_config['snap_max_days_alert'], zfsm_config['directory_listing']);
 
 		if (hasDirectories(data.dataset)) {
-			updateDatasetDirectoryRows(data.dataset, snap_max_days_alert);
+			updateDatasetDirectoryRows(msg.data.dataset, msg.data['snapshots'], zfsm_config['snap_max_days_alert']);
 		}
 
 		var total_snaps = parseInt($('#'+msg.data['pool']+'-attribute-snapshots > span').text());

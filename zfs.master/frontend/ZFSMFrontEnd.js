@@ -279,12 +279,12 @@ function generateDatasetDirectoryRows(zpool, zdataset, parent, show_status, dest
 	return agg;
 }
 
-function updateDatasetDirectoryRows(zdataset, snap_max_days_alert) {
+function updateDatasetDirectoryRows(zdataset, snapshots, snap_max_days_alert) {
 	var icon_color = 'grey';
 	var snap_count = 0;
 
-	if (zdataset['snapshots'] !== undefined && zdataset['snapshots'].length > 0) {
-		const snap = getLastSnap(zdataset['snapshots']);
+	if (snapshots!== undefined && snapshots.length > 0) {
+		const snap = getLastSnap(snapshots);
 
 		if (daysToNow(snap['creation']) > snap_max_days_alert) {
 			icon_color = 'orange';
@@ -292,7 +292,7 @@ function updateDatasetDirectoryRows(zdataset, snap_max_days_alert) {
 			icon_color = '#486dba';
 		}
 
-		snap_count = zdataset['snapshots'].length;
+		snap_count = snapshots.length;
 	}
 
 	const depth = zdataset['name'].split('/').length;
