@@ -374,6 +374,44 @@ function destroyDataset($zdataset, $zforce) {
 	return $array_ret;
 }
 
+#region directories
+
+function renameDirectory($directory, $directory_new_name) {
+	$array_ret = buildArrayRet();
+
+	$cmd_line = "mv ".$force.escapeshellarg($directory)." ".escapeshellarg($directory_new_name).$boutput_str;
+
+	$ret = execCommand($cmd_line, $exec_result);
+	
+	if ($ret == 0):
+		$array_ret['succeeded'][$directory_new_name] = 0;
+	else:
+		$array_ret['failed'][$directory_new_name] = $ret;
+	endif;
+	
+	return $array_ret;
+}
+
+function deleteDirectory($directory, $zforce) {
+	$array_ret = buildArrayRet();
+	
+	$force = ($zforce == '1') ? '-rf ' : '';
+
+	$cmd_line = 'rm '.$force.escapeshellarg($directory).$boutput_str;
+
+	$ret = execCommand($cmd_line, $exec_result);
+
+	if ($ret == 0):
+		$array_ret['succeeded'][$directory] = 0;
+	else:
+		$array_ret['failed'][$directory] = $ret;
+	endif;
+	
+	return $array_ret;
+}
+
+#endregion directories
+
 #region snapshots
 
 function createDatasetSnapshot($zdataset, $znapshot, $zrecursive) {
