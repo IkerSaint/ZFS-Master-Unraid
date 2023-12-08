@@ -25,7 +25,7 @@ function listDirectories($path, $childs) {
 	$remove = array($path."/..", $path."/.");
 
 	foreach ($childs as $child):
-		$remove[] = $child['name'];
+		$remove[] = $child['mountpoint'];
 	endforeach;
 
 	$dirs = glob($path."/{,.}*" , GLOB_ONLYDIR | GLOB_BRACE);
@@ -164,7 +164,7 @@ function getZFSPoolDevices($zpool) {
 	return trim(shell_exec($cmd_line.' 2>&1'));
 }
 
-function getZFSPoolDatasets($zpool, $zexc_pattern, $directory_listing) {
+function getZFSPoolDatasets($zpool, $zexc_pattern, $directory_listing = array()) {
 	$result = executeZFSProgram($GLOBALS["script_pool_get_datasets"], $zpool, array($zpool, $zexc_pattern));
 
 	if (count($directory_listing)):
@@ -174,7 +174,7 @@ function getZFSPoolDatasets($zpool, $zexc_pattern, $directory_listing) {
 	return sortDatasetArray($result);
 }
 
-function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern, $directory_listing) {
+function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern, $directory_listing = array()) {
 	$result = executeZFSProgram($GLOBALS["script_pool_get_datasets_snapshots"], $zpool, array($zpool, $zexc_pattern));
 
 	if (count($directory_listing)):
