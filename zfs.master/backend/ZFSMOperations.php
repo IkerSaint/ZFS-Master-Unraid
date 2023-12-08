@@ -395,9 +395,9 @@ function renameDirectory($directory, $directory_new_name) {
 function deleteDirectory($directory, $zforce) {
 	$array_ret = buildArrayRet();
 	
-	$force = ($zforce == '1') ? '-rf ' : '';
+	$force = ($zforce == '1') ? 'f ' : ' ';
 
-	$cmd_line = 'rm '.$force.escapeshellarg($directory).$boutput_str;
+	$cmd_line = 'rm -r'.$force.escapeshellarg($directory).$boutput_str;
 
 	$ret = execCommand($cmd_line, $exec_result);
 
