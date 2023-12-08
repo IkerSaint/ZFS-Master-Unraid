@@ -214,7 +214,7 @@ function getPoolShowStatus(zpool) {
 
 function generateDatasetDirectoryRows(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert, display) {
 	var agg = '';
-	Object.keys(zdataset.directories).forEach((directory) => {
+	Object.values(zdataset.directories).forEach((directory) => {
 		var tr = '<tr id="tr-'+directory+'" class="zdataset-'+zpool+' '+parent+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
 		tr += '<td></td><td></td><td>';
 
@@ -434,11 +434,11 @@ function generateDatasetArrayRows(zpool, dataset, parent, show_status, destructi
 		if (Object.keys(zdataset.child).length > 0) {
 			tr += generateDatasetArrayRows(zpool, zdataset, parent+' '+dataset['name'], show_status, destructive_mode, snap_max_days_alert, display);
 		}
-	});
 
-	if (hasDirectories(dataset)) {
-		tr += generateDatasetDirectoryRows(zpool, dataset, parent+' '+dataset['name'] , show_status, destructive_mode, snap_max_days_alert, display);
-	}
+		if (hasDirectories(zdataset)) {
+			tr += generateDatasetDirectoryRows(zpool, zdataset, parent+' '+zdataset['name'] , show_status, destructive_mode, snap_max_days_alert, display);
+		}
+	});
 
 	return tr;
 }
