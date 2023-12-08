@@ -107,7 +107,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	} else if (msg.op == 'getSnapshot') {
 		updateSnapshotInfo(msg.data, zfsm_config['destructive_mode'], zfsm_config['snap_max_days_alert'], zfsm_config['directory_listing']);
 
-		if (hasDirectories(data.dataset)) {
+		if (hasDirectories(msg.data.dataset)) {
 			updateDatasetDirectoryRows(msg.data.dataset, msg.data['snapshots'], zfsm_config['snap_max_days_alert']);
 		}
 
