@@ -102,7 +102,7 @@ $sleep_time = 0.0;
 $iters = 0;
 
 while (true) {
-    if ($iters > 35):
+    if ($iters > 15):
         if (filemtime("/boot/config/plugins/zfs.master/zfs.master.cfg") != $zfsm_cfg_timestamp):
             $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
             $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
