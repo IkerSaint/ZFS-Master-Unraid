@@ -214,7 +214,7 @@ function getPoolShowStatus(zpool) {
 
 function generateDatasetDirectoryRows(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert, display) {
 	var agg = '';
-	zdataset.directories.forEach((directory) => {
+	Object.keys(zdataset.directories).forEach((directory) => {
 		var tr = '<tr id="tr-'+directory+'" class="zdataset-'+zpool+' '+parent+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
 		tr += '<td></td><td></td><td>';
 
@@ -233,13 +233,13 @@ function generateDatasetDirectoryRows(zpool, zdataset, parent, show_status, dest
 			snap_count = zdataset['snapshots'].length;
 		}
 
-		const depth = directory.split('/').length - 1;
+		const depth = zdataset['name'].split('/').length;
 
 		for (let i = 1; i <= depth; i++) {
 			tr += '&emsp;&emsp;';
 		}
 
-		tr += '<a class="info hand"><i class="fa fa-folder-o icon" style="color:'+icon_color+'"></i>';
+		tr += '<a><i class="fa fa-folder-o icon" style="color:'+icon_color+'"></i></a>';
 
 		tr += directory.substring(directory.lastIndexOf("/") + 1);
 		tr += '</td>';
@@ -332,7 +332,7 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	tr += '<span>'+implodeWithKeys('<br>', properties)+'</span></a>';
 
 
-	if (Object.keys(zdataset.child).length > 0 || hasDirectories(zdataset)) {
+	if (Object.keys(zdataset.child).length > 0 || Object.keys(zdataset.directories).length > 0) {
 		tr += '<i class="fa fa-minus-square fa-append" name="'+zdataset['name']+'"></i>';
 	}
 
@@ -421,7 +421,7 @@ function generateDatasetArrayRows(zpool, dataset, parent, show_status, destructi
 	if (Object.keys(dataset.child).length == 0 && dataset['name'] != parent) {
 		tr += generateDatasetRow(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display);
 		
-		if (hasDirectories(dataset)) {
+		if (Object.keys(dataset.directories).length > 0) {
 			tr += generateDatasetDirectoryRows(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display);
 		}
 
@@ -436,7 +436,7 @@ function generateDatasetArrayRows(zpool, dataset, parent, show_status, destructi
 		}
 	});
 
-	if (hasDirectories(dataset)) {
+	if (Object.keys(dataset.directories).length > 0) {
 		tr += generateDatasetDirectoryRows(zpool, dataset, parent+' '+dataset['name'] , show_status, destructive_mode, snap_max_days_alert, display);
 	}
 
@@ -572,7 +572,7 @@ async function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
 	tmp += '<span>'+implodeWithKeys('<br>', properties)+'</span></a>';
 
 
-	if (Object.keys(data.dataset['child']).length > 0 || hasDirectories(data.dataset)) {
+	if (Object.keys(data.dataset['child']).length > 0 || Object.keys(data.dataset.directories).length > 0) {
 		tmp += '<i class="fa fa-minus-square fa-append" name="'+data.dataset['name']+'"></i>';
 	}
 
