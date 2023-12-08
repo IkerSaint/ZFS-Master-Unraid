@@ -107,6 +107,10 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	} else if (msg.op == 'getSnapshot') {
 		updateSnapshotInfo(msg.data, zfsm_config['destructive_mode'], zfsm_config['snap_max_days_alert'], zfsm_config['directory_listing']);
 
+		if (hasDirectories(data.dataset)) {
+			updateDatasetDirectoryRows(data.dataset, snap_max_days_alert);
+		}
+
 		var total_snaps = parseInt($('#'+msg.data['pool']+'-attribute-snapshots > span').text());
 		$('#'+msg.data['pool']+'-attribute-snapshots > span').text(total_snaps+msg.data['snapshots'].length);
 

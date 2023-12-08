@@ -322,10 +322,7 @@ function updateDatasetDirectoryRows(zdataset, snap_max_days_alert) {
 	
 		tmp = '<td>';
 		tmp += '<i class="fa fa-camera-retro icon" style="color:'+icon_color+'"></i><span>'+snap_count+'</span>';
-	
-		if (data.dataset['mountpoint'] != "none") {
-			tmp += ' <a href="/Main/Browse?dir='+directory+'"><i class="icon-u-tab zfs_bar_button" title="Browse '+directory+'"></i></a>';
-		}
+		tmp += '<a href="/Main/Browse?dir='+directory+'"><i class="icon-u-tab zfs_bar_button" title="Browse '+directory+'"></i></a>';
 	
 		td_snaps.innerHTML = tmp;
 	});
@@ -625,10 +622,6 @@ async function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert, d
 
 	if (Object.keys(data.dataset['child']).length > 0 || hasDirectories(data.dataset)) {
 		tmp += '<i class="fa fa-minus-square fa-append" name="'+data.dataset['name']+'"></i>';
-
-		if (hasDirectories(data.dataset)) {
-			updateDatasetDirectoryRows(data.dataset, snap_max_days_alert);
-		}
 	}
 
 	if (data.dataset['origin'] !== undefined) {
