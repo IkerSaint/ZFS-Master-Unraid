@@ -15,14 +15,24 @@ function resolve_error(int $error_code) {
         return posix_strerror($error_code);
     endif;
 
+    var $ret = '';
+
     switch ($error_code) {
-        case 1001:
-            return ZFSM_ERR_NOT_IN_CONFIG_STR;
-        case 1002:
-            return ZFSM_ERR_UNABLE_TO_SAVE_STR;
+        case ZFSM_ERR_NOT_IN_CONFIG:
+            $ret = ZFSM_ERR_NOT_IN_CONFIG_STR;
+            break;
+        case ZFSM_ERR_UNABLE_TO_SAVE:
+            $ret = ZFSM_ERR_UNABLE_TO_SAVE_STR;
+            break
+        case ZFSM_ERR_ALREADY_SET_IN_CONFIG:
+            $ret = return ZFSM_ERR_ALREADY_SET_IN_CONFIG_STR;
+            break;
+        default:
+            $ret = ZFSM_ERR_UNKNOWN_STR;
+            break;
     }
 
-    return ZFSM_ERR_UNKOWN;
+    return $ret;
 }
 
 ?>

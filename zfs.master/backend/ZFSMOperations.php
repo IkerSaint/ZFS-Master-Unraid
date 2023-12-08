@@ -65,7 +65,7 @@ function addToDirectoryListing($zdataset) {
 
 	$config = parse_plugin_cfg( 'zfs.master', true);
 
-	if (!isset($config['general']['directory_listing'])):
+	if (!isset($config['general']['directory_listing']) || $config['general']['directory_listing'] == ""):
 		$config['general']['directory_listing'] = $zdataset;
 	else:
 		$config['general']['directory_listing'] = $config['general']['directory_listing']."\r\n".$zdataset;
@@ -107,7 +107,11 @@ function removeFromDirectoryListing($zdataset) {
 	$key = array_search($zdataset, $tmp_array);
 	unset($tmp_array[$key]);
 
-	$config['general']['directory_listing'] = implode(PHP_EOL, $tmp_array);
+	if (count($tmp_array)):
+		$config['general']['directory_listing'] = implode(PHP_EOL, $tmp_array);
+	else:
+		$config['general']['directory_listing'] = "";
+	endif;
 
 	$ret = saveConfig($config);
 
