@@ -332,7 +332,7 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	tr += '<span>'+implodeWithKeys('<br>', properties)+'</span></a>';
 
 
-	if (Object.keys(zdataset.child).length > 0 || Object.keys(zdataset.directories).length > 0) {
+	if (Object.keys(zdataset.child).length > 0 || hasDirectories(zdataset)) {
 		tr += '<i class="fa fa-minus-square fa-append" name="'+zdataset['name']+'"></i>';
 	}
 
@@ -421,7 +421,7 @@ function generateDatasetArrayRows(zpool, dataset, parent, show_status, destructi
 	if (Object.keys(dataset.child).length == 0 && dataset['name'] != parent) {
 		tr += generateDatasetRow(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display);
 		
-		if (Object.keys(dataset.directories).length > 0) {
+		if (hasDirectories(dataset)) {
 			tr += generateDatasetDirectoryRows(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display);
 		}
 
@@ -436,7 +436,7 @@ function generateDatasetArrayRows(zpool, dataset, parent, show_status, destructi
 		}
 	});
 
-	if (Object.keys(dataset.directories).length > 0) {
+	if (hasDirectories(dataset)) {
 		tr += generateDatasetDirectoryRows(zpool, dataset, parent+' '+dataset['name'] , show_status, destructive_mode, snap_max_days_alert, display);
 	}
 
@@ -572,7 +572,7 @@ async function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
 	tmp += '<span>'+implodeWithKeys('<br>', properties)+'</span></a>';
 
 
-	if (Object.keys(data.dataset['child']).length > 0 || Object.keys(data.dataset.directories).length > 0) {
+	if (Object.keys(data.dataset['child']).length > 0 || hasDirectories(data.dataset)) {
 		tmp += '<i class="fa fa-minus-square fa-append" name="'+data.dataset['name']+'"></i>';
 	}
 
