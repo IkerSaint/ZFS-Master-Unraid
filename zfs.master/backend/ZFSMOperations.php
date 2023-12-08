@@ -47,7 +47,7 @@ function saveConfig($array) {
         }
     }
 
-    if (!$handle = fopen($plugin_config, 'w')) {
+    if (!$handle = fopen("/boot/config/plugins/zfs.master/zfs.master.cfg", 'w')) {
         return false;
     }
 
@@ -69,6 +69,11 @@ function addToDirectoryListing($zdataset) {
 		$config['general']['directory_listing'] = $zdataset;
 	else:
 		$config['general']['directory_listing'] = $config['general']['directory_listing']."\r\n".$zdataset;
+	endif;
+
+	if (str_contains($config['general']['directory_listing'], $zdataset)):
+		$array_ret['failed'][$zdataset] = ZFSM_ERR_ALREADY_SET_IN_CONFIG;
+		return $array_ret;
 	endif;
 
 	$ret = saveConfig($config);
@@ -137,14 +142,22 @@ function getZFSPoolDevices($zpool) {
 	return trim(shell_exec($cmd_line.' 2>&1'));
 }
 
-function getZFSPoolDatasets($zpool, $zexc_pattern) {
+function getZFSPoolDatasets($zpool, $zexc_pattern, $directory_listing) {
 	$result = executeZFSProgram($GLOBALS["script_pool_get_datasets"], $zpool, array($zpool, $zexc_pattern));
+
+	if (count($directory_listing)):
+		getDatasetDirectories($result);
+	endif;
 	
 	return sortDatasetArray($result);
 }
 
-function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern) {
+function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern, $directory_listing) {
 	$result = executeZFSProgram($GLOBALS["script_pool_get_datasets_snapshots"], $zpool, array($zpool, $zexc_pattern));
+
+	if (count($directory_listing)):
+		getDatasetDirectories($result);
+	endif;
 	
 	return sortDatasetArray($result);
 }
@@ -153,20 +166,21 @@ function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern) {
 
 #region datasets
 
-function getDatasetProperty($zpool, $zdataset, $zproperty) {
-	$array_ret = executeZFSProgram($GLOBALS["script_dataset_get_property"], $zpool, array($zdataset, $zproperty));
-
-	return $array_ret;
-}
-
-function getDatasetDirectories($zdataset_path) {
-	$dirs = glob($zdataset_path."/{,.}*" , GLOB_ONLYDIR | GLOB_BRACE);
+function getDatasetDirectories($dataset_tree) {
+	/*$dirs = glob($zdataset_path."/{,.}*" , GLOB_ONLYDIR | GLOB_BRACE);
 
 	if (!isset($dirs) || !is_array($dirs)):
     	return array();
 	endif;
 	
 	$array_ret = array_diff($dirs, array($zdataset_path."/..", $zdataset_path."/."));
+
+	return $array_ret;*/
+	return $dataset_tree;
+}
+
+function getDatasetProperty($zpool, $zdataset, $zproperty) {
+	$array_ret = executeZFSProgram($GLOBALS["script_dataset_get_property"], $zpool, array($zdataset, $zproperty));
 
 	return $array_ret;
 }
