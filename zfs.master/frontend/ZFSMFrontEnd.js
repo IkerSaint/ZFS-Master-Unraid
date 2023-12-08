@@ -137,11 +137,11 @@ function usage_color(percent, free, display) {
 }
 
 function hasDirectories(dataset) {
-	if (dataset['directories'] === undefined)
+	if (dataset['directories'] === undefined || dataset['directories'] == null)
 		return false;
 
-	if (dataset['directories'] == null || dataset['directories'].length <= 0)
-		return false
+	if (dataset['directories'].length <= 0)
+		return false;
 
 	return true;
 }
