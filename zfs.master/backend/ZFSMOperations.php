@@ -21,6 +21,24 @@ function buildArrayRet() {
 	return $array_ret;
 }
 
+function listDirectories($path, $childs) {
+	$remove = array($path."/..", $path."/.");
+
+	foreach ($childs as $child):
+		$remove[] = $child['name'];
+	endforeach;
+
+	$dirs = glob($path."/{,.}*" , GLOB_ONLYDIR | GLOB_BRACE);
+
+	if (!isset($dirs) || !is_array($dirs)):
+    	return array();
+	endif;
+	
+	$array_ret = array_diff($dirs, $remove);
+
+	return $array_ret;
+}
+
 function saveConfig($array) {
     $content = '';
 
@@ -65,15 +83,15 @@ function addToDirectoryListing($zdataset) {
 
 	$config = parse_plugin_cfg( 'zfs.master', true);
 
+	if (str_contains($config['general']['directory_listing'], $zdataset)):
+		$array_ret['failed'][$zdataset] = ZFSM_ERR_ALREADY_SET_IN_CONFIG;
+		return $array_ret;
+	endif;
+
 	if (!isset($config['general']['directory_listing']) || $config['general']['directory_listing'] == ""):
 		$config['general']['directory_listing'] = $zdataset;
 	else:
 		$config['general']['directory_listing'] = $config['general']['directory_listing']."\r\n".$zdataset;
-	endif;
-
-	if (str_contains($config['general']['directory_listing'], $zdataset)):
-		$array_ret['failed'][$zdataset] = ZFSM_ERR_ALREADY_SET_IN_CONFIG;
-		return $array_ret;
 	endif;
 
 	$ret = saveConfig($config);
@@ -150,7 +168,7 @@ function getZFSPoolDatasets($zpool, $zexc_pattern, $directory_listing) {
 	$result = executeZFSProgram($GLOBALS["script_pool_get_datasets"], $zpool, array($zpool, $zexc_pattern));
 
 	if (count($directory_listing)):
-		getDatasetDirectories($result);
+		getDatasetDirectories($result, $directory_listing);
 	endif;
 	
 	return sortDatasetArray($result);
@@ -160,7 +178,7 @@ function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern, $directory_listin
 	$result = executeZFSProgram($GLOBALS["script_pool_get_datasets_snapshots"], $zpool, array($zpool, $zexc_pattern));
 
 	if (count($directory_listing)):
-		getDatasetDirectories($result);
+		getDatasetDirectories($result, $directory_listing);
 	endif;
 	
 	return sortDatasetArray($result);
@@ -170,16 +188,17 @@ function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern, $directory_listin
 
 #region datasets
 
-function getDatasetDirectories($dataset_tree) {
-	/*$dirs = glob($zdataset_path."/{,.}*" , GLOB_ONLYDIR | GLOB_BRACE);
+function getDatasetDirectories($dataset_tree, $directory_listing) {
+	foreach ($dataset_tree as $dataset):
+		if (in_array($dataset['name'], $directory_listing):
+			$dataset['directories'] = listDirectories($dataset['mountpoint'], $dataset['child']);
+		endif;
 
-	if (!isset($dirs) || !is_array($dirs)):
-    	return array();
-	endif;
-	
-	$array_ret = array_diff($dirs, array($zdataset_path."/..", $zdataset_path."/."));
+		if (count($dataset['child'])):
+			getDatasetDirectories($dataset['child'], $directory_listing);
+		endif;
+	endforeach;
 
-	return $array_ret;*/
 	return $dataset_tree;
 }
 

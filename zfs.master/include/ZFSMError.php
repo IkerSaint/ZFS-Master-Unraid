@@ -15,7 +15,7 @@ function resolve_error(int $error_code) {
         return posix_strerror($error_code);
     endif;
 
-    var $ret = '';
+    $ret = '';
 
     switch ($error_code) {
         case ZFSM_ERR_NOT_IN_CONFIG:
@@ -23,9 +23,9 @@ function resolve_error(int $error_code) {
             break;
         case ZFSM_ERR_UNABLE_TO_SAVE:
             $ret = ZFSM_ERR_UNABLE_TO_SAVE_STR;
-            break
+            break;
         case ZFSM_ERR_ALREADY_SET_IN_CONFIG:
-            $ret = return ZFSM_ERR_ALREADY_SET_IN_CONFIG_STR;
+            $ret = ZFSM_ERR_ALREADY_SET_IN_CONFIG_STR;
             break;
         default:
             $ret = ZFSM_ERR_UNKNOWN_STR;
