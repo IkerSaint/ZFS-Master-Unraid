@@ -249,8 +249,7 @@ function generateDatasetDirectoryRows(zpool, zdataset, parent, show_status, dest
 		tr += '<td>';
 		var id = crc16(directory);
 
-		tr += '<button type="button" id="'+id+'" class="zfs_compact">Actions</button></span>';
-		//tr += '<button type="button" id="'+id+'" onclick="addDatasetContext(\''+zpool+'\', \''+zdataset['name']+'\', '+snap_count+', \''+id+'\', '+destructive_mode+', \''+zdataset['keystatus']+'\'';
+		tr += '<button type="button" id="'+id+'" onclick="addDirectoryContext(\''+directory+'\', \''+id+'\', '+destructive_mode+');" class="zfs_compact">Actions</button></span>';
 		tr += '</td>';
 
 		//mountpoint

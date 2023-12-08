@@ -324,6 +324,36 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,'Create Dataset',550,680,false);
   }
 
+  function addDirectoryContext(directory, id, destructive_mode) {
+	var opts = [];
+
+	opts.push({header:directory});
+
+	if (destructive_mode != 0) {
+		opts.push(
+		  {
+			text: _('Rename'),
+			icon: 'fa-font',
+			action: function (e) {
+				e.preventDefault();
+				renameDirectory(directory);
+			}
+		  },
+		  {
+			text: _('Delete'),
+			icon: 'fa-trash',
+			action: function (e) {
+				e.preventDefault();
+				deleteDirectory(directory);
+		    }
+		  },
+		  { divider: true }
+		);
+	}
+
+    context.attach('#' + id, opts);
+  }
+
   function addDatasetContext(zpool, zdataset, snapscount, id, destructive_mode, encryption, origin) {
     var config = getConfig();
 	var opts = [];
