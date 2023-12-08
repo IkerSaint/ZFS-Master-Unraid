@@ -136,6 +136,16 @@ function usage_color(percent, free, display) {
 	}
 }
 
+function hasDirectories(dataset) {
+	if (dataset['directories'] === undefined)
+		return false;
+
+	if (dataset['directories'] == null || dataset['directories'].length <= 0)
+		return false
+
+	return true;
+}
+
 //endregion utils
 
 
@@ -202,6 +212,144 @@ function getPoolShowStatus(zpool) {
 	return true;
 }
 
+function generateDatasetDirectoryRows(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert, display) {
+	/*var tr = '<tr id="tr-'+zdataset['name']+'" class="zdataset-'+zpool+' '+parent+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
+	tr += '<td></td><td></td><td>';
+
+	const creationDate = new Date(zdataset['creation'] * 1000);
+
+	const properties = {
+		'Creation Date' : creationDate.toLocaleString('en-US', { hour12: false }),
+		'Compression' : zdataset['compression'],
+		'Compress Ratio' : zdataset['compressratio']/100,
+		'Record Size' : fromBytesToString(zdataset['recordsize']),
+		'Access Time' : zdataset['atime'],
+		'XAttr' : zdataset['xattr'],
+		'Primary Cache' : zdataset['primarycache'],
+		'Encryption' : zdataset['encryption'],
+		'Key Status' : zdataset['keystatus'],
+		'Quota' : fromBytesToString(zdataset['quota']),
+		'Read Only' : zdataset['readonly'],
+		'Case Sensitive' : zdataset['casesensitivity'],
+		'Sync' : zdataset['sync'],
+		'Origin' : zdataset['origin'] ?? '',
+		'Space used by Snaps' : fromBytesToString(zdataset['usedbysnapshots'])
+	};
+
+	var icon_color = 'grey';
+	var snap_count = 0;
+
+	if (zdataset['snapshots'] !== undefined && zdataset['snapshots'].length > 0) {
+		const snap = getLastSnap(zdataset['snapshots']);
+		var snapdate = new Date(snap['creation'] * 1000);
+
+		if (daysToNow(snap['creation']) > snap_max_days_alert) {
+			icon_color = 'orange';
+		} else {
+			icon_color = '#486dba';
+		}
+
+		properties['Last Snap Date'] = snapdate.toLocaleString('en-US', { hour12: false });
+		properties['Last Snap'] = snap['name'];
+
+		snap_count = zdataset['snapshots'].length;
+	}
+
+	const depth = zdataset['name'].split('/').length - 1;
+
+	for (let i = 1; i <= depth; i++) {
+    	tr += '&emsp;&emsp;';
+	}
+
+	tr += '<a class="info hand"><i class="fa fa-hdd-o icon" style="color:'+icon_color+'" onclick="toggleDataset(\''+zdataset['name']+'\');"></i>';
+	tr += '<span>'+implodeWithKeys('<br>', properties)+'</span></a>';
+
+
+	if (Object.keys(zdataset.child).length > 0 || hasDirectories(zdataset)) {
+		tr += '<i class="fa fa-minus-square fa-append" name="'+zdataset['name']+'"></i>';
+	}
+
+	if (zdataset['origin'] !== undefined) {
+		tr += '<i class="fa fa-clone fa-append"></i>';
+	}
+
+	if (zdataset['keystatus'] != 'none') {
+		if (zdataset['keystatus'] == 'available') {
+			tr += '<i class="fa fa-unlock fa-append"></i>';
+		} else {
+			tr += '<i class="fa fa-lock fa-append"></i>';
+		}
+	}
+
+	tr += zdataset['name'].substring(zdataset['name'].lastIndexOf("/") + 1);
+	tr += '</td>';
+
+	// Actions
+
+	tr += '<td>';
+	var id = crc16(zdataset['name']);
+
+	tr += '<button type="button" id="'+id+'" onclick="addDatasetContext(\''+zpool+'\', \''+zdataset['name']+'\', '+snap_count+', \''+id+'\', '+destructive_mode+', \''+zdataset['keystatus']+'\'';
+	
+	if (zdataset['origin'] !== undefined) {
+		tr += ',\''+zdataset['origin']+'\'';
+	}
+
+	tr += ');" class="zfs_compact">Actions</button></span>';
+	tr += '</td>';
+
+	//mountpoint
+	tr += '<td>';
+	if (zdataset['mountpoint'] != "none") {
+		tr += zdataset['mountpoint'];
+	}
+
+	tr += '</td>';
+
+	// Referr
+	tr += '<td>';
+	tr += fromBytesToString(zdataset['referenced']);
+	tr += '</td>';
+
+	// Used
+	var percent = 100-Math.round(calculateFreePercent(zdataset['used'], zdataset['available']));
+
+	tr += '<td>';
+	if (display['text'] % 10 == 0) {
+		tr += fromBytesToString(zdataset['used']);
+	} else {
+		tr += '<div class="usage-disk"><span style="margin:0;width:'+percent+'%" class="'+usage_color(percent, false, display)+'"></span><span>'+fromBytesToString(zdataset['used'])+'</span></div>';
+	}
+	tr += '</td>';
+
+	// Free
+	tr += '<td>';	
+	if (display['text'] < 10 ? display['text'] % 10 == 0 : display['text'] % 10 != 0) {
+		tr += fromBytesToString(zdataset['available']);
+	} else {
+		tr += '<div class="usage-disk"><span style="margin:0;width:'+(100-percent)+'%" class="'+usage_color(100-percent, true, display)+'"></span><span>'+fromBytesToString(zdataset['available'])+'</span></div>';
+	}
+	tr += '</td>';
+
+	// Snapshots
+
+	tr += '<td>';
+	tr += '<i class="fa fa-camera-retro icon" style="color:'+icon_color+'"></i><span>'+snap_count+'</span>';
+
+	// Mountpoint
+
+	if (zdataset['mountpoint'] != "none") {
+		tr += ' <a href="/Main/Browse?dir='+zdataset['mountpoint']+'"><i class="icon-u-tab zfs_bar_button" title="Browse '+zdataset['mountpoint']+'"></i></a>';
+	}
+
+	tr += '</td>';
+	tr += '</tr>';
+
+	return tr;*/
+	console.warn(zdataset['directories']);
+	return '';
+}
+
 function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert, display) {
 	var tr = '<tr id="tr-'+zdataset['name']+'" class="zdataset-'+zpool+' '+parent+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
 	tr += '<td></td><td></td><td>';
@@ -255,7 +403,7 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	tr += '<span>'+implodeWithKeys('<br>', properties)+'</span></a>';
 
 
-	if (Object.keys(zdataset.child).length > 0) {
+	if (Object.keys(zdataset.child).length > 0 || hasDirectories(zdataset)) {
 		tr += '<i class="fa fa-minus-square fa-append" name="'+zdataset['name']+'"></i>';
 	}
 
@@ -339,11 +487,17 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 }
 
 function generateDatasetArrayRows(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display) {
-	if (Object.keys(dataset.child).length == 0 && dataset['name'] != parent) {
-		return generateDatasetRow(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display);
-	}
-
 	var tr = '';
+
+	if (Object.keys(dataset.child).length == 0 && dataset['name'] != parent) {
+		tr += generateDatasetRow(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display);
+		
+		if (hasDirectories(dataset)) {
+			tr += generateDatasetDirectoryRows(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display);
+		}
+
+		return tr;
+	}
 
 	Object.values(dataset.child).forEach((zdataset) => {
 		tr += generateDatasetRow(zpool, zdataset, parent+' '+dataset['name'], show_status, destructive_mode, snap_max_days_alert, display);
@@ -352,6 +506,10 @@ function generateDatasetArrayRows(zpool, dataset, parent, show_status, destructi
 			tr += generateDatasetArrayRows(zpool, zdataset, parent+' '+dataset['name'], show_status, destructive_mode, snap_max_days_alert, display);
 		}
 	});
+
+	if (hasDirectories(dataset)) {
+		tr += generateDatasetDirectoryRows(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display);
+	}
 
 	return tr;
 }
@@ -485,7 +643,7 @@ async function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
 	tmp += '<span>'+implodeWithKeys('<br>', properties)+'</span></a>';
 
 
-	if (Object.keys(data.dataset['child']).length > 0) {
+	if (Object.keys(data.dataset['child']).length > 0 || hasDirectories(data.dataset)) {
 		tmp += '<i class="fa fa-minus-square fa-append" name="'+data.dataset['name']+'"></i>';
 	}
 
