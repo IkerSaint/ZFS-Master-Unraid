@@ -376,7 +376,7 @@ function destroyDataset($zdataset, $zforce) {
 
 #region directories
 
-function renameDirectory($directory, $directory_new_name) {
+function moveDirectory($directory, $directory_new_name) {
 	$array_ret = buildArrayRet();
 
 	$cmd_line = "mv ".$force.escapeshellarg($directory)." ".escapeshellarg($directory_new_name).$boutput_str;

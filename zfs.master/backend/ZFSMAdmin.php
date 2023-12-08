@@ -117,10 +117,10 @@ switch ($_POST['cmd']) {
 		returnAnswer($ret, "ZFS Dataset Promote", "Dataset promoted successfully", "Unable to promote dataset", true);
 		
 		break;
-	case 'renamedirectory':
-		$ret = renameDirectory($_POST['directory'], $_POST['newname']);
+	case 'movedirectory':
+		$ret = moveDirectory($_POST['directory'], $_POST['newname']);
 
-		returnAnswer($ret, "ZFS Directory rename", "Directory renamed successfully", "Unable to rename directory", true);
+		returnAnswer($ret, "ZFS Directory Move", "Directory moved successfully", "Unable to move directory", true);
 
 		break;
 	case 'deletedirectory':

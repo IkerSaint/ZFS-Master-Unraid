@@ -279,6 +279,58 @@ function generateDatasetDirectoryRows(zpool, zdataset, parent, show_status, dest
 	return agg;
 }
 
+function updateDatasetDirectoryRows(zdataset, snap_max_days_alert) {
+	var icon_color = 'grey';
+	var snap_count = 0;
+
+	if (zdataset['snapshots'] !== undefined && zdataset['snapshots'].length > 0) {
+		const snap = getLastSnap(zdataset['snapshots']);
+
+		if (daysToNow(snap['creation']) > snap_max_days_alert) {
+			icon_color = 'orange';
+		} else {
+			icon_color = '#486dba';
+		}
+
+		snap_count = zdataset['snapshots'].length;
+	}
+
+	const depth = zdataset['name'].split('/').length;
+
+	Object.values(zdataset.directories).forEach((directory) => {
+		var row = document.getElementById('tr-'+directory);
+
+		tds = row.getElementsByTagName('td');
+
+		td_dataset = tds[2];
+		td_snaps = tds[8];
+	
+		var tmp = '';
+	
+		for (let i = 1; i <= depth; i++) {
+			tmp += '&emsp;&emsp;';
+		}
+
+		tmp += '<a><i class="fa fa-folder-o icon" style="color:'+icon_color+'"></i></a>';
+
+		tmp += directory.substring(directory.lastIndexOf("/") + 1);
+		tmp += '</td>';
+	
+		td_dataset.innerHTML = tmp;
+	
+		// Snapshots
+	
+		tmp = '<td>';
+		tmp += '<i class="fa fa-camera-retro icon" style="color:'+icon_color+'"></i><span>'+snap_count+'</span>';
+	
+		if (data.dataset['mountpoint'] != "none") {
+			tmp += ' <a href="/Main/Browse?dir='+directory+'"><i class="icon-u-tab zfs_bar_button" title="Browse '+directory+'"></i></a>';
+		}
+	
+		td_snaps.innerHTML = tmp;
+	});
+}
+
 function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert, display) {
 	var tr = '<tr id="tr-'+zdataset['name']+'" class="zdataset-'+zpool+' '+parent+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
 	tr += '<td></td><td></td><td>';
@@ -571,9 +623,12 @@ async function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert, d
 	tmp += '<a class="info hand"><i class="fa fa-hdd-o icon" style="color:'+icon_color+'" onclick="toggleDataset(\''+data.dataset['name']+'\');"></i>';
 	tmp += '<span>'+implodeWithKeys('<br>', properties)+'</span></a>';
 
-
 	if (Object.keys(data.dataset['child']).length > 0 || hasDirectories(data.dataset)) {
 		tmp += '<i class="fa fa-minus-square fa-append" name="'+data.dataset['name']+'"></i>';
+
+		if (hasDirectories(data.dataset)) {
+			updateDatasetDirectoryRows(data.dataset, snap_max_days_alert);
+		}
 	}
 
 	if (data.dataset['origin'] !== undefined) {

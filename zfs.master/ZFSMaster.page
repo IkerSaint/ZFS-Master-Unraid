@@ -341,11 +341,11 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
 	opts.push(
 		{
-			text: _('Rename'),
+			text: _('Move/Rename'),
 			icon: 'fa-font',
 			action: function (e) {
 				e.preventDefault();
-				renameDirectory(directory);
+				moveDirectory(directory);
 			}
 		},
 	);
@@ -769,7 +769,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	  });
   }
 
-  function renameDirectory(directory) {
+  function moveDirectory(directory) {
 	  Swal2.fire({
 		  title: '<strong>New name for '+directory+'</strong>',
 		  html: '<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Directory new name (Full name)" value="'+directory+'" type="mytext" style="display: flex;">',
@@ -790,7 +790,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	      }
 	  }).then((result) => {
 		  if (result.isConfirmed) {
-			$.post('<?=$urlzmadmin?>',{cmd: 'renamedirectory', directory: directory, newname: result.value[0]}, function(data) {
+			$.post('<?=$urlzmadmin?>',{cmd: 'movedirectory', directory: directory, newname: result.value[0]}, function(data) {
 				Swal2.fire({
 					title: 'Rename Result',
 					icon: 'info',
