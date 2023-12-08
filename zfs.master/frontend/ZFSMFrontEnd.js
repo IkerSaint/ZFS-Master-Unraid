@@ -214,26 +214,27 @@ function getPoolShowStatus(zpool) {
 
 function generateDatasetDirectoryRows(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert, display) {
 	var agg = '';
+
+	var icon_color = 'grey';
+	var snap_count = 0;
+
+	if (zdataset['snapshots'] !== undefined && zdataset['snapshots'].length > 0) {
+		const snap = getLastSnap(zdataset['snapshots']);
+
+		if (daysToNow(snap['creation']) > snap_max_days_alert) {
+			icon_color = 'orange';
+		} else {
+			icon_color = '#486dba';
+		}
+
+		snap_count = zdataset['snapshots'].length;
+	}
+
+	const depth = zdataset['name'].split('/').length;
+
 	Object.values(zdataset.directories).forEach((directory) => {
 		var tr = '<tr id="tr-'+directory+'" class="zdataset-'+zpool+' '+parent+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
 		tr += '<td></td><td></td><td>';
-
-		var icon_color = 'grey';
-		var snap_count = 0;
-
-		if (zdataset['snapshots'] !== undefined && zdataset['snapshots'].length > 0) {
-			const snap = getLastSnap(zdataset['snapshots']);
-
-			if (daysToNow(snap['creation']) > snap_max_days_alert) {
-				icon_color = 'orange';
-			} else {
-				icon_color = '#486dba';
-			}
-
-			snap_count = zdataset['snapshots'].length;
-		}
-
-		const depth = zdataset['name'].split('/').length;
 
 		for (let i = 1; i <= depth; i++) {
 			tr += '&emsp;&emsp;';
@@ -494,7 +495,7 @@ function generatePoolTableRows(zpool, devices, show_status, display) {
 	return tr; 
 }
 
-function updateFullBodyTable(data, destructive_mode, snap_max_days_alert, display) {
+function updateFullBodyTable(data, destructive_mode, snap_max_days_alert, display, directory_listing) {
 	var html_pools = "";
 
 	Object.values(data.pools).forEach((zpool) => {
@@ -511,7 +512,7 @@ function updateFullBodyTable(data, destructive_mode, snap_max_days_alert, displa
 	zfs_table_body.innerHTML = html_pools;
 }
 
-async function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
+async function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert, directory_listing) {
 	var row = document.getElementById('tr-'+data.dataset['name']);
 
 	tds = row.getElementsByTagName('td');

@@ -93,11 +93,11 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
 	var msg = JSON.parse(data);
     if (msg.op == 'getAll') {
-		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>, <?=json_encode($display)?>);
+		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>, <?=json_encode($display)?>, <?=$zfsm_cfg['directory_listing']?>);
 
 		saveCache(msg.data);
     } else if (msg.op == 'getDatasets') {
-		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>, <?=json_encode($display)?>);
+		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>, <?=json_encode($display)?>, <?=$zfsm_cfg['directory_listing']?>);
 
         for (const pool in msg.data['pools']) {
 			$('#'+pool+'-attribute-snapshots > span').text('0');
@@ -105,7 +105,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
 		saveCache(msg.data);
 	} else if (msg.op == 'getSnapshot') {
-		updateSnapshotInfo(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
+		updateSnapshotInfo(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>, <?=$zfsm_cfg['directory_listing']?>);
 
 		var total_snaps = parseInt($('#'+msg.data['pool']+'-attribute-snapshots > span').text());
 		$('#'+msg.data['pool']+'-attribute-snapshots > span').text(total_snaps+msg.data['snapshots'].length);
@@ -221,7 +221,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		return;
 	}
 
-	updateFullBodyTable(data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>, <?=json_encode($display)?>);
+	updateFullBodyTable(data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>, <?=json_encode($display)?>, <?=$zfsm_cfg['directory_listing']?>);
 
 	$('#zfsm-last-refresh').text('Last refresh at '+data.timestamp);
 
@@ -332,14 +332,6 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	if (destructive_mode != 0) {
 		opts.push(
 		  {
-			text: _('Rename'),
-			icon: 'fa-font',
-			action: function (e) {
-				e.preventDefault();
-				renameDirectory(directory);
-			}
-		  },
-		  {
 			text: _('Delete'),
 			icon: 'fa-trash',
 			action: function (e) {
@@ -347,9 +339,20 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 				deleteDirectory(directory);
 		    }
 		  },
-		  { divider: true }
+		  { divider: true },
 		);
 	}
+
+	opts.push(
+		{
+			text: _('Rename'),
+			icon: 'fa-font',
+			action: function (e) {
+				e.preventDefault();
+				renameDirectory(directory);
+			}
+		},
+	);
 
     context.attach('#' + id, opts);
   }
