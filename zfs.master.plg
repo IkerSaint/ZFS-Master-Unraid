@@ -2,7 +2,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name		"zfs.master">
 <!ENTITY author		"IkerSaint">
-<!ENTITY version "2023.12.08.30.feature-folders-listing">
+<!ENTITY version "2023.12.08.31.feature-folders-listing">
 <!ENTITY launch     "Main">
 <!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/feature-folders-listing">
 <!ENTITY pluginURL	"&gitURL;/&name;.plg">
