@@ -65,6 +65,13 @@ _(Datasets Exclusion Patterns (Just One!))_:
 > This definitely speed up the Information refresh process!.
 :end
 
+_(Directory Listing (Dataset names, one per line!))_:
+: <textarea name="directory_listing" cols="40" rows="10" placeholder="mypool/docker&#10;mypool/otherdataset"><?=implode(PHP_EOL ,$zfsm_cfg['directory_listing'])?></textarea>
+
+:zc_settings_directory_listing_plug:
+> Dataset names and not their file paths. Please note that the plugin will only display the first-level directories. 
+:end
+
 <div id="title" class="nocontrol">_(Snapshots)_</div>
 _(Dataset Icon Alert Max Days)_:
 : <input type="text" name="snap_max_days_alert" value="<?=$zfsm_cfg['snap_max_days_alert']?>">

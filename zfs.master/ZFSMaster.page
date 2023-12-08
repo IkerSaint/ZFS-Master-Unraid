@@ -14,7 +14,6 @@ require_once $docroot."/webGui/include/Helpers.php";
 
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
-$zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
 
 $lastrefreshtext = '<span class="zfs_bar_text"><a class="tooltip" title="Information refresh time"><i id="zfsm-last-refresh"></i></a></span>';
 $refreshbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="requestRefresh()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a></span>';
@@ -88,16 +87,17 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
 <script>
   var zfs_sub = new NchanSubscriber('/sub/zfs_master',{subscriber:'websocket'});
+  var zfsm_config = <?=json_encode($zfsm_cfg)?>;
 
   zfs_sub.on('message', function(data) {
 
 	var msg = JSON.parse(data);
     if (msg.op == 'getAll') {
-		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>, <?=json_encode($display)?>);
+		updateFullBodyTable(msg.data, zfsm_config['destructive_mode'], zfsm_config['snap_max_days_alert'], <?=json_encode($display)?>, zfsm_config['directory_listing']);
 
 		saveCache(msg.data);
     } else if (msg.op == 'getDatasets') {
-		updateFullBodyTable(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>, <?=json_encode($display)?>);
+		updateFullBodyTable(msg.data, zfsm_config['destructive_mode'], zfsm_config['snap_max_days_alert'], <?=json_encode($display)?>, zfsm_config['directory_listing']);
 
         for (const pool in msg.data['pools']) {
 			$('#'+pool+'-attribute-snapshots > span').text('0');
@@ -105,7 +105,11 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
 		saveCache(msg.data);
 	} else if (msg.op == 'getSnapshot') {
-		updateSnapshotInfo(msg.data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>);
+		updateSnapshotInfo(msg.data, zfsm_config['destructive_mode'], zfsm_config['snap_max_days_alert'], zfsm_config['directory_listing']);
+
+		if (hasDirectories(msg.data.dataset)) {
+			updateDatasetDirectoryRows(msg.data.dataset, msg.data['snapshots'], zfsm_config['snap_max_days_alert']);
+		}
 
 		var total_snaps = parseInt($('#'+msg.data['pool']+'-attribute-snapshots > span').text());
 		$('#'+msg.data['pool']+'-attribute-snapshots > span').text(total_snaps+msg.data['snapshots'].length);
@@ -120,6 +124,8 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
 	} else if (msg.op == 'stop_refresh') {
 		replaceElementClass('#zfsm-refresh', 'fa-spinner fa-spin', 'fa-refresh');
+	} else if (msg.op == 'updateConfig') {
+		zfsm_config = msg.data;
 	}
 
 	processHiddenDatasets();
@@ -128,7 +134,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   $(function() {
 	  zfs_sub.start();
 	  addButtons();
-	  if (<?=$zfsm_cfg['refresh_interval']?> > 0) {
+	  if (zfsm_config['refresh_interval'] > 0) {
 	  	requestRefresh();
 	  } else {
 		loadCache();
@@ -157,7 +163,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
   
   function getUnraidParentElement() {
-	  if ('<?=$zfsm_cfg['version']?>'.localeCompare('6.11.9', undefined, { numeric: true, sensitivity: 'base' }) == 1) {
+	  if (zfsm_config['version'].localeCompare('6.11.9', undefined, { numeric: true, sensitivity: 'base' }) == 1) {
 		return $('.title .left').filter(function(){return $(this).text() === 'ZFS Master';}).parent();
 	  }
 	  return $('div#title > span.left').filter(function(){return $(this).text() === 'ZFS Master';}).parent();
@@ -215,7 +221,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		return;
 	}
 
-	updateFullBodyTable(data, <?=$zfsm_cfg['destructive_mode']?>, <?=$zfsm_cfg['snap_max_days_alert']?>, <?=json_encode($display)?>);
+	updateFullBodyTable(data, zfsm_config['destructive_mode'], zfsm_config['snap_max_days_alert'], <?=json_encode($display)?>, zfsm_config['directory_listing']);
 
 	$('#zfsm-last-refresh').text('Last refresh at '+data.timestamp);
 
@@ -314,12 +320,45 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
   
   function createDataset(zpool) {
-	  var csrf_token = $('input[name="csrf_token"]').val();	  
-	  openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,'Create Dataset',550,680,false);
+	var csrf_token = $('input[name="csrf_token"]').val();	  
+	openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,'Create Dataset',550,680,false);
+  }
+
+  function addDirectoryContext(directory, id, destructive_mode) {
+	var opts = [];
+
+	opts.push({header:directory});
+
+	if (destructive_mode != 0) {
+		opts.push(
+		  {
+			text: _('Delete'),
+			icon: 'fa-trash',
+			action: function (e) {
+				e.preventDefault();
+				deleteDirectory(directory);
+		    }
+		  },
+		  { divider: true },
+		);
+	}
+
+	opts.push(
+		{
+			text: _('Move/Rename'),
+			icon: 'fa-font',
+			action: function (e) {
+				e.preventDefault();
+				moveDirectory(directory);
+			}
+		},
+	);
+
+    context.attach('#' + id, opts);
   }
 
   function addDatasetContext(zpool, zdataset, snapscount, id, destructive_mode, encryption, origin) {
-    var opts = [];
+	var opts = [];
 	var edit_opts = [];
 
 	edit_opts.push(
@@ -467,6 +506,26 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 			},
 		});
     }
+
+	if (!zfsm_config['directory_listing'].includes(zdataset)) {
+		opts.push({
+			text: _('Add Directory Listing'),
+			icon: 'fa-folder',
+			action: function (e) {
+				e.preventDefault();
+				addDirectoryListing(zdataset);
+			},
+		});
+	} else {
+		opts.push({
+			text: _('Remove Directory Listing'),
+			icon: 'fa-folder',
+			action: function (e) {
+				e.preventDefault();
+				removeDirectoryListing(zdataset);
+			},
+		});
+	}
 
     context.attach('#' + id, opts);
 
@@ -670,6 +729,26 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	  });
 	  $('.swal2-html-container').attr('style', 'display: grid;');
   }
+
+  function addDirectoryListing(zdataset) {
+	$.post('<?=$urlzmadmin?>',{cmd: 'adddirectortlisting', zdataset: zdataset}, function(data) {
+		Swal2.fire({
+			title: 'Directory Listing Result',
+			icon: 'info',
+			html: formatAnswer(JSON.parse(data))
+		});
+	});
+  }
+
+  function removeDirectoryListing(zdataset) {
+	$.post('<?=$urlzmadmin?>',{cmd: 'removedirectorylisting', zdataset: zdataset}, function(data) {
+		Swal2.fire({
+			title: 'Directory Listing Result',
+			icon: 'info',
+			html: formatAnswer(JSON.parse(data))
+		});
+	});
+  }
   
   function destroyDataset(zdataset) {
 	  Swal2.fire({
@@ -686,6 +765,62 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 			  $.post('<?=$urlzmadmin?>',{cmd: 'destroydataset', zdataset: zdataset, force: result.value}, function(data) {
 				Swal2.fire({
 					title: 'Destroy Result',
+					icon: 'info',
+					html: formatAnswer(JSON.parse(data))
+				});
+			  });
+		  }
+	  });
+  }
+
+  function moveDirectory(directory) {
+	  Swal2.fire({
+		  title: '<strong>New name for '+directory+'</strong>',
+		  html: '<input id="swal2-input" maxlength="256" autocapitalize="off" autocorrect="off" class="swal2-input" placeholder="Directory new name (Full name)" value="'+directory+'" type="mytext" style="display: flex;">',
+		  showConfirmButton: true,
+		  showCancelButton: true,
+		  preConfirm: function () {
+			return new Promise(function (resolve) {
+			  if ($('#swal2-input').val() == '') {
+				Swal2.showValidationMessage('Enter a value for the directory name');
+				Swal2.enableButtons(); // Enable the confirm button again.
+              } else {
+				Swal2.resetValidationMessage();
+				resolve([
+				  $('#swal2-input').val()
+				])
+			  }
+		    })
+	      }
+	  }).then((result) => {
+		  if (result.isConfirmed) {
+			$.post('<?=$urlzmadmin?>',{cmd: 'movedirectory', directory: directory, newname: result.value[0]}, function(data) {
+				Swal2.fire({
+					title: 'Rename Result',
+					icon: 'info',
+					html: formatAnswer(JSON.parse(data))
+				});
+			});
+		  }
+	  });
+	  $('.swal2-html-container').attr('style', 'display: grid;');
+  }
+
+  function deleteDirectory(directory) {
+	  Swal2.fire({
+		  title: '<strong>Delete Directory<br>'+directory+'</strong>',
+		  icon: 'warning',
+		  html: 'This operation will delete the Directory, <b>which cannot be undone</b>, are you sure?',
+		  input: 'checkbox',
+		  inputPlaceholder: 'Force and Recursively Destroy all files and sub-directories',
+		  showConfirmButton: true,
+		  confirmButtonText: 'Delete',
+		  showCancelButton: true
+	  }).then((result) => {
+		  if (result.isConfirmed) {
+			  $.post('<?=$urlzmadmin?>',{cmd: 'deletedirectory', directory: directory, force: result.value}, function(data) {
+				Swal2.fire({
+					title: 'Delete Result',
 					icon: 'info',
 					html: formatAnswer(JSON.parse(data))
 				});

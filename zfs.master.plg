@@ -2,9 +2,9 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name		"zfs.master">
 <!ENTITY author		"IkerSaint">
-<!ENTITY version "2023.12.05.11">
+<!ENTITY version "2023.12.08.47.feature-folders-listing">
 <!ENTITY launch     "Main">
-<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main">
+<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/feature-folders-listing">
 <!ENTITY pluginURL	"&gitURL;/&name;.plg">
 ]>
 
@@ -14,6 +14,10 @@
 		pluginURL="&pluginURL;"
 		min="6.9.2">
 <CHANGES>
+
+###2023.12.8
+- Add - Directory Listing functionality
+- Fix - Optimize multiple operations
 
 ###2023.12.4
 - Fix - Used and Free % bars/texts are now consistent with unraid theme and config

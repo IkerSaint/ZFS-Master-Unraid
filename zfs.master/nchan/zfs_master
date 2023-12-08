@@ -22,8 +22,9 @@ require_once $docroot."/plugins/".$plugin."/backend/ZFSMOperations.php";
 
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
+$zfsm_cfg_timestamp = filemtime("/boot/config/plugins/zfs.master/zfs.master.cfg");
 
-function getData($include_snapshots, $exclusion_pattern) {
+function getData($include_snapshots, $exclusion_pattern, $directory_listing) {
     $zpool_global = getZFSPools();
     $zpool_devices = array();
     $zpool_datasets = array();
@@ -33,10 +34,10 @@ function getData($include_snapshots, $exclusion_pattern) {
 
         $zpool_devices[$zpool_name] = getZFSPoolDevices($zpool_name);
         if ($include_snapshots):
-            $zpool_datasets[$zpool_name] = getZFSPoolDatasetsAndSnapshots($zpool_name, $exclusion_pattern);
+            $zpool_datasets[$zpool_name] = getZFSPoolDatasetsAndSnapshots($zpool_name, $exclusion_pattern, $directory_listing);
             $zpool_global[$zpool_name]['Snapshots'] = $zpool_datasets[$zpool_name]['total_snapshots'];
         else:
-            $zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $exclusion_pattern);
+            $zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $exclusion_pattern, $directory_listing);
         endif;
         $zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
     endforeach;
@@ -53,10 +54,10 @@ function getData($include_snapshots, $exclusion_pattern) {
     return $message;
 }
 
-function getAllData($exclusion_pattern) {
+function getAllData($exclusion_pattern, $directory_listing) {
     publish('zfs_master', '{"op":"start_refresh"}');
 
-    $message = getData(true, $exclusion_pattern);
+    $message = getData(true, $exclusion_pattern, $directory_listing);
 
     publish('zfs_master', '{"op":"stop_refresh"}');
 }
@@ -77,10 +78,10 @@ function getDatasetsSnapshots($zpool, $zdatasets) {
     endforeach;
 }
 
-function getLazyLoadData($exclusion_pattern) {
+function getLazyLoadData($exclusion_pattern, $directory_listing) {
     publish('zfs_master', '{"op":"start_refresh"}');
 
-    $message = getData(false, $exclusion_pattern);
+    $message = getData(false, $exclusion_pattern, $directory_listing);
 
     foreach ($message['data']['datasets'] as $zpool):
         getDatasetsSnapshots($zpool['name'], $zpool['child']);
@@ -89,13 +90,26 @@ function getLazyLoadData($exclusion_pattern) {
     publish('zfs_master', '{"op":"stop_refresh"}');
 }
 
+function notifyConfigUpdate($config) {
+    $message = array();
+    $message['data'] = $config;
+    $message['op'] = "updateConfig";
+
+    publish('zfs_master', json_encode($message));
+}
+
 $sleep_time = 0.0;
 $iters = 0;
 
 while (true) {
-    if ($iters > 200):
-        $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
-        $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
+    if ($iters > 15):
+        if (filemtime("/boot/config/plugins/zfs.master/zfs.master.cfg") != $zfsm_cfg_timestamp):
+            $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
+            $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
+            $zfsm_cfg_timestamp = filemtime("/boot/config/plugins/zfs.master/zfs.master.cfg");
+
+            notifyConfigUpdate($zfsm_cfg);
+        endif;
 
         $iters = 0;
     endif;
@@ -105,9 +119,9 @@ while (true) {
         unlink('/tmp/zfsm_reload');
 
         if ($zfsm_cfg['lazy_load'] == "0"):
-            getAllData($zfsm_cfg['dataset_exclusion']);
+            getAllData($zfsm_cfg['dataset_exclusion'], $zfsm_cfg['directory_listing']);
         else:
-            getLazyLoadData($zfsm_cfg['dataset_exclusion']);
+            getLazyLoadData($zfsm_cfg['dataset_exclusion'], $zfsm_cfg['directory_listing']);
         endif;
 
     elseif (($zfsm_cfg['refresh_interval'] > 0 && $zfsm_cfg['refresh_interval'] <= $sleep_time) || file_exists('/tmp/zfsm_reload') == true):
@@ -116,9 +130,9 @@ while (true) {
         endif;
 
         if ($zfsm_cfg['lazy_load'] == "0"):
-            getAllData($zfsm_cfg['dataset_exclusion']);
+            getAllData($zfsm_cfg['dataset_exclusion'], $zfsm_cfg['directory_listing']);
         else:
-            getLazyLoadData($zfsm_cfg['dataset_exclusion']);
+            getLazyLoadData($zfsm_cfg['dataset_exclusion'], $zfsm_cfg['directory_listing']);
         endif;
 
         $sleep_time = 0.0;

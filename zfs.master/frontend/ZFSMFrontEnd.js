@@ -136,6 +136,16 @@ function usage_color(percent, free, display) {
 	}
 }
 
+function hasDirectories(dataset) {
+	if (dataset['directories'] === undefined || dataset['directories'] == null)
+		return false;
+
+	if (dataset['directories'].length <= 0)
+		return false;
+
+	return true;
+}
+
 //endregion utils
 
 
@@ -202,6 +212,122 @@ function getPoolShowStatus(zpool) {
 	return true;
 }
 
+function generateDatasetDirectoryRows(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert, display) {
+	var agg = '';
+
+	var icon_color = 'grey';
+	var snap_count = 0;
+
+	if (zdataset['snapshots'] !== undefined && zdataset['snapshots'].length > 0) {
+		const snap = getLastSnap(zdataset['snapshots']);
+
+		if (daysToNow(snap['creation']) > snap_max_days_alert) {
+			icon_color = 'orange';
+		} else {
+			icon_color = '#486dba';
+		}
+
+		snap_count = zdataset['snapshots'].length;
+	}
+
+	const depth = zdataset['name'].split('/').length;
+
+	Object.values(zdataset.directories).forEach((directory) => {
+		var tr = '<tr id="tr-'+directory+'" class="zdataset-'+zpool+' '+parent+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
+		tr += '<td></td><td></td><td>';
+
+		for (let i = 1; i <= depth; i++) {
+			tr += '&emsp;&emsp;';
+		}
+
+		tr += '<a><i class="fa fa-folder-o icon" style="color:'+icon_color+'"></i></a>';
+
+		tr += directory.substring(directory.lastIndexOf("/") + 1);
+		tr += '</td>';
+
+		// Actions
+
+		tr += '<td>';
+		var id = crc16(directory);
+
+		tr += '<button type="button" id="'+id+'" onclick="addDirectoryContext(\''+directory+'\', \''+id+'\', '+destructive_mode+');" class="zfs_compact">Actions</button></span>';
+		tr += '</td>';
+
+		//mountpoint
+		tr += '<td>'+directory+'</td>';
+
+		// Referr
+		tr += '<td></td>';
+
+		// Used
+		tr += '<td></td>';
+
+		// Free
+		tr += '<td></td>';
+
+		// Snapshots
+		tr += '<td><i class="fa fa-camera-retro icon" style="color:'+icon_color+'"></i><span>'+snap_count+'</span>';
+
+		// Mountpoint
+
+		tr += '<a href="/Main/Browse?dir='+directory+'"><i class="icon-u-tab zfs_bar_button" title="Browse '+directory+'"></i></a>';
+		tr += '</td>';
+		tr += '</tr>';
+		agg += tr;
+	});
+
+	return agg;
+}
+
+function updateDatasetDirectoryRows(zdataset, snapshots, snap_max_days_alert) {
+	var icon_color = 'grey';
+	var snap_count = 0;
+
+	if (snapshots!== undefined && snapshots.length > 0) {
+		const snap = getLastSnap(snapshots);
+
+		if (daysToNow(snap['creation']) > snap_max_days_alert) {
+			icon_color = 'orange';
+		} else {
+			icon_color = '#486dba';
+		}
+
+		snap_count = snapshots.length;
+	}
+
+	const depth = zdataset['name'].split('/').length;
+
+	Object.values(zdataset.directories).forEach((directory) => {
+		var row = document.getElementById('tr-'+directory);
+
+		tds = row.getElementsByTagName('td');
+
+		td_dataset = tds[2];
+		td_snaps = tds[8];
+	
+		var tmp = '';
+	
+		for (let i = 1; i <= depth; i++) {
+			tmp += '&emsp;&emsp;';
+		}
+
+		tmp += '<a><i class="fa fa-folder-o icon" style="color:'+icon_color+'"></i></a>';
+
+		tmp += directory.substring(directory.lastIndexOf("/") + 1);
+		tmp += '</td>';
+	
+		td_dataset.innerHTML = tmp;
+	
+		// Snapshots
+	
+		tmp = '<td>';
+		tmp += '<i class="fa fa-camera-retro icon" style="color:'+icon_color+'"></i><span>'+snap_count+'</span>';
+		tmp += '<a href="/Main/Browse?dir='+directory+'"><i class="icon-u-tab zfs_bar_button" title="Browse '+directory+'"></i></a>';
+	
+		td_snaps.innerHTML = tmp;
+	});
+}
+
 function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert, display) {
 	var tr = '<tr id="tr-'+zdataset['name']+'" class="zdataset-'+zpool+' '+parent+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
 	tr += '<td></td><td></td><td>';
@@ -255,7 +381,7 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	tr += '<span>'+implodeWithKeys('<br>', properties)+'</span></a>';
 
 
-	if (Object.keys(zdataset.child).length > 0) {
+	if (Object.keys(zdataset.child).length > 0 || hasDirectories(zdataset)) {
 		tr += '<i class="fa fa-minus-square fa-append" name="'+zdataset['name']+'"></i>';
 	}
 
@@ -339,17 +465,27 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 }
 
 function generateDatasetArrayRows(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display) {
-	if (Object.keys(dataset.child).length == 0 && dataset['name'] != parent) {
-		return generateDatasetRow(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display);
-	}
-
 	var tr = '';
+
+	if (Object.keys(dataset.child).length == 0 && dataset['name'] != parent) {
+		tr += generateDatasetRow(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display);
+		
+		if (hasDirectories(dataset)) {
+			tr += generateDatasetDirectoryRows(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display);
+		}
+
+		return tr;
+	}
 
 	Object.values(dataset.child).forEach((zdataset) => {
 		tr += generateDatasetRow(zpool, zdataset, parent+' '+dataset['name'], show_status, destructive_mode, snap_max_days_alert, display);
 
 		if (Object.keys(zdataset.child).length > 0) {
 			tr += generateDatasetArrayRows(zpool, zdataset, parent+' '+dataset['name'], show_status, destructive_mode, snap_max_days_alert, display);
+		}
+
+		if (hasDirectories(zdataset)) {
+			tr += generateDatasetDirectoryRows(zpool, zdataset, parent+' '+zdataset['name'] , show_status, destructive_mode, snap_max_days_alert, display);
 		}
 	});
 
@@ -408,7 +544,7 @@ function generatePoolTableRows(zpool, devices, show_status, display) {
 	return tr; 
 }
 
-function updateFullBodyTable(data, destructive_mode, snap_max_days_alert, display) {
+function updateFullBodyTable(data, destructive_mode, snap_max_days_alert, display, directory_listing) {
 	var html_pools = "";
 
 	Object.values(data.pools).forEach((zpool) => {
@@ -425,7 +561,7 @@ function updateFullBodyTable(data, destructive_mode, snap_max_days_alert, displa
 	zfs_table_body.innerHTML = html_pools;
 }
 
-async function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
+async function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert, directory_listing) {
 	var row = document.getElementById('tr-'+data.dataset['name']);
 
 	tds = row.getElementsByTagName('td');
@@ -484,8 +620,7 @@ async function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert) {
 	tmp += '<a class="info hand"><i class="fa fa-hdd-o icon" style="color:'+icon_color+'" onclick="toggleDataset(\''+data.dataset['name']+'\');"></i>';
 	tmp += '<span>'+implodeWithKeys('<br>', properties)+'</span></a>';
 
-
-	if (Object.keys(data.dataset['child']).length > 0) {
+	if (Object.keys(data.dataset['child']).length > 0 || hasDirectories(data.dataset)) {
 		tmp += '<i class="fa fa-minus-square fa-append" name="'+data.dataset['name']+'"></i>';
 	}
 

@@ -3,7 +3,11 @@
 define('__ROOT__', dirname(dirname(__FILE__)));
 
 require_once __ROOT__."/include/ZFSMBase.php";
+require_once __ROOT__."/include/ZFSMError.php";
 require_once __ROOT__."/include/ZFSMHelpers.php";
+require_once "/usr/local/emhttp/webGui/include/Helpers.php";
+
+#region helpers
 
 function refreshData() {
 	touch("/tmp/zfsm_reload");
@@ -16,6 +20,129 @@ function buildArrayRet() {
 
 	return $array_ret;
 }
+
+function listDirectories($path, $childs) {
+	$remove = array($path."/..", $path."/.");
+
+	foreach ($childs as $child):
+		$remove[] = $child['mountpoint'];
+	endforeach;
+
+	$dirs = glob($path."/{,.}*" , GLOB_ONLYDIR | GLOB_BRACE);
+
+	if (!isset($dirs) || !is_array($dirs)):
+    	return array();
+	endif;
+	
+	$array_ret = array_diff($dirs, $remove);
+
+	return $array_ret;
+}
+
+function saveConfig($array) {
+    $content = '';
+
+    foreach ($array as $key => $elem) {
+        if (is_array($elem)) {
+            $content .= "[" . $key . "]\n";
+            foreach ($elem as $key2 => $elem2) {
+                if (is_array($elem2)) {
+                    foreach ($elem2 as $value) {
+                        $content .= $key2 . "[] = \"" . $value . "\"\n";
+                    }
+                } else {
+                    $content .= $key2 . " = " . (empty($elem2) ? '' : "\"" . $elem2 . "\"") . "\n";
+                }
+            }
+        } else {
+            if (is_array($elem)) {
+                foreach ($elem as $value) {
+                    $content .= $key . "[] = \"" . $value . "\"\n";
+                }
+            } else {
+                $content .= $key . " = " . (empty($elem) ? '' : "\"" . $elem . "\"") . "\n";
+            }
+        }
+    }
+
+    if (!$handle = fopen("/boot/config/plugins/zfs.master/zfs.master.cfg", 'w')) {
+        return false;
+    }
+
+    if (!fwrite($handle, $content)) {
+        fclose($handle);
+        return false;
+    }
+
+    fclose($handle);
+    return true;
+}
+
+function addToDirectoryListing($zdataset) {
+	$array_ret = buildArrayRet();
+
+	$config = parse_plugin_cfg( 'zfs.master', true);
+
+	if (str_contains($config['general']['directory_listing'], $zdataset)):
+		$array_ret['failed'][$zdataset] = ZFSM_ERR_ALREADY_SET_IN_CONFIG;
+		return $array_ret;
+	endif;
+
+	if (!isset($config['general']['directory_listing']) || $config['general']['directory_listing'] == ""):
+		$config['general']['directory_listing'] = $zdataset;
+	else:
+		$config['general']['directory_listing'] = $config['general']['directory_listing']."\r\n".$zdataset;
+	endif;
+
+	$ret = saveConfig($config);
+
+	if ($ret == true):
+		$array_ret['succeeded'][$zdataset] = 0;
+	else:
+		$array_ret['failed'][$zdataset] = ZFSM_ERR_UNABLE_TO_SAVE;
+	endif;
+
+	return $array_ret;
+}
+
+function removeFromDirectoryListing($zdataset) {
+	$array_ret = buildArrayRet();
+
+	$config = parse_plugin_cfg( 'zfs.master', true);
+
+	if (!isset($config['general']['directory_listing'])):
+		$array_ret['failed'][$zdataset] = ZFSM_ERR_NOT_IN_CONFIG;
+		return $array_ret;
+	endif;
+
+	$tmp_array = preg_split('/\r\n|\r|\n/', $config['general']['directory_listing']);
+
+	if (!in_array($zdataset, $tmp_array)):
+		$array_ret['failed'][$zdataset] = ZFSM_ERR_NOT_IN_CONFIG;
+		return $array_ret;
+	endif;
+	
+	$key = array_search($zdataset, $tmp_array);
+	unset($tmp_array[$key]);
+
+	if (count($tmp_array)):
+		$config['general']['directory_listing'] = implode(PHP_EOL, $tmp_array);
+	else:
+		$config['general']['directory_listing'] = "";
+	endif;
+
+	$ret = saveConfig($config);
+
+	if ($ret == true):
+		$array_ret['succeeded'][$zdataset] = 0;
+	else:
+		$array_ret['failed'][$zdataset] = ZFSM_ERR_UNABLE_TO_SAVE;
+	endif;
+
+	return $array_ret;
+}
+
+#endregion helpers
 
 #region zpools
 
@@ -37,14 +164,22 @@ function getZFSPoolDevices($zpool) {
 	return trim(shell_exec($cmd_line.' 2>&1'));
 }
 
-function getZFSPoolDatasets($zpool, $zexc_pattern) {
+function getZFSPoolDatasets($zpool, $zexc_pattern, $directory_listing = array()) {
 	$result = executeZFSProgram($GLOBALS["script_pool_get_datasets"], $zpool, array($zpool, $zexc_pattern));
+
+	if (count($directory_listing)):
+		$result['child'] = getDatasetDirectories($result['child'], $directory_listing);
+	endif;
 	
 	return sortDatasetArray($result);
 }
 
-function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern) {
+function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern, $directory_listing = array()) {
 	$result = executeZFSProgram($GLOBALS["script_pool_get_datasets_snapshots"], $zpool, array($zpool, $zexc_pattern));
+
+	if (count($directory_listing)):
+		$result['child'] = getDatasetDirectories($result['child'], $directory_listing);
+	endif;
 	
 	return sortDatasetArray($result);
 }
@@ -52,6 +187,20 @@ function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern) {
 #endregion zpools
 
 #region datasets
+
+function getDatasetDirectories($dataset_tree, $directory_listing) {
+	foreach ($dataset_tree as &$dataset):
+		if (in_array($dataset['name'], $directory_listing)):
+			$dataset['directories'] = listDirectories($dataset['mountpoint'], $dataset['child']);
+		endif;
+
+		if (isset($dataset['child']) && count($dataset['child'])):
+			$dataset['child'] = getDatasetDirectories($dataset['child'], $directory_listing);
+		endif;
+	endforeach;
+
+	return $dataset_tree;
+}
 
 function getDatasetProperty($zpool, $zdataset, $zproperty) {
 	$array_ret = executeZFSProgram($GLOBALS["script_dataset_get_property"], $zpool, array($zdataset, $zproperty));
@@ -224,6 +373,44 @@ function destroyDataset($zdataset, $zforce) {
 	
 	return $array_ret;
 }
+
+#region directories
+
+function moveDirectory($directory, $directory_new_name) {
+	$array_ret = buildArrayRet();
+
+	$cmd_line = "mv ".$force.escapeshellarg($directory)." ".escapeshellarg($directory_new_name).$boutput_str;
+
+	$ret = execCommand($cmd_line, $exec_result);
+	
+	if ($ret == 0):
+		$array_ret['succeeded'][$directory_new_name] = 0;
+	else:
+		$array_ret['failed'][$directory_new_name] = $ret;
+	endif;
+	
+	return $array_ret;
+}
+
+function deleteDirectory($directory, $zforce) {
+	$array_ret = buildArrayRet();
+	
+	$force = ($zforce == '1') ? 'f ' : ' ';
+
+	$cmd_line = 'rm -r'.$force.escapeshellarg($directory).$boutput_str;
+
+	$ret = execCommand($cmd_line, $exec_result);
+
+	if ($ret == 0):
+		$array_ret['succeeded'][$directory] = 0;
+	else:
+		$array_ret['failed'][$directory] = $ret;
+	endif;
+	
+	return $array_ret;
+}
+
+#endregion directories
 
 #region snapshots
 

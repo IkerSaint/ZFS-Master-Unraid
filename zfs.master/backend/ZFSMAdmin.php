@@ -77,6 +77,16 @@ switch ($_POST['cmd']) {
 		echo json_encode($ret);
 
 		break;
+	case 'adddirectortlisting':
+		$ret = addToDirectoryListing($_POST['zdataset']);
+
+		returnAnswer($ret, "Directory Listing", "Dataset added successfully", "Unable to add dataset", false);
+		break;
+	case 'removedirectorylisting':
+		$ret = removeFromDirectoryListing($_POST['zdataset']);
+
+		returnAnswer($ret, "Directory Listing", "Dataset removed successfully", "Unable to remove dataset", false);
+		break;
 	case 'renamedataset':
 		$ret = renameDataset($_POST['zdataset'], $_POST['newname'], $_POST['force']);
 
@@ -106,6 +116,18 @@ switch ($_POST['cmd']) {
 
 		returnAnswer($ret, "ZFS Dataset Promote", "Dataset promoted successfully", "Unable to promote dataset", true);
 		
+		break;
+	case 'movedirectory':
+		$ret = moveDirectory($_POST['directory'], $_POST['newname']);
+
+		returnAnswer($ret, "ZFS Directory Move", "Directory moved successfully", "Unable to move directory", true);
+
+		break;
+	case 'deletedirectory':
+		$ret = deleteDirectory($_POST['directory'], $_POST['force']);
+
+		returnAnswer($ret, "ZFS Directory Delete", "Directory deleted successfully", "Unable to delete directory", true);
+
 		break;
 	case 'rollbacksnapshot':
 		$ret = rollbackDatasetSnapshot($_POST['snapshot']);
