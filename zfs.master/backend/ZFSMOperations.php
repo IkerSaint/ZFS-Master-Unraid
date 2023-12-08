@@ -194,7 +194,7 @@ function getDatasetDirectories($dataset_tree, $directory_listing) {
 			$dataset['directories'] = listDirectories($dataset['mountpoint'], $dataset['child']);
 		endif;
 
-		if (count($dataset['child'])):
+		if (isset($dataset['child']) && count($dataset['child'])):
 			getDatasetDirectories($dataset['child'], $directory_listing);
 		endif;
 	endforeach;
