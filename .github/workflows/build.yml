@@ -25,7 +25,7 @@ jobs:
         run: |
             echo "Replacing current version line"
             sed -i "s/<!ENTITY version.*/<!ENTITY version \"$buildver\">/g" zfs.master.plg
-            sed -i "s,IkerSaint/ZFS-Master-Unraid/.*,IkerSaint/ZFS-Master-Unraid/${{ github.ref_name }}\">",g" zfs.master.plg
+            sed -i "s,IkerSaint/ZFS-Master-Unraid/.*,IkerSaint/ZFS-Master-Unraid/${{ github.ref_name }}\">,g" zfs.master.plg
             echo "Done!!"
             cat zfs.master.plg
       - name: Delete other branches releases
