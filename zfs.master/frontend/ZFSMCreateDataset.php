@@ -181,9 +181,9 @@ input[type=email]{margin-top:8px;float:left}
 					Quota
 					<input id="quota" name="quota" class="zfsm-input zfsm-w5" maxlength="5">
 					<select id="quotaunit" name="quotaunit" class="zfsm-input">
-						<option value="M" selected>MB</option>
-						<option value="G">GB</option>
-						<option value="T">TB</option>
+						<option value="M" selected>MiB</option>
+						<option value="G">GiB</option>
+						<option value="T">TiB</option>
 					</select>
 				</dl>
 			</div>

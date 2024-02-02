@@ -31,7 +31,7 @@ function nl2br(str, is_xhtml) {
 }
 
 function fromBytesToString(bytes) {
-	const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+	const units = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];
   
 	bytes = Math.max(bytes, 0);
 	const pow = Math.floor((bytes ? Math.log(bytes) : 0) / Math.log(1024));

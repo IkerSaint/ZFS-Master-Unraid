@@ -41,7 +41,7 @@ function zfsnotify( $subject, $description, $message, $type="normal") {
 }
 
 function fromBytesToString($bytes) {
-	$units = array('B', 'KB', 'MB', 'GB', 'TB'); 
+	$units = array('B', 'KiB', 'MiB', 'GiB', 'TiB'); 
 		
 	$bytes = max($bytes, 0); 
    	$pow = floor(($bytes ? log($bytes) : 0) / log(1024)); 

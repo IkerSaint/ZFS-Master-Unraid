@@ -11,7 +11,8 @@
  */
 ?>
 <?
-$docroot = '/usr/local/emhttp';
+$config_file = "/boot/config/plugins/zfs.master/zfs.master.cfg";
+$docroot = "/usr/local/emhttp";
 $plugin = "zfs.master";
 
 require_once "$docroot/webGui/include/Wrappers.php";
@@ -22,7 +23,12 @@ require_once $docroot."/plugins/".$plugin."/backend/ZFSMOperations.php";
 
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
-$zfsm_cfg_timestamp = filemtime("/boot/config/plugins/zfs.master/zfs.master.cfg");
+
+$zfsm_cfg_timestamp = 0;
+
+if (is_file($config_file) && is_readable($config_file)):
+    $zfsm_cfg_timestamp = filemtime("/boot/config/plugins/zfs.master/zfs.master.cfg");
+endif;
 
 function getData($include_snapshots, $exclusion_pattern, $directory_listing) {
     $zpool_global = getZFSPools();
@@ -103,12 +109,14 @@ $iters = 0;
 
 while (true) {
     if ($iters > 15):
-        if (filemtime("/boot/config/plugins/zfs.master/zfs.master.cfg") != $zfsm_cfg_timestamp):
-            $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
-            $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
-            $zfsm_cfg_timestamp = filemtime("/boot/config/plugins/zfs.master/zfs.master.cfg");
+        if (is_file($config_file) && is_readable($config_file)):
+            if (filemtime($config_file) != $zfsm_cfg_timestamp):
+                $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
+                $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
+                $zfsm_cfg_timestamp = filemtime("/boot/config/plugins/zfs.master/zfs.master.cfg");
 
-            notifyConfigUpdate($zfsm_cfg);
+                notifyConfigUpdate($zfsm_cfg);
+            endif;
         endif;
 
         $iters = 0;

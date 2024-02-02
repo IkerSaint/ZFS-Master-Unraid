@@ -57,24 +57,35 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 <link type="text/css" rel="stylesheet" href="<?autov('/plugins/zfs.master/assets/sweetalert2.min.css');?>">
 
 <div id="zfs_master_div">
-<table id="zfs_master" class="zfs_table disk_status wide">
-  <thead>
-    <tr>
-	  <td>Pool</td>
-	  <td>Health</td>
-	  <td>Option/Dataset Name</td>
-	  <td>Size</td>
-	  <td>Mount Point</td>
-	  <td>Refer</td>
-	  <td>Used</td>
-	  <td>Free</td>
-	  <td>Snapshots</td>
-	</tr>
-  </thead>
-  <tbody id="zfs_master_body">
+	<div id="zfs-master-title">
+		<span class="zfs_bar_text">
+			<a class="tooltip" title="Information refresh time"><i id="zfsm-last-refresh"></i></a>
+		</span>
+		<span class="zfs_bar_button">
+			<a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="requestRefresh()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a>
+		</span>
+		<span class="zfs_bar_button">
+			<a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a>
+		</span>
+	</div>
+	<table id="zfs_master" class="zfs_table disk_status wide">
+	<thead>
+		<tr>
+		<td>Pool</td>
+		<td>Health</td>
+		<td>Option/Dataset Name</td>
+		<td>Size</td>
+		<td>Mount Point</td>
+		<td>Refer</td>
+		<td>Used</td>
+		<td>Free</td>
+		<td>Snapshots</td>
+		</tr>
+	</thead>
+	<tbody id="zfs_master_body">
 
-  </tbody>
-</table>
+	</tbody>
+	</table>
 </div>
 
 :zfs_master_help_plug:
