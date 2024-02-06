@@ -137,6 +137,29 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		replaceElementClass('#zfsm-refresh', 'fa-spinner fa-spin', 'fa-refresh');
 	} else if (msg.op == 'updateConfig') {
 		zfsm_config = msg.data;
+	} else if (msg.op == 'start_directory_copy') {
+		Swal2.fire({
+		  title: '<strong>Copying Directory',
+		  icon: 'warning',
+		  html: '',
+		  footer: 'Operation is in progress, it cannot be interrupted, please do not close this window',
+		  allowOutsideClick: false,
+		  timer: 2000,
+ 		  timerProgressBar: true
+	  	});
+		
+	} else if (msg.op == 'directory_copy') {
+		const timer = Swal2.getPopup().querySelector("b");
+    	timerInterval = setInterval(() => {
+      		timer.textContent = `${Swal.getTimerLeft()}`;
+    	}, 100);
+		console.warn(timerInterval)
+
+		const html = Swal2.getHtmlContainer();
+		console.warn(html);
+
+	} else if (msg.op == 'stop_directory_copy') {
+
 	}
 
 	processHiddenDatasets();

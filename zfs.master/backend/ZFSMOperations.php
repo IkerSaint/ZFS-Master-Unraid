@@ -437,8 +437,10 @@ function convertDirectory($directory, $zpool) {
 		fclose($pipes[1]);
 
 		publish('zfs_master', '{"op":"stop_directory_copy"}');
+
+		proc_close($process);
 	
-		$array_ret['succeeded'][$directory] = proc_close($process);
+		$array_ret['succeeded'][$directory] = $status["exitcode"];
 	else:
 		$array_ret['failed'][$directory] = ZFSM_ERR_UNABLE_TO_CREATE_PROC;
 	endif;
