@@ -335,7 +335,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,'Create Dataset',550,680,false);
   }
 
-  function addDirectoryContext(directory, id, destructive_mode) {
+  function addDirectoryContext(directory, pool, id, destructive_mode) {
 	var opts = [];
 
 	opts.push({header:directory});
@@ -343,14 +343,22 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	if (destructive_mode != 0) {
 		opts.push(
 		  {
+			text: _('Convert to Dataset'),
+			icon: 'fa-files-o',
+			action: function (e) {
+				e.preventDefault();
+				convertDirectory(directory, pool);
+		    }
+		  },
+		  { divider: true },
+		  {
 			text: _('Delete'),
 			icon: 'fa-trash',
 			action: function (e) {
 				e.preventDefault();
 				deleteDirectory(directory);
 		    }
-		  },
-		  { divider: true },
+		  }
 		);
 	}
 
@@ -815,6 +823,27 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  }
 	  });
 	  $('.swal2-html-container').attr('style', 'display: grid;');
+  }
+
+  function convertDirectory(directory, pool) {
+	Swal2.fire({
+		  title: '<strong>Convert <br>'+directory+' to Dataset</strong>',
+		  icon: 'warning',
+		  html: 'This operation will convert the Directory to a Dataset, <b>The directory will be renamed to &lt;dir&gt;_tmp_&lt;date&gt;</b>; and  the information copy over to the dataset, make sure you have enough space, <b>No information is lost in the process</b>',
+		  showConfirmButton: true,
+		  confirmButtonText: 'Convert',
+		  showCancelButton: true
+	  }).then((result) => {
+		  if (result.isConfirmed) {
+			  $.post('<?=$urlzmadmin?>',{cmd: 'convertdirectory', directory: directory, pool: pool}, function(data) {
+				Swal2.fire({
+					title: 'Convert Result',
+					icon: 'info',
+					html: formatAnswer(JSON.parse(data))
+				});
+			  });
+		  }
+	  });
   }
 
   function deleteDirectory(directory) {

@@ -8,6 +8,8 @@ define("ZFSM_ERR_UNABLE_TO_SAVE", 1002);
 define("ZFSM_ERR_UNABLE_TO_SAVE_STR", "Unable to save changes");
 define("ZFSM_ERR_ALREADY_SET_IN_CONFIG", 1003);
 define("ZFSM_ERR_ALREADY_SET_IN_CONFIG_STR", "Property already set in plugin config");
+define("ZFSM_ERR_UNABLE_TO_CREATE_PROC", 1004);
+define("ZFSM_ERR_UNABLE_TO_CREATE_PROC_STR", "Unable to create the process");
 
 
 function resolve_error(int $error_code) {
@@ -26,6 +28,9 @@ function resolve_error(int $error_code) {
             break;
         case ZFSM_ERR_ALREADY_SET_IN_CONFIG:
             $ret = ZFSM_ERR_ALREADY_SET_IN_CONFIG_STR;
+            break;
+        case ZFSM_ERR_UNABLE_TO_CREATE_PROC:
+            $ret = ZFSM_ERR_UNABLE_TO_CREATE_PROC_STR;
             break;
         default:
             $ret = ZFSM_ERR_UNKNOWN_STR;
