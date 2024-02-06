@@ -242,7 +242,11 @@ function createDataset( $zdataset, $zoptions) {
 	unset($zoptions["passphrase"]);
 		
 	$cmd_line = "zfs create -vP";
-	$cmd_line .= " -o ".implodeWithKeys(" -o ", $zoptions, "=");
+	
+	if (count($zoptions)):
+		$cmd_line .= " -o ".implodeWithKeys(" -o ", $zoptions, "=");
+	endif;
+
 	$cmd_line .= ' '.escapeshellarg($zdataset).$boutput_str;
 
 	if ($zoptions["encryption"] == 'on'):
@@ -381,7 +385,7 @@ function destroyDataset($zdataset, $zforce) {
 
 function convertDirectory($directory, $zpool) {
 	$array_ret = buildArrayRet();
-	$directory_new_name =  $directory."_tmp_".date("Ymdhis")
+	$directory_new_name =  $directory."_tmp_".date("Ymdhis");
 
 	$mv_dir = moveDirectory($directory, $directory_new_name);
 
@@ -399,7 +403,7 @@ function convertDirectory($directory, $zpool) {
 		return $dataset;
 	endif;
 
-	$mountpoint = getDatasetProperty($zpool, $dataset, 'mountpoint');
+	$mountpoint = getDatasetProperty($zpool, $dataset_name, 'mountpoint');
 
 	$descriptorspec = array(
 		0 => array("pipe", "r"),
@@ -407,7 +411,7 @@ function convertDirectory($directory, $zpool) {
 		2 => array("pipe", "w")
 	);
 
-	$rsync_cmd_line = "rsync -ra --stats --info=progress2 ".$directory_new_name." ".$mountpoint.""
+	$rsync_cmd_line = "rsync -ra --stats --info=progress2 ".$directory_new_name."/ ".$mountpoint."/";
 
 	$process = proc_open( $rsync_cmd_line, $descriptorspec, $pipes);
 
