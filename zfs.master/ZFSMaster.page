@@ -145,12 +145,16 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  footer: 'Operation is in progress, it cannot be interrupted, please do not close this window',
 		  allowOutsideClick: false,
 		  timer: 20000,
- 		  timerProgressBar: true
+ 		  timerProgressBar: true,
+		  didOpen: () => {
+    		Swal2.showLoading();
+		  }
 	  	});
 		
 	} else if (msg.op == 'directory_copy') {
 		const html = Swal2.getHtmlContainer();
-		console.warn(html);
+		html.innerHTML = parseDirectoryCopy(msg.data);
+		console.warn(parseDirectoryCopy(msg.data));
 	} else if (msg.op == 'stop_directory_copy') {
 
 	}

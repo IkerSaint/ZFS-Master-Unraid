@@ -146,6 +146,28 @@ function hasDirectories(dataset) {
 	return true;
 }
 
+function fromTimeToSeconds(time) {
+	parts = time.split(':')
+	console.log(parts);
+	
+	total = parseInt(parts[2]);
+	total += parseInt(parts[1]*60);
+	total += parseInt(parts[0]*60*60);
+	
+	return total;
+}
+
+function parseDirectoryCopy(msg) {
+	regex = /(?<data>[\d,]+)\s+(?<progress>[\d]+%)\s+(?<speed>[\d.]+[G|M|K|B]+\/s)\s+(?<time>[\d]+:[\d]+:[\d]+)/;
+	
+	groups = regex.exec(msg)['groups'];
+	
+	groups['data'] = fromBytesToString(groups['data'].replace(/,/g, ''));
+	groups['time'] = fromTimeToSeconds(groups['time']);
+	
+	return groups;
+}
+
 //endregion utils
 
 
