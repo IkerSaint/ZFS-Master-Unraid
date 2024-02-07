@@ -139,25 +139,18 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		zfsm_config = msg.data;
 	} else if (msg.op == 'start_directory_copy') {
 		Swal2.fire({
-		  title: '<strong>Copying Directory',
+		  title: '<strong>Copying Directory</strong>',
 		  icon: 'warning',
-		  html: '',
+		  html: 'Starting...',
 		  footer: 'Operation is in progress, it cannot be interrupted, please do not close this window',
 		  allowOutsideClick: false,
-		  timer: 2000,
+		  timer: 20000,
  		  timerProgressBar: true
 	  	});
 		
 	} else if (msg.op == 'directory_copy') {
-		const timer = Swal2.getPopup().querySelector("b");
-    	timerInterval = setInterval(() => {
-      		timer.textContent = `${Swal.getTimerLeft()}`;
-    	}, 100);
-		console.warn(timerInterval)
-
 		const html = Swal2.getHtmlContainer();
 		console.warn(html);
-
 	} else if (msg.op == 'stop_directory_copy') {
 
 	}
