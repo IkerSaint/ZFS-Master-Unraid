@@ -168,9 +168,9 @@ function parseDirectoryCopy(msg) {
 	groups = groups['groups'];
 
 	groups['data'] = fromBytesToString(groups['data'].replace(/,/g, ''));
-	groups['time'] = fromTimeToSeconds(groups['time']);
+	//groups['time'] = fromTimeToSeconds(groups['time']);
 
-	return '<div class="usage-disk"><span style="margin:0;width:'+groups['progress']+' class="greenbar"></span><span>'+groups['speed']+'B</span></div>';
+	return '<div class="usage-disk"><span style="margin:0;width:'+groups['progress']+' class="greenbar"></span><span>'+groups['data']+' - '+groups['speed']+' - '+groups['time']+'</span></div>';
 }
 
 //endregion utils
