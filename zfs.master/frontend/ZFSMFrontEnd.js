@@ -158,14 +158,19 @@ function fromTimeToSeconds(time) {
 }
 
 function parseDirectoryCopy(msg) {
-	regex = /(?<data>[\d,]+)\s+(?<progress>[\d]+%)\s+(?<speed>[\d.]+[G|M|K|B]+\/s)\s+(?<time>[\d]+:[\d]+:[\d]+)/;
+	regex = /(?<data>[\d,]+)[\s\t]+(?<progress>[\d]+%)[\s\t]+(?<speed>[\d.]+[G|M|K|B]+\/s)[\s\t]+(?<time>[\d]+:[\d]+:[\d]+)/;
 	
-	groups = regex.exec(msg)['groups'];
+	groups = regex.exec(msg.replace(/(?:\\[rn])+/g, ""));
 	
+	if (groups == null || !'groups' in groups)
+		return '';
+
+	groups = groups['groups'];
+
 	groups['data'] = fromBytesToString(groups['data'].replace(/,/g, ''));
 	groups['time'] = fromTimeToSeconds(groups['time']);
-	
-	return groups;
+
+	return '<div class="usage-disk"><span style="margin:0;width:'+groups['progress']+' class="greenbar"></span><span>'+groups['speed']+'B</span></div>';
 }
 
 //endregion utils
