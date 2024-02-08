@@ -439,6 +439,8 @@ function convertDirectory($directory, $zpool) {
 		publish('zfs_master', '{"op":"stop_directory_copy"}');
 
 		proc_close($process);
+
+		sleep(1);
 	
 		$array_ret['succeeded'][$directory] = $status["exitcode"];
 	else:
