@@ -515,6 +515,10 @@ function generateDatasetArrayRows(zpool, dataset, parent, show_status, destructi
 		}
 	});
 
+	if (dataset['name'] == parent && hasDirectories(dataset)) {
+		tr += generateDatasetDirectoryRows(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display);
+	}
+
 	return tr;
 }
 
