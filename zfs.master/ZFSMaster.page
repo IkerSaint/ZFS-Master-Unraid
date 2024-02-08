@@ -153,7 +153,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		const html = Swal2.getHtmlContainer();
 		html.innerHTML = parseDirectoryCopy(msg.data);
 	} else if (msg.op == 'stop_directory_copy') {
-
+		Swal2.close();
 	}
 
 	processHiddenDatasets();
