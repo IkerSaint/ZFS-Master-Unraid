@@ -146,6 +146,7 @@ window.onload = function() {
 		<td>Name</td>
 		<td>Used</td>
 		<td>Refer</td>
+		<td>Written</td>
 		<td>Defer Destroy</td>
 		<td>Holds</td>
 		<td>Creation Date</td>
@@ -166,6 +167,9 @@ window.onload = function() {
 			echo '</td>';
 			echo '<td class="snapl-attribute-referenced">';
 				echo fromBytesToString($snap['referenced']);
+			echo '</td>';
+			echo '<td class="snapl-attribute-written">';
+				echo fromBytesToString($snap['written']);
 			echo '</td>';
 			echo '<td class="snapl-attribute-defer_destroy">';
 				echo $snap['defer_destroy'];

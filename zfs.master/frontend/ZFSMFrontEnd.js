@@ -31,7 +31,7 @@ function nl2br(str, is_xhtml) {
 }
 
 function fromBytesToString(bytes) {
-	const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+	const units = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];
   
 	bytes = Math.max(bytes, 0);
 	const pow = Math.floor((bytes ? Math.log(bytes) : 0) / Math.log(1024));
@@ -146,6 +146,32 @@ function hasDirectories(dataset) {
 	return true;
 }
 
+function fromTimeToSeconds(time) {
+	parts = time.split(':')
+	console.log(parts);
+	
+	total = parseInt(parts[2]);
+	total += parseInt(parts[1]*60);
+	total += parseInt(parts[0]*60*60);
+	
+	return total;
+}
+
+function parseDirectoryCopy(msg) {
+	regex = /(?<data>[\d,]+)[\s\t]+(?<progress>[\d]+%)[\s\t]+(?<speed>[\d.]+[G|M|K|B]+\/s)[\s\t]+(?<time>[\d]+:[\d]+:[\d]+)/;
+	
+	groups = regex.exec(msg.replace(/(?:\\[rn])+/g, ""));
+	
+	if (groups == null || !'groups' in groups)
+		return '';
+
+	groups = groups['groups'];
+
+	groups['data'] = fromBytesToString(groups['data'].replace(/,/g, ''));
+
+	return '<div class="usage-disk"><span style="margin:0;width:'+groups['progress']+'" class="greenbar"></span><span>data:'+groups['data']+' speed:'+groups['speed']+' time:'+groups['time']+'</span></div>';
+}
+
 //endregion utils
 
 
@@ -250,7 +276,7 @@ function generateDatasetDirectoryRows(zpool, zdataset, parent, show_status, dest
 		tr += '<td>';
 		var id = crc16(directory);
 
-		tr += '<button type="button" id="'+id+'" onclick="addDirectoryContext(\''+directory+'\', \''+id+'\', '+destructive_mode+');" class="zfs_compact">Actions</button></span>';
+		tr += '<button type="button" id="'+id+'" onclick="addDirectoryContext(\''+directory+'\', \''+zpool+'\', \''+id+'\', '+destructive_mode+');" class="zfs_compact">Actions</button></span>';
 		tr += '</td>';
 
 		//mountpoint
@@ -488,6 +514,10 @@ function generateDatasetArrayRows(zpool, dataset, parent, show_status, destructi
 			tr += generateDatasetDirectoryRows(zpool, zdataset, parent+' '+zdataset['name'] , show_status, destructive_mode, snap_max_days_alert, display);
 		}
 	});
+
+	if (dataset['name'] == parent && hasDirectories(dataset)) {
+		tr += generateDatasetDirectoryRows(zpool, dataset, parent, show_status, destructive_mode, snap_max_days_alert, display);
+	}
 
 	return tr;
 }

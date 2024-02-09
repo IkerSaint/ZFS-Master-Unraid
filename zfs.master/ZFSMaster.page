@@ -36,14 +36,16 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   .zfs_bar_text {
-	  padding-right: 8px;
-	  float: right;
-	  font-size: 1.2rem
+	  font-size: 1.2rem!important;
   }
   
   .zfs_compact {
 	  padding: 2px 4px 3px 6px!important;
 	  margin: 2px 2px!important;
+  }
+
+  .zfs_master_title {
+	margin-top: -45px!important;
   }
   
 </style>
@@ -56,25 +58,37 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 <script type="text/javascript" src="<?autov('/plugins/zfs.master/assets/sweetalert2.all.min.js');?>"></script>
 <link type="text/css" rel="stylesheet" href="<?autov('/plugins/zfs.master/assets/sweetalert2.min.css');?>">
 
-<div id="zfs_master_div">
-<table id="zfs_master" class="zfs_table disk_status wide">
-  <thead>
-    <tr>
-	  <td>Pool</td>
-	  <td>Health</td>
-	  <td>Option/Dataset Name</td>
-	  <td>Size</td>
-	  <td>Mount Point</td>
-	  <td>Refer</td>
-	  <td>Used</td>
-	  <td>Free</td>
-	  <td>Snapshots</td>
-	</tr>
-  </thead>
-  <tbody id="zfs_master_body">
 
-  </tbody>
-</table>
+<div id="zfs-master-title" class="title zfs_master_title">
+	<span class="left zfs_bar_text">
+		<a class="tooltip" title="Information refresh time"><i id="zfsm-last-refresh"></i></a>
+	</span>
+	<span class="zfs_bar_button">
+		<a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="requestRefresh()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a>
+	</span>
+	<span class="zfs_bar_button">
+		<a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a>
+	</span>
+</div>
+<div id="zfs_master_div">
+	<table id="zfs_master" class="zfs_table disk_status wide">
+	<thead>
+		<tr>
+		<td>Pool</td>
+		<td>Health</td>
+		<td>Option/Dataset Name</td>
+		<td>Size</td>
+		<td>Mount Point</td>
+		<td>Refer</td>
+		<td>Used</td>
+		<td>Free</td>
+		<td>Snapshots</td>
+		</tr>
+	</thead>
+	<tbody id="zfs_master_body">
+
+	</tbody>
+	</table>
 </div>
 
 :zfs_master_help_plug:
@@ -126,6 +140,23 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		replaceElementClass('#zfsm-refresh', 'fa-spinner fa-spin', 'fa-refresh');
 	} else if (msg.op == 'updateConfig') {
 		zfsm_config = msg.data;
+	} else if (msg.op == 'start_directory_copy') {
+		Swal2.fire({
+		  title: '<strong>Copying Directory</strong>',
+		  icon: 'warning',
+		  html: 'Starting...',
+		  footer: 'Operation is in progress, it cannot be interrupted, please do not close this window',
+		  allowOutsideClick: false,
+		  didOpen: () => {
+    		Swal2.showLoading();
+		  }
+	  	});
+		
+	} else if (msg.op == 'directory_copy') {
+		const html = Swal2.getHtmlContainer();
+		html.innerHTML = parseDirectoryCopy(msg.data);
+	} else if (msg.op == 'stop_directory_copy') {
+		Swal2.close();
 	}
 
 	processHiddenDatasets();
@@ -133,7 +164,6 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
   $(function() {
 	  zfs_sub.start();
-	  addButtons();
 	  if (zfsm_config['refresh_interval'] > 0) {
 	  	requestRefresh();
 	  } else {
@@ -147,14 +177,6 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
   function requestRefresh() {
 	  $.post('<?=$urlzmadmin?>', {cmd: 'refresh'} );
-  }
-
-  function addButtons() {
-	  var parent = getUnraidParentElement();
-	  
-	  parent.append('<?=$lastrefreshtext?>')
-	  parent.append('<?=$settingsbutton?>');
-	  parent.append('<?=$refreshbutton?>');
   }
   
   function replaceElementClass(element, oldClass, newClass){
@@ -324,7 +346,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	openBox('<?=$urlcreatedataset?>?zpool='+zpool+'&csrf_token='+csrf_token,'Create Dataset',550,680,false);
   }
 
-  function addDirectoryContext(directory, id, destructive_mode) {
+  function addDirectoryContext(directory, pool, id, destructive_mode) {
 	var opts = [];
 
 	opts.push({header:directory});
@@ -332,14 +354,22 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	if (destructive_mode != 0) {
 		opts.push(
 		  {
+			text: _('Convert to Dataset'),
+			icon: 'fa-files-o',
+			action: function (e) {
+				e.preventDefault();
+				convertDirectory(directory, pool);
+		    }
+		  },
+		  { divider: true },
+		  {
 			text: _('Delete'),
 			icon: 'fa-trash',
 			action: function (e) {
 				e.preventDefault();
 				deleteDirectory(directory);
 		    }
-		  },
-		  { divider: true },
+		  }
 		);
 	}
 
@@ -804,6 +834,27 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  }
 	  });
 	  $('.swal2-html-container').attr('style', 'display: grid;');
+  }
+
+  function convertDirectory(directory, pool) {
+	Swal2.fire({
+		  title: '<strong>Convert <br>'+directory+' to Dataset</strong>',
+		  icon: 'warning',
+		  html: 'This operation will convert the Directory to a Dataset, <b>The directory will be renamed to &lt;dir&gt;_tmp_&lt;date&gt;</b>; and  the information copy over to the dataset, make sure you have enough space, <b>No information is lost in the process</b>',
+		  showConfirmButton: true,
+		  confirmButtonText: 'Convert',
+		  showCancelButton: true
+	  }).then((result) => {
+		  if (result.isConfirmed) {
+			  $.post('<?=$urlzmadmin?>',{cmd: 'convertdirectory', directory: directory, pool: pool}, function(data) {
+				Swal2.fire({
+					title: 'Convert Result',
+					icon: 'info',
+					html: formatAnswer(JSON.parse(data))
+				});
+			  });
+		  }
+	  });
   }
 
   function deleteDirectory(directory) {

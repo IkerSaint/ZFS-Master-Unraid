@@ -1,4 +1,4 @@
-local snap_properties = {'used','referenced','defer_destroy','userrefs','creation'}
+local snap_properties = {'used','referenced','written','defer_destroy','userrefs','creation'}
 local dataset_properties = {'used','available','referenced','encryption', 'keystatus', 'mountpoint','compression','compressratio','usedbysnapshots','quota','recordsize','atime','xattr','primarycache','readonly','casesensitivity','sync','creation', 'origin'}
 local total_snapshots = 0
 

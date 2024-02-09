@@ -6,6 +6,7 @@ require_once __ROOT__."/include/ZFSMBase.php";
 require_once __ROOT__."/include/ZFSMError.php";
 require_once __ROOT__."/include/ZFSMHelpers.php";
 require_once "/usr/local/emhttp/webGui/include/Helpers.php";
+require_once "$docroot/webGui/include/publish.php";
 
 #region helpers
 
@@ -167,7 +168,10 @@ function getZFSPoolDevices($zpool) {
 function getZFSPoolDatasets($zpool, $zexc_pattern, $directory_listing = array()) {
 	$result = executeZFSProgram($GLOBALS["script_pool_get_datasets"], $zpool, array($zpool, $zexc_pattern));
 
+	$result['directories'] = listDirectories($result['mountpoint'], $result['child']);
+
 	if (count($directory_listing)):
+		
 		$result['child'] = getDatasetDirectories($result['child'], $directory_listing);
 	endif;
 	
@@ -177,6 +181,8 @@ function getZFSPoolDatasets($zpool, $zexc_pattern, $directory_listing = array())
 function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern, $directory_listing = array()) {
 	$result = executeZFSProgram($GLOBALS["script_pool_get_datasets_snapshots"], $zpool, array($zpool, $zexc_pattern));
 
+	$result['directories'] = listDirectories($result['mountpoint'], $result['child']);
+	
 	if (count($directory_listing)):
 		$result['child'] = getDatasetDirectories($result['child'], $directory_listing);
 	endif;
@@ -239,7 +245,11 @@ function createDataset( $zdataset, $zoptions) {
 	unset($zoptions["passphrase"]);
 		
 	$cmd_line = "zfs create -vP";
-	$cmd_line .= " -o ".implodeWithKeys(" -o ", $zoptions, "=");
+	
+	if (count($zoptions)):
+		$cmd_line .= " -o ".implodeWithKeys(" -o ", $zoptions, "=");
+	endif;
+
 	$cmd_line .= ' '.escapeshellarg($zdataset).$boutput_str;
 
 	if ($zoptions["encryption"] == 'on'):
@@ -375,6 +385,73 @@ function destroyDataset($zdataset, $zforce) {
 }
 
 #region directories
+
+function convertDirectory($directory, $zpool) {
+	$array_ret = buildArrayRet();
+	$directory_new_name =  $directory."_tmp_".date("Ymdhis");
+
+	$mv_dir = moveDirectory($directory, $directory_new_name);
+
+	if (count($mv_dir['succeeded']) <= 0 ):
+		return $mv_dir;
+	endif;
+
+	$pool_pos = stripos($directory, $zpool);
+	$dataset_name = substr($directory, $pool_pos);
+
+	$dataset = createDataset( $dataset_name, array());
+
+	if (count($dataset['succeeded']) <= 0 ):
+		moveDirectory( $directory_new_name, $directory);
+		return $dataset;
+	endif;
+
+	$mountpoint = getDatasetProperty($zpool, $dataset_name, 'mountpoint');
+
+	$descriptorspec = array(
+		0 => array("pipe", "r"),
+		1 => array("pipe", "w"),
+		2 => array("pipe", "w")
+	);
+
+	$rsync_cmd_line = "rsync -ra --stats --info=progress2 ".$directory_new_name."/ ".$mountpoint."/";
+
+	$process = proc_open( $rsync_cmd_line, $descriptorspec, $pipes);
+
+	if (is_resource($process)):
+		publish('zfs_master', '{"op":"start_directory_copy"}');
+
+		do {	
+			$line = fread($pipes[1], 2048);
+			
+			if ($line):
+				$message = array();
+				$message['data'] = $line;
+				$message['op'] = "directory_copy";
+				
+				publish('zfs_master', json_encode($message));
+			endif;
+
+			$status = proc_get_status($process);
+			
+			sleep(0.1);
+		} while ($status['running']);
+	
+		fclose($pipes[1]);
+
+		publish('zfs_master', '{"op":"stop_directory_copy"}');
+
+		proc_close($process);
+
+		sleep(1);
+	
+		$array_ret['succeeded'][$directory] = $status["exitcode"];
+	else:
+		$array_ret['failed'][$directory] = ZFSM_ERR_UNABLE_TO_CREATE_PROC;
+	endif;
+
+	return $array_ret;
+}
 
 function moveDirectory($directory, $directory_new_name) {
 	$array_ret = buildArrayRet();

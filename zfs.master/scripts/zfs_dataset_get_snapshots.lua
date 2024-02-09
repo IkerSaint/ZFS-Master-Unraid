@@ -1,4 +1,4 @@
-local snap_properties = {'used','referenced','defer_destroy','userrefs','creation'}
+local snap_properties = {'used','referenced','written','defer_destroy','userrefs','creation'}
 
 function list_snapshots(dataset)
     local snapshot_list = {}
