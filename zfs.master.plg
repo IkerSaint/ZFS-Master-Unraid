@@ -15,6 +15,16 @@
 		min="6.9.2">
 <CHANGES>
 
+###2024.02.9
+- Add - Convert directory to dataset functionality
+- Add - Written property for snapshots
+- Add - Directory listing for root datasets
+- Fix - Tabbed view support
+- Fix - Configuration file associated errors
+- Fix - Units nomenclature
+- Fix - Pool information parsing errors
+- Remove - Unraid Notifications 
+
 ###2023.12.8
 - Add - Directory Listing functionality
 - Fix - Optimize multiple operations
