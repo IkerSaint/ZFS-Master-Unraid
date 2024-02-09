@@ -43,6 +43,10 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	  padding: 2px 4px 3px 6px!important;
 	  margin: 2px 2px!important;
   }
+
+  .zfs_master_title {
+	margin-top: -45px!important;
+  }
   
 </style>
 
@@ -55,7 +59,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 <link type="text/css" rel="stylesheet" href="<?autov('/plugins/zfs.master/assets/sweetalert2.min.css');?>">
 
 
-<div id="zfs-master-title">
+<div id="zfs-master-title" class="title zfs_master_title">
 	<span class="left zfs_bar_text">
 		<a class="tooltip" title="Information refresh time"><i id="zfsm-last-refresh"></i></a>
 	</span>
