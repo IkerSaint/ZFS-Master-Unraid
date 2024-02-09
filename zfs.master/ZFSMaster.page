@@ -36,9 +36,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   .zfs_bar_text {
-	  padding-right: 8px;
-	  float: right;
-	  font-size: 1.2rem
+	  font-size: 1.2rem!important;
   }
   
   .zfs_compact {
@@ -56,18 +54,19 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 <script type="text/javascript" src="<?autov('/plugins/zfs.master/assets/sweetalert2.all.min.js');?>"></script>
 <link type="text/css" rel="stylesheet" href="<?autov('/plugins/zfs.master/assets/sweetalert2.min.css');?>">
 
+
+<div id="zfs-master-title">
+	<span class="left zfs_bar_text">
+		<a class="tooltip" title="Information refresh time"><i id="zfsm-last-refresh"></i></a>
+	</span>
+	<span class="zfs_bar_button">
+		<a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="requestRefresh()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a>
+	</span>
+	<span class="zfs_bar_button">
+		<a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a>
+	</span>
+</div>
 <div id="zfs_master_div">
-	<div id="zfs-master-title">
-		<span class="zfs_bar_text">
-			<a class="tooltip" title="Information refresh time"><i id="zfsm-last-refresh"></i></a>
-		</span>
-		<span class="zfs_bar_button">
-			<a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="requestRefresh()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a>
-		</span>
-		<span class="zfs_bar_button">
-			<a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a>
-		</span>
-	</div>
 	<table id="zfs_master" class="zfs_table disk_status wide">
 	<thead>
 		<tr>
@@ -161,7 +160,6 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
   $(function() {
 	  zfs_sub.start();
-	  addButtons();
 	  if (zfsm_config['refresh_interval'] > 0) {
 	  	requestRefresh();
 	  } else {
@@ -175,14 +173,6 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 
   function requestRefresh() {
 	  $.post('<?=$urlzmadmin?>', {cmd: 'refresh'} );
-  }
-
-  function addButtons() {
-	  var parent = getUnraidParentElement();
-	  
-	  parent.append('<?=$lastrefreshtext?>')
-	  parent.append('<?=$settingsbutton?>');
-	  parent.append('<?=$refreshbutton?>');
   }
   
   function replaceElementClass(element, oldClass, newClass){
