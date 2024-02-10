@@ -22,7 +22,7 @@ function buildArrayRet() {
 	return $array_ret;
 }
 
-function listDirectories($path, $childs) {
+function listDirectories($path, $childs, $zexc_pattern) {
 	$remove = array($path."/..", $path."/.");
 
 	foreach ($childs as $child):
@@ -36,6 +36,8 @@ function listDirectories($path, $childs) {
 	endif;
 	
 	$array_ret = array_diff($dirs, $remove);
+
+	$array_ret = array_filter($array_ret, function($v) { return preg_match($zexc_pattern, $v); });
 
 	return $array_ret;
 }
@@ -168,11 +170,10 @@ function getZFSPoolDevices($zpool) {
 function getZFSPoolDatasets($zpool, $zexc_pattern, $directory_listing = array()) {
 	$result = executeZFSProgram($GLOBALS["script_pool_get_datasets"], $zpool, array($zpool, $zexc_pattern));
 
-	$result['directories'] = listDirectories($result['mountpoint'], $result['child']);
+	$result['directories'] = listDirectories($result['mountpoint'], $result['child'], $zexc_pattern);
 
 	if (count($directory_listing)):
-		
-		$result['child'] = getDatasetDirectories($result['child'], $directory_listing);
+		$result['child'] = getDatasetDirectories($result['child'], $directory_listing, $zexc_pattern);
 	endif;
 	
 	return sortDatasetArray($result);
@@ -181,10 +182,10 @@ function getZFSPoolDatasets($zpool, $zexc_pattern, $directory_listing = array())
 function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern, $directory_listing = array()) {
 	$result = executeZFSProgram($GLOBALS["script_pool_get_datasets_snapshots"], $zpool, array($zpool, $zexc_pattern));
 
-	$result['directories'] = listDirectories($result['mountpoint'], $result['child']);
+	$result['directories'] = listDirectories($result['mountpoint'], $result['child'], $zexc_pattern);
 	
 	if (count($directory_listing)):
-		$result['child'] = getDatasetDirectories($result['child'], $directory_listing);
+		$result['child'] = getDatasetDirectories($result['child'], $directory_listing, $zexc_pattern);
 	endif;
 	
 	return sortDatasetArray($result);
@@ -194,14 +195,14 @@ function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern, $directory_listin
 
 #region datasets
 
-function getDatasetDirectories($dataset_tree, $directory_listing) {
+function getDatasetDirectories($dataset_tree, $directory_listing, $zexc_pattern) {
 	foreach ($dataset_tree as &$dataset):
 		if (in_array($dataset['name'], $directory_listing)):
-			$dataset['directories'] = listDirectories($dataset['mountpoint'], $dataset['child']);
+			$dataset['directories'] = listDirectories($dataset['mountpoint'], $dataset['child'], $zexc_pattern);
 		endif;
 
 		if (isset($dataset['child']) && count($dataset['child'])):
-			$dataset['child'] = getDatasetDirectories($dataset['child'], $directory_listing);
+			$dataset['child'] = getDatasetDirectories($dataset['child'], $directory_listing, $zexc_pattern);
 		endif;
 	endforeach;
 
@@ -414,7 +415,7 @@ function convertDirectory($directory, $zpool) {
 		2 => array("pipe", "w")
 	);
 
-	$rsync_cmd_line = "rsync -ra --stats --info=progress2 ".$directory_new_name."/ ".$mountpoint."/";
+	$rsync_cmd_line = "rsync -aX --stats --info=progress2 ".$directory_new_name."/ ".$mountpoint."/";
 
 	$process = proc_open( $rsync_cmd_line, $descriptorspec, $pipes);
 
