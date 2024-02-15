@@ -31,13 +31,13 @@ function listDirectories($path, $childs, $zexc_pattern) {
 
 	$dirs = glob($path."/{,.}*" , GLOB_ONLYDIR | GLOB_BRACE);
 
-	if (!isset($dirs) || !is_array($dirs)):
-    	return array();
+	if (!isset($dirs) || !is_array($dirs) || count($dirs) == 0):
+		return array();
 	endif;
 	
 	$array_ret = array_diff($dirs, $remove);
 
-	$array_ret = array_filter($array_ret, function($v) { return preg_match($zexc_pattern, $v); });
+	$array_ret = array_filter($array_ret, function($v) use($zexc_pattern) { return !preg_match($zexc_pattern."/i", $v); });
 
 	return $array_ret;
 }
