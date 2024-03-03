@@ -415,7 +415,7 @@ function convertDirectory($directory, $zpool) {
 		2 => array("pipe", "w")
 	);
 
-	$rsync_cmd_line = "rsync -aX --stats --info=progress2 ".$directory_new_name."/ ".$mountpoint."/";
+	$rsync_cmd_line = "rsync -aX --stats --info=progress2 ".escapeshellarg($directory_new_name)."/ ".escapeshellarg($mountpoint)."/";
 
 	$process = proc_open( $rsync_cmd_line, $descriptorspec, $pipes);
 

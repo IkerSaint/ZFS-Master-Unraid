@@ -15,6 +15,11 @@
 		min="6.9.2">
 <CHANGES>
 
+###2024.03.03
+- Fix - Dataset name validation before convertion
+- Fix - rsync command for folders with whitespaces or special characters
+- Add - Compatibility with 6.13 beta
+
 ###2024.02.15
 - Fix - Directory Listing not Working
 

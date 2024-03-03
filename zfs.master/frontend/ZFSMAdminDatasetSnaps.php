@@ -139,7 +139,7 @@ window.onload = function() {
 
 <body>
 	<div id="adminsnaps-form-div" class="zfsm_dialog">
-	<table id="zfs_master" class="zfs_snap_table disk_status wide">
+	<table id="zfs_master" class="unraid zfs_snap_table disk_status legacy wide">
 	<thead>
 		<tr>
 		<td><input type="checkbox" id="checkAll"></td>

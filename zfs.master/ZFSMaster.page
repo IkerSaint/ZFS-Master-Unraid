@@ -71,7 +71,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	</span>
 </div>
 <div id="zfs_master_div">
-	<table id="zfs_master" class="zfs_table disk_status wide">
+	<table id="zfs_master" class="unraid zfs_table disk_status legacy wide">
 	<thead>
 		<tr>
 		<td>Pool</td>
@@ -837,8 +837,18 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   }
 
   function convertDirectory(directory, pool) {
+	if (directory.match(/[^a-zA-Z0-9_\-\ \./]/)) {
+		Swal2.fire({
+			title: 'Invalid dataset name',
+			icon: 'warning',
+			html: 'Directory name contains invalid characters for a dataset name, allowed characters:<br><br>Alphanumeric (a-z0-9)<br>space ( )<br>underscore(_)<br>hypen(-)<br>period (.)'
+		});
+
+		return;
+	}	
+
 	Swal2.fire({
-		  title: '<strong>Convert <br>'+directory+' to Dataset</strong>',
+		  title: '<strong> Convert '+directory+' to Dataset</strong>',
 		  icon: 'warning',
 		  html: 'This operation will convert the Directory to a Dataset, <b>The directory will be renamed to &lt;dir&gt;_tmp_&lt;date&gt;</b>; and  the information copy over to the dataset, make sure you have enough space, <b>No information is lost in the process</b>',
 		  showConfirmButton: true,
