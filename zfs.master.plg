@@ -18,6 +18,7 @@
 ###2024.03.03
 - Fix - Dataset name validation before convertion
 - Fix - rsync command for folders with whitespaces or special characters
+- Fix - Errors on empty exclusion patterns
 - Add - Compatibility with 6.13 beta
 
 ###2024.02.15

@@ -37,7 +37,9 @@ function listDirectories($path, $childs, $zexc_pattern) {
 	
 	$array_ret = array_diff($dirs, $remove);
 
-	$array_ret = array_filter($array_ret, function($v) use($zexc_pattern) { return !preg_match($zexc_pattern."/i", $v); });
+	if (!empty($zexc_pattern)):
+		$array_ret = array_filter($array_ret, function($v) use($zexc_pattern) { return !preg_match($zexc_pattern."/i", $v); });
+	endif;
 
 	return $array_ret;
 }
