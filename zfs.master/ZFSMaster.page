@@ -145,19 +145,17 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  title: '<strong>Copying Directory</strong>',
 		  icon: 'warning',
 		  html: 'Starting...',
-		  timer: 5000,
-		  footer: 'Operation is in progress, it cannot be interrupted, check the progress on the dataset name',
-		  allowOutsideClick: false,
+		  timer: 3000,
+		  footer: 'Operation is in progress, it cannot be interrupted, check the progress on the dataset row',
 		  didOpen: () => {
     		Swal2.showLoading();
 		  }
 	  	});
-		
 	} else if (msg.op == 'directory_copy') {
 		htmlProgress = parseDirectoryCopy(msg.data.line);
-		$('#tr'+$.escapeSelector(msg.data.dataset)+' > td:nth-child(1)').html(htmlProgress);
+		$('#tr-'+$.escapeSelector(msg.data.dataset)+' > td:nth-child(1)').html(htmlProgress);
 	} else if (msg.op == 'stop_directory_copy') {
-		$('#tr'+$.escapeSelector(msg.data.dataset)+' > td:nth-child(1)').text('');
+		$('#tr-'+$.escapeSelector(msg.data.dataset)+' > td:nth-child(1)').text('');
 	}
 
 	processHiddenDatasets();
