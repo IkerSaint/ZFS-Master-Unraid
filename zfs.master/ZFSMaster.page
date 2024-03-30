@@ -155,9 +155,9 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		
 	} else if (msg.op == 'directory_copy') {
 		htmlProgress = parseDirectoryCopy(msg.data.line);
-		$('#tr'+msg.data.directory+' > td:nth-child(1)').text(htmlProgress);
+		$('#tr'+$.escapeSelector(msg.data.dataset)+' > td:nth-child(1)').html(htmlProgress);
 	} else if (msg.op == 'stop_directory_copy') {
-		$('#tr'+msg.data.directory+' > td:nth-child(1)').text('');
+		$('#tr'+$.escapeSelector(msg.data.dataset)+' > td:nth-child(1)').text('');
 	}
 
 	processHiddenDatasets();

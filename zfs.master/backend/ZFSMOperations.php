@@ -411,6 +411,8 @@ function convertDirectory($directory, $zpool) {
 		return $dataset;
 	endif;
 
+	refreshData();
+
 	$mountpoint = getDatasetProperty($zpool, $dataset_name, 'mountpoint');
 
 	$descriptorspec = array(
@@ -425,7 +427,7 @@ function convertDirectory($directory, $zpool) {
 
 	if (is_resource($process)):
 		$message = array();
-		$message['data']['directory'] = $directory;
+		$message['data']['dataset'] = $dataset_name;
 		$message['op'] = "start_directory_copy";
 
 		publish('zfs_master', json_encode($message));
@@ -436,7 +438,7 @@ function convertDirectory($directory, $zpool) {
 			if ($line):
 				$message = array();
 				$message['data']['line'] = $line;
-				$message['data']['directory'] = $directory;
+				$message['data']['dataset'] = $dataset_name;
 				$message['op'] = "directory_copy";
 				
 				publish('zfs_master', json_encode($message));
@@ -450,7 +452,7 @@ function convertDirectory($directory, $zpool) {
 		fclose($pipes[1]);
 
 		$message = array();
-		$message['data']['directory'] = $directory;
+		$message['data']['dataset'] = $dataset_name;
 		$message['op'] = "stop_directory_copy";
 
 		publish('zfs_master', json_encode($message));
