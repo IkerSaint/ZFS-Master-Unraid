@@ -26,7 +26,9 @@ function listDirectories($path, $childs, $zexc_pattern) {
 	$remove = array($path."/..", $path."/.");
 
 	foreach ($childs as $child):
-		$remove[] = $child['mountpoint'];
+		if (isset($child['mountpoint'])):
+			$remove[] = $child['mountpoint'];
+		endif;
 	endforeach;
 
 	$dirs = glob($path."/{,.}*" , GLOB_ONLYDIR | GLOB_BRACE);
@@ -422,14 +424,19 @@ function convertDirectory($directory, $zpool) {
 	$process = proc_open( $rsync_cmd_line, $descriptorspec, $pipes);
 
 	if (is_resource($process)):
-		publish('zfs_master', '{"op":"start_directory_copy"}');
+		$message = array();
+		$message['data']['directory'] = $directory;
+		$message['op'] = "start_directory_copy";
+
+		publish('zfs_master', json_encode($message));
 
 		do {	
 			$line = fread($pipes[1], 2048);
 			
 			if ($line):
 				$message = array();
-				$message['data'] = $line;
+				$message['data']['line'] = $line;
+				$message['data']['directory'] = $directory;
 				$message['op'] = "directory_copy";
 				
 				publish('zfs_master', json_encode($message));
@@ -442,7 +449,11 @@ function convertDirectory($directory, $zpool) {
 	
 		fclose($pipes[1]);
 
-		publish('zfs_master', '{"op":"stop_directory_copy"}');
+		$message = array();
+		$message['data']['directory'] = $directory;
+		$message['op'] = "stop_directory_copy";
+
+		publish('zfs_master', json_encode($message));
 
 		proc_close($process);
 

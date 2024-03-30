@@ -145,7 +145,8 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 		  title: '<strong>Copying Directory</strong>',
 		  icon: 'warning',
 		  html: 'Starting...',
-		  footer: 'Operation is in progress, it cannot be interrupted, please do not close this window',
+		  timer: 5000,
+		  footer: 'Operation is in progress, it cannot be interrupted, check the progress on the dataset name',
 		  allowOutsideClick: false,
 		  didOpen: () => {
     		Swal2.showLoading();
@@ -153,10 +154,10 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	  	});
 		
 	} else if (msg.op == 'directory_copy') {
-		const html = Swal2.getHtmlContainer();
-		html.innerHTML = parseDirectoryCopy(msg.data);
+		htmlProgress = parseDirectoryCopy(msg.data.line);
+		$('#tr'+msg.data.directory+' > td:nth-child(1)').text(htmlProgress);
 	} else if (msg.op == 'stop_directory_copy') {
-		Swal2.close();
+		$('#tr'+msg.data.directory+' > td:nth-child(1)').text('');
 	}
 
 	processHiddenDatasets();
@@ -850,7 +851,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	Swal2.fire({
 		  title: '<strong> Convert '+directory+' to Dataset</strong>',
 		  icon: 'warning',
-		  html: 'This operation will convert the Directory to a Dataset, <b>The directory will be renamed to &lt;dir&gt;_tmp_&lt;date&gt;</b>; and  the information copy over to the dataset, make sure you have enough space, <b>No information is lost in the process</b>',
+		  html: 'This operation will convert the Directory to a Dataset, <b>The directory will be renamed to &lt;dir&gt;_tmp_&lt;date&gt;</b>; and  the information copy over to the dataset, make sure you have enough space (Twice the source), <b>No information is lost in the process</b>',
 		  showConfirmButton: true,
 		  confirmButtonText: 'Convert',
 		  showCancelButton: true
