@@ -459,7 +459,9 @@ function convertDirectory($directory, $zpool) {
 
 		proc_close($process);
 
-		sleep(1);
+		refreshData();
+
+		sleep(0.25);
 	
 		$array_ret['succeeded'][$directory] = $status["exitcode"];
 	else:
