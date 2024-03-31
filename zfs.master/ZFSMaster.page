@@ -849,7 +849,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	Swal2.fire({
 		  title: '<strong> Convert '+directory+' to Dataset</strong>',
 		  icon: 'warning',
-		  html: 'This operation will convert the Directory to a Dataset, <b>The directory will be renamed to &lt;dir&gt;_tmp_&lt;date&gt;</b>; and  the information copy over to the dataset, make sure you have enough space (Twice the source), <b>No information is lost in the process</b>',
+		  html: 'This operation will convert the Directory to a Dataset, <b>The directory will be renamed to &lt;dir&gt;_tmp_&lt;date&gt;</b>; and  the information copy over to the dataset, make sure you have enough space<b>No information is lost in the process</b>',
 		  showConfirmButton: true,
 		  confirmButtonText: 'Convert',
 		  showCancelButton: true
