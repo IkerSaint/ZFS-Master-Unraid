@@ -128,7 +128,7 @@ switch ($_POST['cmd']) {
 	case 'convertdirectory':
 		$ret = convertDirectory($_POST['directory'], $_POST['pool']);
 
-		returnAnswer($ret, "ZFS Directory Convert", "Directory converted successfully", "Unable to convert directory", true, false);
+		returnAnswer($ret, "ZFS Directory Convert", "Directory converted successfully", "Unable to convert directory", true, true);
 
 		break;
 	case 'deletedirectory':
