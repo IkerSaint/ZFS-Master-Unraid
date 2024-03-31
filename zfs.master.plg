@@ -15,6 +15,13 @@
 		min="6.9.2">
 <CHANGES>
 
+###2024.03.31
+- Fix - Compatibility with 6.13 beta
+- Change - Conver to dataset reporting on dataset roow
+- Add - Unraid notifications for Convert to Dataset
+- Fix - for folder listing corner cases
+- Fix - for zvols
+
 ###2024.03.03
 - Fix - Dataset name validation before convertion
 - Fix - rsync command for folders with whitespaces or special characters
