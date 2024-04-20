@@ -4,7 +4,7 @@
 <!ENTITY author		"IkerSaint">
 <!ENTITY version "2024.03.31.76">
 <!ENTITY launch     "Main">
-<!ENTITY gitURL		"https://raw.githubusercontent.com/Ubsefor/ZFS-Master-Unraid/main">
+<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main">
 <!ENTITY pluginURL	"&gitURL;/&name;.plg">
 ]>
 
