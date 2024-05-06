@@ -15,6 +15,12 @@
 		min="6.9.2">
 <CHANGES>
 
+###2024.05.05
+- Fix - Malicious content in SweetAlert2 package. Thanks @Ubsefor
+- Add - Initial support for ZFS Vols (Just detection, more is coming)
+- Fix - Exclussion patterns keywords
+- 
+
 ###2024.03.31
 - Fix - Compatibility with 6.13 beta
 - Change - Convert to dataset reporting on dataset row

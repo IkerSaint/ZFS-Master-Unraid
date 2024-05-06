@@ -362,6 +362,7 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 
 	const properties = {
 		'Creation Date' : creationDate.toLocaleString('en-US', { hour12: false }),
+		'Type': zdataset['type'],
 		'Compression' : zdataset['compression'],
 		'Compress Ratio' : zdataset['compressratio']/100,
 		'Record Size' : fromBytesToString(zdataset['recordsize']),
