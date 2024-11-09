@@ -378,11 +378,11 @@ function getPropertiesByType(zdataset) {
 			'Space used by Snaps' : fromBytesToString(zdataset['usedbysnapshots'])
 		}
 
-	} else if (zdataset['type'] !== undefined && zdataset['type'] == "filesystem".toLowerCase()) {
+	} else if (zdataset['type'] !== undefined && zdataset['type'] == "volume".toLowerCase()) {
 		properties = {
 			'Creation Date' : creationDate.toLocaleString('en-US', { hour12: false }),
 			'Type' : zdataset['type'],
-			'Block Size' : zdataset['volblocksize'],
+			'Block Size' : fromBytesToString(zdataset['volblocksize']),
 			'Compression' : zdataset['compression'],
 			'Compress Ratio' : zdataset['compressratio']/100,
 			'Primary Cache' : zdataset['primarycache'],
