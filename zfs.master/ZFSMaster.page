@@ -71,7 +71,7 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 	</span>
 </div>
 <div id="zfs_master_div">
-	<table id="zfs_master" class="unraid zfs_table disk_status legacy wide">
+	<table id="zfs_master" class=mainTableClass()>
 	<thead>
 		<tr>
 		<td>Pool</td>
@@ -181,6 +181,13 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
   function replaceElementClass(element, oldClass, newClass){
 	  $(element).removeClass(oldClass);
 	  $(element).addClass(newClass);
+  }
+
+  function mainTableClass() {
+	if (zfsm_config['version'].localeCompare('6.12.13', undefined, { numeric: true, sensitivity: 'base' }) == 1) {
+		return "unraid zfs_table wide";
+	}
+	return "unraid zfs_table disk_status wide";
   }
   
   function getUnraidParentElement() {

@@ -358,7 +358,7 @@ function getPropertiesByType(zdataset) {
 	const creationDate = new Date(zdataset['creation'] * 1000);
 	var properties = {};
 
-	if (zdataset['type'] !== undefined && zdataset['type'] == strtolower("filesystem")) {
+	if (zdataset['type'] !== undefined && zdataset['type'] == "filesystem".toLowerCase()) {
 		properties = {
 			'Creation Date' : creationDate.toLocaleString('en-US', { hour12: false }),
 			'Type' : zdataset['type'],
@@ -378,7 +378,7 @@ function getPropertiesByType(zdataset) {
 			'Space used by Snaps' : fromBytesToString(zdataset['usedbysnapshots'])
 		}
 
-	} else if (zdataset['type'] !== undefined && zdataset['type'] == strtolower("filesystem")) {
+	} else if (zdataset['type'] !== undefined && zdataset['type'] == "filesystem".toLowerCase()) {
 		properties = {
 			'Creation Date' : creationDate.toLocaleString('en-US', { hour12: false }),
 			'Type' : zdataset['type'],
