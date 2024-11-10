@@ -2,9 +2,9 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name		"zfs.master">
 <!ENTITY author		"IkerSaint">
-<!ENTITY version "2024.05.06.78">
+<!ENTITY version "2024.11.10.84.beta">
 <!ENTITY launch     "Main">
-<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main">
+<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/beta">
 <!ENTITY pluginURL	"&gitURL;/&name;.plg">
 ]>
 
@@ -15,11 +15,15 @@
 		min="6.9.2">
 <CHANGES>
 
+###2024.11.11
+- Fix - Style for Unraid 7
+- Add - Properties extraction for ZFS Volumes
+- Fix - for folder listing corner cases
+
 ###2024.05.05
 - Fix - Malicious content in SweetAlert2 package. Thanks @Ubsefor
 - Add - Initial support for ZFS Vols (Just detection, more is coming)
 - Fix - Exclussion patterns keywords
-- 
 
 ###2024.03.31
 - Fix - Compatibility with 6.13 beta
