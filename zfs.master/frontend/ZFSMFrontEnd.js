@@ -626,7 +626,7 @@ async function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert, d
 	td_button = tds[3];
 	td_snaps = tds[8];
 
-	var properties = getPropertiesByType(zdataset);
+	var properties = getPropertiesByType(data);
 
 	var icon_color = 'grey';
 	var snap_count = 0;
