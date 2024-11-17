@@ -399,7 +399,7 @@ function getPropertiesByType(zdataset) {
 }
 
 function getZnapProperties(zdataset) {
-	const ZNAPZEND_PREFIX = "org.znapzend";
+	const ZNAPZEND_PREFIX = "org.znapzend:";
 	var properties = [];
 
 	keys = Object.keys(zdataset).filter(k => k.startsWith(ZNAPZEND_PREFIX));
@@ -680,8 +680,8 @@ async function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert, d
 	var znap_properties = getZnapProperties(data.dataset);
 
 	if (Object.keys(znap_properties).length > 0) {
-		tr += '<a class="info hand"><i class="fa fa-clock-o fa-append"></i>';
-		tr += '<span>'+implodeWithKeys('<br>', znap_properties)+'</span></a>';
+		tmp += '<a class="info hand"><i class="fa fa-clock-o fa-append"></i>';
+		tmp += '<span>'+implodeWithKeys('<br>', znap_properties)+'</span></a>';
 	}
 
 	if (Object.keys(data.dataset['child']).length > 0 || hasDirectories(data.dataset)) {
