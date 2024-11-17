@@ -408,7 +408,7 @@ function getZnapProperties(zdataset) {
 		properties[property.slice(ZNAPZEND_PREFIX.length)] = zdataset[property];
 	});
 
-	return properties;
+	return Object.fromEntries(Object.entries(properties).sort(([a],[b]) => a.localeCompare(b)));
 }
 
 function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert, display) {
