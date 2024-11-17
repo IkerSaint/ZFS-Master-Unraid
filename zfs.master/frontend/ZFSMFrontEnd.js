@@ -398,6 +398,19 @@ function getPropertiesByType(zdataset) {
 	return properties;
 }
 
+function getZnapProperties(zdataset) {
+	const ZNAPZEND_PREFIX = "org.znapzend";
+	var properties = [];
+
+	keys = Object.keys(zdataset).filter(k => k.startsWith(ZNAPZEND_PREFIX));
+
+	keys.forEach((property) => {
+		properties[property.slice(ZNAPZEND_PREFIX.length)] = zdataset[property];
+	});
+
+	return properties;
+}
+
 function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mode, snap_max_days_alert, display) {
 	var tr = '<tr id="tr-'+zdataset['name']+'" class="zdataset-'+zpool+' '+parent+'" style="display: '+(show_status ? 'table-row' : 'none')+'">';
 	tr += '<td></td><td></td><td>';
@@ -432,10 +445,11 @@ function generateDatasetRow(zpool, zdataset, parent, show_status, destructive_mo
 	tr += '<a class="info hand"><i class="fa fa-hdd-o icon" style="color:'+icon_color+'" onclick="toggleDataset(\''+zdataset['name']+'\');"></i>';
 	tr += '<span>'+implodeWithKeys('<br>', properties)+'</span></a>';
 
-	znapzend_keys = Object.keys(zdataset).filter(k => k.startsWith('org.znapzend'));
+	var znap_properties = getZnapProperties(zdataset);
 
-	if (znapzend_keys.length > 0) {
-		tr += '<i class="fa fa-clock-o"></i>';
+	if (Object.keys(znap_properties).length > 0) {
+		tr += '<a class="info hand"><i class="fa fa-clock-o fa-append"></i>';
+		tr += '<span>'+implodeWithKeys('<br>', znap_properties)+'</span></a>';
 	}
 
 	if (Object.keys(zdataset.child).length > 0 || hasDirectories(zdataset)) {
@@ -663,10 +677,11 @@ async function updateSnapshotInfo(data, destructive_mode, snap_max_days_alert, d
 	tmp += '<a class="info hand"><i class="fa fa-hdd-o icon" style="color:'+icon_color+'" onclick="toggleDataset(\''+data.dataset['name']+'\');"></i>';
 	tmp += '<span>'+implodeWithKeys('<br>', properties)+'</span></a>';
 
-	znapzend_keys = Object.keys(data.dataset).filter(k => k.startsWith('org.znapzend'));
+	var znap_properties = getZnapProperties(data.dataset);
 
-	if (znapzend_keys.length > 0) {
-		tmp += '<i class="fa fa-clock-o"></i>';
+	if (Object.keys(znap_properties).length > 0) {
+		tr += '<a class="info hand"><i class="fa fa-clock-o fa-append"></i>';
+		tr += '<span>'+implodeWithKeys('<br>', znap_properties)+'</span></a>';
 	}
 
 	if (Object.keys(data.dataset['child']).length > 0 || hasDirectories(data.dataset)) {
