@@ -171,7 +171,7 @@ function getZFSPoolDevices($zpool) {
 	return trim(shell_exec($cmd_line.' 2>&1'));
 }
 
-function getZFSPoolDatasets($zpool, $zexc_pattern, $directory_listing = array(), $ext) {
+function getZFSPoolDatasets($zpool, $zexc_pattern, $ext, $directory_listing = array()) {
 	if ($ext == "0") {
 		$result = executeZFSProgram($GLOBALS["script_pool_get_datasets"], $zpool, array($zpool, $zexc_pattern));
 	} else {
@@ -187,7 +187,7 @@ function getZFSPoolDatasets($zpool, $zexc_pattern, $directory_listing = array(),
 	return sortDatasetArray($result);
 }
 
-function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern, $directory_listing = array(), $ext) {
+function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern, $ext, $directory_listing = array()) {
 	if ($ext == "0") {
 		$result = executeZFSProgram($GLOBALS["script_pool_get_datasets_snapshots"], $zpool, array($zpool, $zexc_pattern));
 	} else {
