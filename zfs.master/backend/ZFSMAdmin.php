@@ -74,7 +74,7 @@ switch ($_POST['cmd']) {
 		returnAnswer($array_ret, "ZFS Dataset Edit", "Dataset edited successfully", "Unable to edit dataset", true, false);
 		break;
 	case 'getdatasetproperties':
-		$ret = getAllDatasetProperties($_POST['zdataset']);
+		$ret = getAllDatasetProperties($_POST['zdataset'], $zfsm_cfg['znapzend_data']);
 
 		echo json_encode($ret);
 

@@ -43,6 +43,17 @@ _(Lazy Load)_:
 > updated one dataset at the time instead of all at once.
 :end
 
+_(Load ZnapZend Data)_:
+: <select name="znapzend_data">
+	<?=mk_option($zfsm_cfg['znapzend_data'], "0", _('No'))?>
+	<?=mk_option($zfsm_cfg['znapzend_data'], "1", _('Yes'))?>
+  </select>
+  
+:zc_settings_znapzend_data_plug:
+> + Set to **Yes** to enable loading ZnapZend plans.
+> + Set to **No** to disable loading ZnapZend plans.
+:end
+
 
 _(Destructive Mode)_:
 : <select name="destructive_mode">

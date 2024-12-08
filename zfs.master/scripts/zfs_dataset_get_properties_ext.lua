@@ -7,6 +7,11 @@ function get_properties(name)
         dataset[property] = zfs.get_prop(name, property)
 	end
 
+	for property in zfs.list.user_properties(name) do
+        val, src = zfs.get_prop(name, property)
+        dataset[property] = val
+    end
+
 	return dataset;
 end 
  

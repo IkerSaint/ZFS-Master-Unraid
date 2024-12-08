@@ -12,7 +12,7 @@ require_once $docroot."/plugins/".$plugin."/backend/ZFSMOperations.php";
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 
 $zpool = $_GET['zpool'];
-$zpool_datasets = getZFSPoolDatasets($zpool, $zfsm_cfg['dataset_exclusion']);
+$zpool_datasets = getZFSPoolDatasets($zpool, $zfsm_cfg['dataset_exclusion'], $zfsm_cfg['znapzend_data']);
 ?>
 
 <!DOCTYPE html>

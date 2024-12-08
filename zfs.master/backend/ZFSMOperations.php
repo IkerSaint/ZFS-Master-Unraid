@@ -171,25 +171,33 @@ function getZFSPoolDevices($zpool) {
 	return trim(shell_exec($cmd_line.' 2>&1'));
 }
 
-function getZFSPoolDatasets($zpool, $zexc_pattern, $directory_listing = array()) {
-	$result = executeZFSProgram($GLOBALS["script_pool_get_datasets"], $zpool, array($zpool, $zexc_pattern));
+function getZFSPoolDatasets($zpool, $zexc_pattern, $directory_listing = array(), $ext) {
+	if ($ext == "0") {
+		$result = executeZFSProgram($GLOBALS["script_pool_get_datasets"], $zpool, array($zpool, $zexc_pattern));
+	} else {
+		$result = executeZFSProgram($GLOBALS["script_pool_get_datasets_ext"], $zpool, array($zpool, $zexc_pattern));
+	}
 
 	$result['directories'] = listDirectories($result['mountpoint'], $result['child'], $zexc_pattern);
 
 	if (count($directory_listing)):
-		$result['child'] = getDatasetDirectories($result['child'], $directory_listing, $zexc_pattern);
+		$result['child'] = getDatasetDirectories($result['child'], $directory_listing, $zexc_pattern, $ext);
 	endif;
 	
 	return sortDatasetArray($result);
 }
 
-function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern, $directory_listing = array()) {
-	$result = executeZFSProgram($GLOBALS["script_pool_get_datasets_snapshots"], $zpool, array($zpool, $zexc_pattern));
+function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern, $directory_listing = array(), $ext) {
+	if ($ext == "0") {
+		$result = executeZFSProgram($GLOBALS["script_pool_get_datasets_snapshots"], $zpool, array($zpool, $zexc_pattern));
+	} else {
+		$result = executeZFSProgram($GLOBALS["script_pool_get_datasets_snapshots_ext"], $zpool, array($zpool, $zexc_pattern));
+	}
 
 	$result['directories'] = listDirectories($result['mountpoint'], $result['child'], $zexc_pattern);
 	
 	if (count($directory_listing)):
-		$result['child'] = getDatasetDirectories($result['child'], $directory_listing, $zexc_pattern);
+		$result['child'] = getDatasetDirectories($result['child'], $directory_listing, $zexc_pattern, $ext);
 	endif;
 	
 	return sortDatasetArray($result);
@@ -199,14 +207,14 @@ function getZFSPoolDatasetsAndSnapshots($zpool, $zexc_pattern, $directory_listin
 
 #region datasets
 
-function getDatasetDirectories($dataset_tree, $directory_listing, $zexc_pattern) {
+function getDatasetDirectories($dataset_tree, $directory_listing, $zexc_pattern, $ext) {
 	foreach ($dataset_tree as &$dataset):
 		if (in_array($dataset['name'], $directory_listing)):
 			$dataset['directories'] = listDirectories($dataset['mountpoint'], $dataset['child'], $zexc_pattern);
 		endif;
 
 		if (isset($dataset['child']) && count($dataset['child'])):
-			$dataset['child'] = getDatasetDirectories($dataset['child'], $directory_listing, $zexc_pattern);
+			$dataset['child'] = getDatasetDirectories($dataset['child'], $directory_listing, $zexc_pattern, $ext);
 		endif;
 	endforeach;
 
@@ -219,10 +227,14 @@ function getDatasetProperty($zpool, $zdataset, $zproperty) {
 	return $array_ret;
 }
 
-function getAllDatasetProperties($zdataset) {
+function getAllDatasetProperties($zdataset, $ext) {
 	$zpool = explode("/", $zdataset)[0];
 	
-	$array_ret = executeZFSProgram($GLOBALS["script_dataset_get_properties"], $zpool, array($zdataset));
+	if ($ext == 0) {
+		$array_ret = executeZFSProgram($GLOBALS["script_dataset_get_properties"], $zpool, array($zdataset));
+	} else {
+		$array_ret = executeZFSProgram($GLOBALS["script_dataset_get_properties_ext"], $zpool, array($zdataset));
+	}
 
 	return $array_ret;
 }

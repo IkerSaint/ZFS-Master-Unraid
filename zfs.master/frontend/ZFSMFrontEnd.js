@@ -622,10 +622,14 @@ function generatePoolTableRows(zpool, devices, show_status, display) {
 function updateFullBodyTable(data, destructive_mode, snap_max_days_alert, display, directory_listing) {
 	var html_pools = "";
 
+	zfs_table_body = document.getElementById('zfs_master_body');
+
+	if (zfs_table_body === undefined) {
+		return;
+	}
+
 	Object.values(data.pools).forEach((zpool) => {
 		const show_status = getPoolShowStatus(zpool['Pool']);
-
-		zfs_table_body = document.getElementById('zfs_master_body');
 
 		html_pools += '<tr>';
 		html_pools += generatePoolTableRows( zpool, data['devices'][zpool['Pool']], show_status, display);

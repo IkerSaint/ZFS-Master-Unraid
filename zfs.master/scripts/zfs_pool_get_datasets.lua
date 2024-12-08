@@ -13,11 +13,6 @@ function list_datasets(root, exclusion_pattern)
 		dataset[property] = zfs.get_prop(root, property)
 	end
 
-	for property in zfs.list.user_properties(root) do
-        val, src = zfs.get_prop(root, property)
-        dataset[property] = val
-    end
-
 	dataset['child'] = {}
 	
     for child in zfs.list.children(root) do

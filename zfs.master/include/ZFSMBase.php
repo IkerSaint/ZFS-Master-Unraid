@@ -7,10 +7,13 @@
 	$plugin_session_file = "/tmp/".$plugin."-session.data";
 	
 	$script_pool_get_datasets = $plugin_scripts."zfs_pool_get_datasets.lua";
+	$script_pool_get_datasets_ext = $plugin_scripts."zfs_pool_get_datasets_ext.lua";
 	$script_pool_get_datasets_snapshots = $plugin_scripts."zfs_pool_get_datasets_snapshots.lua";
+	$script_pool_get_datasets_snapshots_ext = $plugin_scripts."zfs_pool_get_datasets_snapshots_ext.lua";
 
 	$script_dataset_get_property = $plugin_scripts."zfs_dataset_get_property.lua";
 	$script_dataset_get_properties = $plugin_scripts."zfs_dataset_get_properties.lua";
+	$script_dataset_get_properties_ext = $plugin_scripts."zfs_dataset_get_properties_ext.lua";
 	$script_dataset_get_snapshots = $plugin_scripts."zfs_dataset_get_snapshots.lua";
 
 	//$script_dataset_rollback_snapshot = $plugin_scripts."zfs_dataset_rollback_snapshot.lua";
