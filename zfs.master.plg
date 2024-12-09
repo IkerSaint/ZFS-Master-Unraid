@@ -2,9 +2,9 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name		"zfs.master">
 <!ENTITY author		"IkerSaint">
-<!ENTITY version "2024.11.17.96">
+<!ENTITY version "2024.12.09.103.beta">
 <!ENTITY launch     "Main">
-<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/main">
+<!ENTITY gitURL		"https://raw.githubusercontent.com/IkerSaint/ZFS-Master-Unraid/beta">
 <!ENTITY pluginURL	"&gitURL;/&name;.plg">
 ]>
 
@@ -14,6 +14,11 @@
 		pluginURL="&pluginURL;"
 		min="6.9.2">
 <CHANGES>
+
+###2024.12.08
+- Add - Config for pulling ZnapZend plans
+- Fix - Refresh and settings icon
+- Fix - Corner case if no information is loaded
 
 ###2024.11.17
 - Add - ZnapZend plans information

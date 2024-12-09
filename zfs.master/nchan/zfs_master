@@ -30,7 +30,7 @@ if (is_file($config_file) && is_readable($config_file)):
     $zfsm_cfg_timestamp = filemtime("/boot/config/plugins/zfs.master/zfs.master.cfg");
 endif;
 
-function getData($include_snapshots, $exclusion_pattern, $directory_listing) {
+function getData($include_snapshots, $exclusion_pattern, $directory_listing, $ext) {
     $zpool_global = getZFSPools();
     $zpool_devices = array();
     $zpool_datasets = array();
@@ -40,10 +40,10 @@ function getData($include_snapshots, $exclusion_pattern, $directory_listing) {
 
         $zpool_devices[$zpool_name] = getZFSPoolDevices($zpool_name);
         if ($include_snapshots):
-            $zpool_datasets[$zpool_name] = getZFSPoolDatasetsAndSnapshots($zpool_name, $exclusion_pattern, $directory_listing);
+            $zpool_datasets[$zpool_name] = getZFSPoolDatasetsAndSnapshots($zpool_name, $exclusion_pattern, $ext, $directory_listing);
             $zpool_global[$zpool_name]['Snapshots'] = $zpool_datasets[$zpool_name]['total_snapshots'];
         else:
-            $zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $exclusion_pattern, $directory_listing);
+            $zpool_datasets[$zpool_name] = getZFSPoolDatasets($zpool_name, $exclusion_pattern, $ext, $directory_listing);
         endif;
         $zpool_global[$zpool_name]['MountPoint'] = $zpool_datasets[$zpool_name]['mountpoint'];
     endforeach;
@@ -60,15 +60,15 @@ function getData($include_snapshots, $exclusion_pattern, $directory_listing) {
     return $message;
 }
 
-function getAllData($exclusion_pattern, $directory_listing) {
+function getAllData($exclusion_pattern, $directory_listing, $ext) {
     publish('zfs_master', '{"op":"start_refresh"}');
 
-    $message = getData(true, $exclusion_pattern, $directory_listing);
+    $message = getData(true, $exclusion_pattern, $directory_listing, $ext);
 
     publish('zfs_master', '{"op":"stop_refresh"}');
 }
 
-function getDatasetsSnapshots($zpool, $zdatasets) {
+function getDatasetsSnapshots($zpool, $zdatasets, $ext) {
     $message = array();
     $message['data'] = array();
     $message['op'] = "getSnapshot";
@@ -76,21 +76,21 @@ function getDatasetsSnapshots($zpool, $zdatasets) {
 
     foreach ($zdatasets as $zdataset):
         $message['data']['dataset'] = $zdataset;
-        $message['data']['snapshots'] = getDatasetSnapshots($zpool, $zdataset['name']);
+        $message['data']['snapshots'] = getDatasetSnapshots($zpool, $zdataset['name'], $ext);
 
         publish('zfs_master', json_encode($message));
 
-        getDatasetsSnapshots($zpool, $zdataset['child']);
+        getDatasetsSnapshots($zpool, $zdataset['child'], $ext);
     endforeach;
 }
 
-function getLazyLoadData($exclusion_pattern, $directory_listing) {
+function getLazyLoadData($exclusion_pattern, $directory_listing, $ext) {
     publish('zfs_master', '{"op":"start_refresh"}');
 
-    $message = getData(false, $exclusion_pattern, $directory_listing);
+    $message = getData(false, $exclusion_pattern, $directory_listing, $ext);
 
     foreach ($message['data']['datasets'] as $zpool):
-        getDatasetsSnapshots($zpool['name'], $zpool['child']);
+        getDatasetsSnapshots($zpool['name'], $zpool['child'], $ext);
     endforeach;
 
     publish('zfs_master', '{"op":"stop_refresh"}');
@@ -127,9 +127,9 @@ while (true) {
         unlink('/tmp/zfsm_reload');
 
         if ($zfsm_cfg['lazy_load'] == "0"):
-            getAllData($zfsm_cfg['dataset_exclusion'], $zfsm_cfg['directory_listing']);
+            getAllData($zfsm_cfg['dataset_exclusion'], $zfsm_cfg['directory_listing'], $zfsm_cfg['znapzend_data']);
         else:
-            getLazyLoadData($zfsm_cfg['dataset_exclusion'], $zfsm_cfg['directory_listing']);
+            getLazyLoadData($zfsm_cfg['dataset_exclusion'], $zfsm_cfg['directory_listing'], $zfsm_cfg['znapzend_data']);
         endif;
 
     elseif (($zfsm_cfg['refresh_interval'] > 0 && $zfsm_cfg['refresh_interval'] <= $sleep_time) || file_exists('/tmp/zfsm_reload') == true):
@@ -138,9 +138,9 @@ while (true) {
         endif;
 
         if ($zfsm_cfg['lazy_load'] == "0"):
-            getAllData($zfsm_cfg['dataset_exclusion'], $zfsm_cfg['directory_listing']);
+            getAllData($zfsm_cfg['dataset_exclusion'], $zfsm_cfg['directory_listing'], $zfsm_cfg['znapzend_data']);
         else:
-            getLazyLoadData($zfsm_cfg['dataset_exclusion'], $zfsm_cfg['directory_listing']);
+            getLazyLoadData($zfsm_cfg['dataset_exclusion'], $zfsm_cfg['directory_listing'], $zfsm_cfg['znapzend_data']);
         endif;
 
         $sleep_time = 0.0;

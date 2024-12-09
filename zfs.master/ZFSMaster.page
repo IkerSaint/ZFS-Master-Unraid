@@ -14,11 +14,6 @@ require_once $docroot."/webGui/include/Helpers.php";
 
 $zfsm_cfg = loadConfig(parse_plugin_cfg($plugin, true));
 $zfsm_cfg['version'] = parse_ini_file('/etc/unraid-version')['version'];
-
-$lastrefreshtext = '<span class="zfs_bar_text"><a class="tooltip" title="Information refresh time"><i id="zfsm-last-refresh"></i></a></span>';
-$refreshbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="requestRefresh()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a></span>';
-$settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a></span>';
-
 ?>
 
 <link type="text/css" rel="stylesheet" href="/webGui/styles/font-awesome.css?v=1545863026">
@@ -58,16 +53,15 @@ $settingsbutton = '<span class="zfs_bar_button"><a style="cursor:pointer" class=
 <script type="text/javascript" src="<?autov('/plugins/zfs.master/assets/sweetalert2.all.min.js');?>"></script>
 <link type="text/css" rel="stylesheet" href="<?autov('/plugins/zfs.master/assets/sweetalert2.min.css');?>">
 
-
 <div id="zfs-master-title" class="title zfs_master_title">
 	<span class="left zfs_bar_text">
 		<a class="tooltip" title="Information refresh time"><i id="zfsm-last-refresh"></i></a>
 	</span>
 	<span class="zfs_bar_button">
-		<a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="requestRefresh()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a>
+		<a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a>
 	</span>
 	<span class="zfs_bar_button">
-		<a style="cursor:pointer" class="tooltip" title="ZFS Master Settings" href="/Settings/ZFSMasterSettings"><i id="zfsm-settings" class="fa fa-gear"></i></a>
+		<a style="cursor:pointer" class="tooltip" title="Refresh Information" onclick="requestRefresh()"><i id="zfsm-refresh" class="fa fa-refresh"></i></a>
 	</span>
 </div>
 <div id="zfs_master_div">
