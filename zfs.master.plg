@@ -17,6 +17,7 @@
 
 ###2024.12.08
 - Add - Config for pulling ZnapZend plans
+- Fix - Refresh and settings icon
 - Fix - Corner case if no information is loaded
 
 ###2024.11.17
